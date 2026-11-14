@@ -1,0 +1,6 @@
+Mapas reales (proyección equirectangular 2:1), de dominio público:
+  earth.jpg        Blue Marble Next Generation, NASA Earth Observatory
+  earth-night.jpg  Black Marble 2016, NASA Earth Observatory / Suomi NPP
+  moon.jpg         CGI Moon Kit (LRO), NASA Scientific Visualization Studio
+  mars.jpg         Viking MDIM 2.1, USGS Astrogeology / NASA
+Se regeneran con scripts/fetch-textures.sh. Si falta alguno, ese planeta se dibuja con un shader procedural.

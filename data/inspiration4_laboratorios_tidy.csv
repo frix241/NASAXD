@@ -1,0 +1,365 @@
+tripulante,medida,unidad,momento,valor,calidad,fuente
+C001,Hemoglobina,g/dL,L-92,14.42,ok,simulado
+C001,Hemoglobina,g/dL,L-44,14.25,ok,simulado
+C001,Hemoglobina,g/dL,L-3,14.37,ok,simulado
+C001,Hemoglobina,g/dL,R+1,13.43,ok,simulado
+C001,Hemoglobina,g/dL,R+45,14.16,ok,simulado
+C001,Hemoglobina,g/dL,R+82,14.19,ok,simulado
+C001,Hemoglobina,g/dL,R+194,14.43,ok,simulado
+C001,Hematocrito,%,L-92,40.1,ok,simulado
+C001,Hematocrito,%,L-44,40.0,ok,simulado
+C001,Hematocrito,%,L-3,39.4,ok,simulado
+C001,Hematocrito,%,R+1,38.2,ok,simulado
+C001,Hematocrito,%,R+45,38.9,ok,simulado
+C001,Hematocrito,%,R+82,38.8,ok,simulado
+C001,Hematocrito,%,R+194,40.1,ok,simulado
+C001,Glóbulos rojos,M/µL,L-92,4.55,ok,simulado
+C001,Glóbulos rojos,M/µL,L-44,4.58,ok,simulado
+C001,Glóbulos rojos,M/µL,L-3,4.66,ok,simulado
+C001,Glóbulos rojos,M/µL,R+1,4.39,ok,simulado
+C001,Glóbulos rojos,M/µL,R+45,4.47,ok,simulado
+C001,Glóbulos rojos,M/µL,R+82,4.57,ok,simulado
+C001,Glóbulos rojos,M/µL,R+194,4.53,ok,simulado
+C001,Glóbulos blancos,K/µL,L-92,7.44,ok,simulado
+C001,Glóbulos blancos,K/µL,L-44,6.98,ok,simulado
+C001,Glóbulos blancos,K/µL,L-3,7.44,ok,simulado
+C001,Glóbulos blancos,K/µL,R+1,8.06,ok,simulado
+C001,Glóbulos blancos,K/µL,R+45,7.41,ok,simulado
+C001,Glóbulos blancos,K/µL,R+82,7.20,ok,simulado
+C001,Glóbulos blancos,K/µL,R+194,7.41,ok,simulado
+C001,Plaquetas,K/µL,L-92,260,ok,simulado
+C001,Plaquetas,K/µL,L-44,260,dudoso,simulado
+C001,Plaquetas,K/µL,L-3,270,ok,simulado
+C001,Plaquetas,K/µL,R+1,275,ok,simulado
+C001,Plaquetas,K/µL,R+45,265,ok,simulado
+C001,Plaquetas,K/µL,R+82,273,ok,simulado
+C001,Plaquetas,K/µL,R+194,,faltante,simulado
+C001,Glucosa,mg/dL,L-92,85.0,ok,simulado
+C001,Glucosa,mg/dL,L-44,84.3,ok,simulado
+C001,Glucosa,mg/dL,L-3,84.0,ok,simulado
+C001,Glucosa,mg/dL,R+1,88.8,ok,simulado
+C001,Glucosa,mg/dL,R+45,86.6,ok,simulado
+C001,Glucosa,mg/dL,R+82,83.4,ok,simulado
+C001,Glucosa,mg/dL,R+194,83.3,ok,simulado
+C001,Creatinina,mg/dL,L-92,0.85,ok,simulado
+C001,Creatinina,mg/dL,L-44,0.84,ok,simulado
+C001,Creatinina,mg/dL,L-3,0.86,ok,simulado
+C001,Creatinina,mg/dL,R+1,0.91,ok,simulado
+C001,Creatinina,mg/dL,R+45,0.89,ok,simulado
+C001,Creatinina,mg/dL,R+82,0.89,ok,simulado
+C001,Creatinina,mg/dL,R+194,0.84,ok,simulado
+C001,Sodio,mmol/L,L-92,140,ok,simulado
+C001,Sodio,mmol/L,L-44,140,ok,simulado
+C001,Sodio,mmol/L,L-3,139,ok,simulado
+C001,Sodio,mmol/L,R+1,139,ok,simulado
+C001,Sodio,mmol/L,R+45,139,ok,simulado
+C001,Sodio,mmol/L,R+82,140,ok,simulado
+C001,Sodio,mmol/L,R+194,140,ok,simulado
+C001,Potasio,mmol/L,L-92,4.08,ok,simulado
+C001,Potasio,mmol/L,L-44,4.09,ok,simulado
+C001,Potasio,mmol/L,L-3,4.04,ok,simulado
+C001,Potasio,mmol/L,R+1,3.94,ok,simulado
+C001,Potasio,mmol/L,R+45,3.93,ok,simulado
+C001,Potasio,mmol/L,R+82,3.99,ok,simulado
+C001,Potasio,mmol/L,R+194,4.07,ok,simulado
+C001,Calcio,mg/dL,L-92,9.72,ok,simulado
+C001,Calcio,mg/dL,L-44,9.66,ok,simulado
+C001,Calcio,mg/dL,L-3,9.78,ok,simulado
+C001,Calcio,mg/dL,R+1,10.06,ok,simulado
+C001,Calcio,mg/dL,R+45,9.83,ok,simulado
+C001,Calcio,mg/dL,R+82,9.71,ok,simulado
+C001,Calcio,mg/dL,R+194,9.77,ok,simulado
+C001,Colesterol total,mg/dL,L-92,190,ok,simulado
+C001,Colesterol total,mg/dL,L-44,186,ok,simulado
+C001,Colesterol total,mg/dL,L-3,,faltante,simulado
+C001,Colesterol total,mg/dL,R+1,177,ok,simulado
+C001,Colesterol total,mg/dL,R+45,188,ok,simulado
+C001,Colesterol total,mg/dL,R+82,189,ok,simulado
+C001,Colesterol total,mg/dL,R+194,190,ok,simulado
+C001,Proteína total,g/dL,L-92,7.26,ok,simulado
+C001,Proteína total,g/dL,L-44,7.14,dudoso,simulado
+C001,Proteína total,g/dL,L-3,7.23,ok,simulado
+C001,Proteína total,g/dL,R+1,7.45,ok,simulado
+C001,Proteína total,g/dL,R+45,7.30,ok,simulado
+C001,Proteína total,g/dL,R+82,7.25,ok,simulado
+C001,Proteína total,g/dL,R+194,7.24,ok,simulado
+C001,Vitamina D,ng/mL,L-92,36.3,ok,simulado
+C001,Vitamina D,ng/mL,L-44,37.4,ok,simulado
+C001,Vitamina D,ng/mL,L-3,37.4,ok,simulado
+C001,Vitamina D,ng/mL,R+1,36.5,ok,simulado
+C001,Vitamina D,ng/mL,R+45,36.7,ok,simulado
+C001,Vitamina D,ng/mL,R+82,37.6,ok,simulado
+C001,Vitamina D,ng/mL,R+194,38.6,dudoso,simulado
+C002,Hemoglobina,g/dL,L-92,14.12,ok,simulado
+C002,Hemoglobina,g/dL,L-44,14.48,ok,simulado
+C002,Hemoglobina,g/dL,L-3,14.45,ok,simulado
+C002,Hemoglobina,g/dL,R+1,13.73,ok,simulado
+C002,Hemoglobina,g/dL,R+45,,faltante,simulado
+C002,Hemoglobina,g/dL,R+82,14.25,ok,simulado
+C002,Hemoglobina,g/dL,R+194,,faltante,simulado
+C002,Hematocrito,%,L-92,43.7,ok,simulado
+C002,Hematocrito,%,L-44,43.9,ok,simulado
+C002,Hematocrito,%,L-3,43.0,ok,simulado
+C002,Hematocrito,%,R+1,42.0,ok,simulado
+C002,Hematocrito,%,R+45,42.4,ok,simulado
+C002,Hematocrito,%,R+82,42.8,ok,simulado
+C002,Hematocrito,%,R+194,43.0,ok,simulado
+C002,Glóbulos rojos,M/µL,L-92,4.81,ok,simulado
+C002,Glóbulos rojos,M/µL,L-44,4.81,ok,simulado
+C002,Glóbulos rojos,M/µL,L-3,4.84,ok,simulado
+C002,Glóbulos rojos,M/µL,R+1,,faltante,simulado
+C002,Glóbulos rojos,M/µL,R+45,4.76,dudoso,simulado
+C002,Glóbulos rojos,M/µL,R+82,4.80,ok,simulado
+C002,Glóbulos rojos,M/µL,R+194,4.92,ok,simulado
+C002,Glóbulos blancos,K/µL,L-92,6.02,ok,simulado
+C002,Glóbulos blancos,K/µL,L-44,6.26,ok,simulado
+C002,Glóbulos blancos,K/µL,L-3,6.38,ok,simulado
+C002,Glóbulos blancos,K/µL,R+1,6.95,ok,simulado
+C002,Glóbulos blancos,K/µL,R+45,6.59,ok,simulado
+C002,Glóbulos blancos,K/µL,R+82,6.22,ok,simulado
+C002,Glóbulos blancos,K/µL,R+194,6.21,ok,simulado
+C002,Plaquetas,K/µL,L-92,271,ok,simulado
+C002,Plaquetas,K/µL,L-44,278,ok,simulado
+C002,Plaquetas,K/µL,L-3,273,ok,simulado
+C002,Plaquetas,K/µL,R+1,291,ok,simulado
+C002,Plaquetas,K/µL,R+45,275,dudoso,simulado
+C002,Plaquetas,K/µL,R+82,280,ok,simulado
+C002,Plaquetas,K/µL,R+194,268,ok,simulado
+C002,Glucosa,mg/dL,L-92,87.2,ok,simulado
+C002,Glucosa,mg/dL,L-44,88.5,ok,simulado
+C002,Glucosa,mg/dL,L-3,86.1,ok,simulado
+C002,Glucosa,mg/dL,R+1,91.4,ok,simulado
+C002,Glucosa,mg/dL,R+45,88.5,ok,simulado
+C002,Glucosa,mg/dL,R+82,,faltante,simulado
+C002,Glucosa,mg/dL,R+194,87.4,ok,simulado
+C002,Creatinina,mg/dL,L-92,1.00,ok,simulado
+C002,Creatinina,mg/dL,L-44,1.00,ok,simulado
+C002,Creatinina,mg/dL,L-3,0.99,ok,simulado
+C002,Creatinina,mg/dL,R+1,1.01,ok,simulado
+C002,Creatinina,mg/dL,R+45,1.00,ok,simulado
+C002,Creatinina,mg/dL,R+82,,faltante,simulado
+C002,Creatinina,mg/dL,R+194,1.00,ok,simulado
+C002,Sodio,mmol/L,L-92,141,ok,simulado
+C002,Sodio,mmol/L,L-44,141,ok,simulado
+C002,Sodio,mmol/L,L-3,141,ok,simulado
+C002,Sodio,mmol/L,R+1,139,ok,simulado
+C002,Sodio,mmol/L,R+45,140,ok,simulado
+C002,Sodio,mmol/L,R+82,141,ok,simulado
+C002,Sodio,mmol/L,R+194,,faltante,simulado
+C002,Potasio,mmol/L,L-92,4.38,ok,simulado
+C002,Potasio,mmol/L,L-44,4.28,ok,simulado
+C002,Potasio,mmol/L,L-3,4.33,ok,simulado
+C002,Potasio,mmol/L,R+1,4.14,ok,simulado
+C002,Potasio,mmol/L,R+45,4.20,ok,simulado
+C002,Potasio,mmol/L,R+82,4.32,ok,simulado
+C002,Potasio,mmol/L,R+194,4.38,ok,simulado
+C002,Calcio,mg/dL,L-92,9.48,ok,simulado
+C002,Calcio,mg/dL,L-44,9.47,ok,simulado
+C002,Calcio,mg/dL,L-3,9.47,ok,simulado
+C002,Calcio,mg/dL,R+1,9.65,ok,simulado
+C002,Calcio,mg/dL,R+45,9.49,ok,simulado
+C002,Calcio,mg/dL,R+82,9.54,dudoso,simulado
+C002,Calcio,mg/dL,R+194,9.51,ok,simulado
+C002,Colesterol total,mg/dL,L-92,165,ok,simulado
+C002,Colesterol total,mg/dL,L-44,167,ok,simulado
+C002,Colesterol total,mg/dL,L-3,173,ok,simulado
+C002,Colesterol total,mg/dL,R+1,159,ok,simulado
+C002,Colesterol total,mg/dL,R+45,167,ok,simulado
+C002,Colesterol total,mg/dL,R+82,163,ok,simulado
+C002,Colesterol total,mg/dL,R+194,172,ok,simulado
+C002,Proteína total,g/dL,L-92,7.08,ok,simulado
+C002,Proteína total,g/dL,L-44,7.13,ok,simulado
+C002,Proteína total,g/dL,L-3,7.01,ok,simulado
+C002,Proteína total,g/dL,R+1,7.25,ok,simulado
+C002,Proteína total,g/dL,R+45,7.11,ok,simulado
+C002,Proteína total,g/dL,R+82,7.04,ok,simulado
+C002,Proteína total,g/dL,R+194,7.03,ok,simulado
+C002,Vitamina D,ng/mL,L-92,28.8,ok,simulado
+C002,Vitamina D,ng/mL,L-44,29.6,ok,simulado
+C002,Vitamina D,ng/mL,L-3,30.8,ok,simulado
+C002,Vitamina D,ng/mL,R+1,29.1,ok,simulado
+C002,Vitamina D,ng/mL,R+45,26.8,ok,simulado
+C002,Vitamina D,ng/mL,R+82,27.6,ok,simulado
+C002,Vitamina D,ng/mL,R+194,28.5,ok,simulado
+C003,Hemoglobina,g/dL,L-92,14.34,ok,simulado
+C003,Hemoglobina,g/dL,L-44,14.67,ok,simulado
+C003,Hemoglobina,g/dL,L-3,14.37,ok,simulado
+C003,Hemoglobina,g/dL,R+1,13.78,ok,simulado
+C003,Hemoglobina,g/dL,R+45,14.44,ok,simulado
+C003,Hemoglobina,g/dL,R+82,14.58,ok,simulado
+C003,Hemoglobina,g/dL,R+194,,faltante,simulado
+C003,Hematocrito,%,L-92,41.0,ok,simulado
+C003,Hematocrito,%,L-44,41.7,ok,simulado
+C003,Hematocrito,%,L-3,41.1,ok,simulado
+C003,Hematocrito,%,R+1,39.8,ok,simulado
+C003,Hematocrito,%,R+45,41.4,ok,simulado
+C003,Hematocrito,%,R+82,41.7,ok,simulado
+C003,Hematocrito,%,R+194,41.6,ok,simulado
+C003,Glóbulos rojos,M/µL,L-92,4.78,ok,simulado
+C003,Glóbulos rojos,M/µL,L-44,4.84,ok,simulado
+C003,Glóbulos rojos,M/µL,L-3,4.75,ok,simulado
+C003,Glóbulos rojos,M/µL,R+1,4.51,ok,simulado
+C003,Glóbulos rojos,M/µL,R+45,4.78,ok,simulado
+C003,Glóbulos rojos,M/µL,R+82,4.76,ok,simulado
+C003,Glóbulos rojos,M/µL,R+194,4.74,ok,simulado
+C003,Glóbulos blancos,K/µL,L-92,5.55,ok,simulado
+C003,Glóbulos blancos,K/µL,L-44,5.14,ok,simulado
+C003,Glóbulos blancos,K/µL,L-3,5.16,ok,simulado
+C003,Glóbulos blancos,K/µL,R+1,5.90,ok,simulado
+C003,Glóbulos blancos,K/µL,R+45,5.55,ok,simulado
+C003,Glóbulos blancos,K/µL,R+82,5.70,ok,simulado
+C003,Glóbulos blancos,K/µL,R+194,5.19,ok,simulado
+C003,Plaquetas,K/µL,L-92,249,ok,simulado
+C003,Plaquetas,K/µL,L-44,259,ok,simulado
+C003,Plaquetas,K/µL,L-3,257,ok,simulado
+C003,Plaquetas,K/µL,R+1,274,ok,simulado
+C003,Plaquetas,K/µL,R+45,,faltante,simulado
+C003,Plaquetas,K/µL,R+82,256,ok,simulado
+C003,Plaquetas,K/µL,R+194,251,ok,simulado
+C003,Glucosa,mg/dL,L-92,86.6,ok,simulado
+C003,Glucosa,mg/dL,L-44,86.4,ok,simulado
+C003,Glucosa,mg/dL,L-3,86.1,ok,simulado
+C003,Glucosa,mg/dL,R+1,88.5,ok,simulado
+C003,Glucosa,mg/dL,R+45,88.3,ok,simulado
+C003,Glucosa,mg/dL,R+82,85.6,ok,simulado
+C003,Glucosa,mg/dL,R+194,84.9,ok,simulado
+C003,Creatinina,mg/dL,L-92,0.86,ok,simulado
+C003,Creatinina,mg/dL,L-44,0.84,ok,simulado
+C003,Creatinina,mg/dL,L-3,0.88,ok,simulado
+C003,Creatinina,mg/dL,R+1,0.91,ok,simulado
+C003,Creatinina,mg/dL,R+45,0.88,ok,simulado
+C003,Creatinina,mg/dL,R+82,,faltante,simulado
+C003,Creatinina,mg/dL,R+194,0.86,ok,simulado
+C003,Sodio,mmol/L,L-92,138,ok,simulado
+C003,Sodio,mmol/L,L-44,139,ok,simulado
+C003,Sodio,mmol/L,L-3,139,ok,simulado
+C003,Sodio,mmol/L,R+1,,faltante,simulado
+C003,Sodio,mmol/L,R+45,138,ok,simulado
+C003,Sodio,mmol/L,R+82,139,ok,simulado
+C003,Sodio,mmol/L,R+194,139,ok,simulado
+C003,Potasio,mmol/L,L-92,4.30,dudoso,simulado
+C003,Potasio,mmol/L,L-44,4.27,ok,simulado
+C003,Potasio,mmol/L,L-3,4.25,dudoso,simulado
+C003,Potasio,mmol/L,R+1,4.13,ok,simulado
+C003,Potasio,mmol/L,R+45,4.16,ok,simulado
+C003,Potasio,mmol/L,R+82,4.31,ok,simulado
+C003,Potasio,mmol/L,R+194,4.24,ok,simulado
+C003,Calcio,mg/dL,L-92,9.80,ok,simulado
+C003,Calcio,mg/dL,L-44,9.84,ok,simulado
+C003,Calcio,mg/dL,L-3,9.86,ok,simulado
+C003,Calcio,mg/dL,R+1,9.96,ok,simulado
+C003,Calcio,mg/dL,R+45,9.88,ok,simulado
+C003,Calcio,mg/dL,R+82,9.83,ok,simulado
+C003,Calcio,mg/dL,R+194,9.77,ok,simulado
+C003,Colesterol total,mg/dL,L-92,190,ok,simulado
+C003,Colesterol total,mg/dL,L-44,189,ok,simulado
+C003,Colesterol total,mg/dL,L-3,,faltante,simulado
+C003,Colesterol total,mg/dL,R+1,182,ok,simulado
+C003,Colesterol total,mg/dL,R+45,188,ok,simulado
+C003,Colesterol total,mg/dL,R+82,190,ok,simulado
+C003,Colesterol total,mg/dL,R+194,195,ok,simulado
+C003,Proteína total,g/dL,L-92,7.41,ok,simulado
+C003,Proteína total,g/dL,L-44,7.31,ok,simulado
+C003,Proteína total,g/dL,L-3,7.40,ok,simulado
+C003,Proteína total,g/dL,R+1,7.63,ok,simulado
+C003,Proteína total,g/dL,R+45,7.40,ok,simulado
+C003,Proteína total,g/dL,R+82,7.33,ok,simulado
+C003,Proteína total,g/dL,R+194,,faltante,simulado
+C003,Vitamina D,ng/mL,L-92,36.0,ok,simulado
+C003,Vitamina D,ng/mL,L-44,34.9,ok,simulado
+C003,Vitamina D,ng/mL,L-3,35.6,ok,simulado
+C003,Vitamina D,ng/mL,R+1,32.7,ok,simulado
+C003,Vitamina D,ng/mL,R+45,34.2,ok,simulado
+C003,Vitamina D,ng/mL,R+82,35.1,ok,simulado
+C003,Vitamina D,ng/mL,R+194,35.1,ok,simulado
+C004,Hemoglobina,g/dL,L-92,14.75,ok,simulado
+C004,Hemoglobina,g/dL,L-44,15.06,ok,simulado
+C004,Hemoglobina,g/dL,L-3,14.90,ok,simulado
+C004,Hemoglobina,g/dL,R+1,14.36,ok,simulado
+C004,Hemoglobina,g/dL,R+45,14.75,ok,simulado
+C004,Hemoglobina,g/dL,R+82,14.87,ok,simulado
+C004,Hemoglobina,g/dL,R+194,15.03,ok,simulado
+C004,Hematocrito,%,L-92,44.5,ok,simulado
+C004,Hematocrito,%,L-44,43.9,ok,simulado
+C004,Hematocrito,%,L-3,44.6,ok,simulado
+C004,Hematocrito,%,R+1,43.4,ok,simulado
+C004,Hematocrito,%,R+45,43.0,ok,simulado
+C004,Hematocrito,%,R+82,43.2,ok,simulado
+C004,Hematocrito,%,R+194,44.6,ok,simulado
+C004,Glóbulos rojos,M/µL,L-92,4.63,ok,simulado
+C004,Glóbulos rojos,M/µL,L-44,4.58,ok,simulado
+C004,Glóbulos rojos,M/µL,L-3,4.61,ok,simulado
+C004,Glóbulos rojos,M/µL,R+1,4.24,ok,simulado
+C004,Glóbulos rojos,M/µL,R+45,4.52,ok,simulado
+C004,Glóbulos rojos,M/µL,R+82,4.61,ok,simulado
+C004,Glóbulos rojos,M/µL,R+194,4.57,ok,simulado
+C004,Glóbulos blancos,K/µL,L-92,5.77,ok,simulado
+C004,Glóbulos blancos,K/µL,L-44,5.85,ok,simulado
+C004,Glóbulos blancos,K/µL,L-3,5.65,ok,simulado
+C004,Glóbulos blancos,K/µL,R+1,6.39,ok,simulado
+C004,Glóbulos blancos,K/µL,R+45,5.65,ok,simulado
+C004,Glóbulos blancos,K/µL,R+82,5.61,ok,simulado
+C004,Glóbulos blancos,K/µL,R+194,5.76,ok,simulado
+C004,Plaquetas,K/µL,L-92,258,dudoso,simulado
+C004,Plaquetas,K/µL,L-44,252,ok,simulado
+C004,Plaquetas,K/µL,L-3,257,ok,simulado
+C004,Plaquetas,K/µL,R+1,265,ok,simulado
+C004,Plaquetas,K/µL,R+45,257,ok,simulado
+C004,Plaquetas,K/µL,R+82,259,ok,simulado
+C004,Plaquetas,K/µL,R+194,255,ok,simulado
+C004,Glucosa,mg/dL,L-92,94.3,ok,simulado
+C004,Glucosa,mg/dL,L-44,95.5,dudoso,simulado
+C004,Glucosa,mg/dL,L-3,95.5,ok,simulado
+C004,Glucosa,mg/dL,R+1,97.3,ok,simulado
+C004,Glucosa,mg/dL,R+45,97.4,ok,simulado
+C004,Glucosa,mg/dL,R+82,95.9,ok,simulado
+C004,Glucosa,mg/dL,R+194,96.7,ok,simulado
+C004,Creatinina,mg/dL,L-92,0.91,ok,simulado
+C004,Creatinina,mg/dL,L-44,,faltante,simulado
+C004,Creatinina,mg/dL,L-3,0.91,ok,simulado
+C004,Creatinina,mg/dL,R+1,0.97,ok,simulado
+C004,Creatinina,mg/dL,R+45,0.93,ok,simulado
+C004,Creatinina,mg/dL,R+82,0.92,ok,simulado
+C004,Creatinina,mg/dL,R+194,0.90,ok,simulado
+C004,Sodio,mmol/L,L-92,140,ok,simulado
+C004,Sodio,mmol/L,L-44,141,ok,simulado
+C004,Sodio,mmol/L,L-3,140,ok,simulado
+C004,Sodio,mmol/L,R+1,140,ok,simulado
+C004,Sodio,mmol/L,R+45,140,ok,simulado
+C004,Sodio,mmol/L,R+82,140,ok,simulado
+C004,Sodio,mmol/L,R+194,141,ok,simulado
+C004,Potasio,mmol/L,L-92,4.21,ok,simulado
+C004,Potasio,mmol/L,L-44,4.18,ok,simulado
+C004,Potasio,mmol/L,L-3,4.14,ok,simulado
+C004,Potasio,mmol/L,R+1,3.99,ok,simulado
+C004,Potasio,mmol/L,R+45,4.18,ok,simulado
+C004,Potasio,mmol/L,R+82,4.20,ok,simulado
+C004,Potasio,mmol/L,R+194,,faltante,simulado
+C004,Calcio,mg/dL,L-92,9.41,ok,simulado
+C004,Calcio,mg/dL,L-44,9.35,ok,simulado
+C004,Calcio,mg/dL,L-3,9.34,ok,simulado
+C004,Calcio,mg/dL,R+1,9.60,dudoso,simulado
+C004,Calcio,mg/dL,R+45,9.51,ok,simulado
+C004,Calcio,mg/dL,R+82,9.36,ok,simulado
+C004,Calcio,mg/dL,R+194,9.46,ok,simulado
+C004,Colesterol total,mg/dL,L-92,186,ok,simulado
+C004,Colesterol total,mg/dL,L-44,191,ok,simulado
+C004,Colesterol total,mg/dL,L-3,186,dudoso,simulado
+C004,Colesterol total,mg/dL,R+1,179,ok,simulado
+C004,Colesterol total,mg/dL,R+45,184,ok,simulado
+C004,Colesterol total,mg/dL,R+82,189,ok,simulado
+C004,Colesterol total,mg/dL,R+194,192,ok,simulado
+C004,Proteína total,g/dL,L-92,6.98,ok,simulado
+C004,Proteína total,g/dL,L-44,,faltante,simulado
+C004,Proteína total,g/dL,L-3,7.09,ok,simulado
+C004,Proteína total,g/dL,R+1,7.28,ok,simulado
+C004,Proteína total,g/dL,R+45,7.06,ok,simulado
+C004,Proteína total,g/dL,R+82,7.10,ok,simulado
+C004,Proteína total,g/dL,R+194,7.02,ok,simulado
+C004,Vitamina D,ng/mL,L-92,30.6,ok,simulado
+C004,Vitamina D,ng/mL,L-44,29.6,ok,simulado
+C004,Vitamina D,ng/mL,L-3,28.9,ok,simulado
+C004,Vitamina D,ng/mL,R+1,26.5,ok,simulado
+C004,Vitamina D,ng/mL,R+45,29.4,ok,simulado
+C004,Vitamina D,ng/mL,R+82,30.5,ok,simulado
+C004,Vitamina D,ng/mL,R+194,,faltante,simulado

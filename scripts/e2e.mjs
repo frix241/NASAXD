@@ -1,0 +1,71 @@
+// Prueba de punta a punta sobre el build, con la red externa bloqueada.
+import { chromium } from 'playwright'
+const url = process.env.URL ?? 'http://localhost:4173/'
+const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] })
+for (const [w, h] of [[1440, 900], [420, 860]]) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: w < 500 })
+  const page = await ctx.newPage()
+  const logs = []; const external = []
+  await page.route('**/*', (r) => { const u = r.request().url(); if (u.startsWith(url) || u.startsWith('data:') || u.startsWith('blob:')) r.continue(); else { external.push(u); r.abort() } })
+  page.on('console', (m) => { if (m.type() === 'error') logs.push(m.text()) }); page.on('pageerror', (e) => logs.push('pageerror ' + e.message))
+  const S = (k) => page.evaluate(`(() => { const s = astrotwin.getState(); return ${k} })()`)
+  const check = (name, ok) => console.log(`${ok ? 'OK  ' : 'FALLA'} [${w}] ${name}`)
+  await page.goto(url)
+  await page.waitForTimeout(500)
+  check('botón Saltar visible desde el inicio', await page.getByRole('button', { name: 'Saltar' }).isVisible())
+  await page.getByRole('button', { name: 'Saltar' }).click()
+  await page.waitForTimeout(1100)
+  check('Saltar lleva al Monitor', (await S('s.scene')) === 1)
+  await page.keyboard.press('ArrowDown'); await page.waitForTimeout(1100)
+  check('flecha abajo → Datos', (await S('s.scene')) === 2)
+  await page.mouse.move(w / 2, h / 2)
+  if (w > 500) { await page.mouse.wheel(0, 300); await page.waitForTimeout(1100); check('rueda → Ruta', (await S('s.scene')) === 3) }
+  else { await page.evaluate("astrotwin.getState().setScene(3)"); await page.waitForTimeout(1000) }
+  await page.keyboard.press('ArrowUp'); await page.waitForTimeout(1100)
+  check('flecha arriba → Datos', (await S('s.scene')) === 2)
+  await page.getByRole('button', { name: 'Monitor' }).click(); await page.waitForTimeout(1100)
+  check('punto de navegación → Monitor', (await S('s.scene')) === 1)
+  // zona → indicador
+  await page.getByRole('button', { name: /Riñones/ }).click()
+  check('tocar zona resalta su indicador', (await page.locator('.vital.hl').count()) === 1)
+  // asistente: por escrito y con el micrófono
+  await page.getByRole('button', { name: 'Escribir al asistente' }).click()
+  await page.getByRole('button', { name: '¿Cómo estoy?' }).click()
+  await page.waitForTimeout(1200)
+  const ans = await page.locator('.msg.bot').last().innerText(); check('asistente responde a una sugerencia: ' + ans.slice(0, 50), ans.length > 10)
+  await page.getByRole('textbox', { name: 'Escribe tu pregunta' }).fill('como va mi agua')
+  await page.keyboard.press('Enter'); await page.waitForTimeout(1200)
+  check('asistente responde a una pregunta escrita', /hidrataci/.test(await page.locator('.msg.bot').last().innerText()))
+  check('escribir "d" en el chat no abre el panel de demostración', !(await page.evaluate('astrotwin.getState().demoOpen')))
+  await page.getByRole('button', { name: 'Hablar con el asistente' }).click()
+  await page.waitForTimeout(700)
+  check('micrófono: escucha o explica por qué no puede', (await page.getByText('Escuchando…').count()) + (await page.locator('.chat .note').count()) > 0)
+  await page.waitForTimeout(3500)
+  await page.screenshot({ path: `shots/assistant-${w}.png` })
+  await page.getByRole('button', { name: 'Cerrar asistente' }).click()
+  // demostración + modo historia
+  await page.keyboard.press('d'); await page.waitForTimeout(200)
+  check('tecla D abre el panel', await page.getByText('Modo demostración').isVisible())
+  await page.screenshot({ path: `shots/demo-${w}.png` })
+  await page.getByRole('button', { name: 'Modo historia' }).click()
+  const t0 = Date.now(); const at = async (ms) => page.waitForTimeout(Math.max(0, ms - (Date.now() - t0)))
+  await at(7500); check('historia: alerta roja de sueño en el centro', await page.getByRole('alertdialog', { name: 'Dormiste muy poco' }).isVisible())
+  await page.screenshot({ path: `shots/story1-${w}.png` })
+  await at(17500); check('historia: alerta de tormenta', await page.getByRole('alertdialog', { name: 'Tormenta solar' }).isVisible())
+  await page.screenshot({ path: `shots/story2-${w}.png` })
+  await at(24600); check('historia: en el refugio, radiación en verde', (await S('s.readings.radiation.status')) === 'ok' && (await S('s.sim.sheltered')))
+  await at(36500); check('historia: ruta con 3 tareas y racha 5', (await S('s.scene')) === 3 && (await S('Object.keys(s.tasksDone).length')) === 3 && (await S('s.streak')) === 5)
+  await page.screenshot({ path: `shots/story3-${w}.png` })
+  await at(43000); check('historia termina sola', (await S('s.storyCaption')) === null)
+  check('sin pedidos a internet', external.length === 0); if (external.length) console.log(external)
+  check('consola sin errores', logs.length === 0); if (logs.length) console.log(logs.slice(0, 5))
+  await ctx.close()
+}
+// Sin WebGL y con movimiento reducido
+const ctx = await (await chromium.launch({ args: ['--disable-gpu', '--disable-webgl', '--disable-webgl2', '--disable-3d-apis'] })).newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' })
+const page = await ctx.newPage(); const logs = []
+page.on('pageerror', (e) => logs.push(e.message))
+await page.goto(url); await page.waitForTimeout(7200)
+console.log('sin WebGL:', await page.evaluate('({webgl: astrotwin.getState().webgl, scene: astrotwin.getState().scene})'), logs.join('|') || 'sin errores')
+await page.screenshot({ path: 'shots/nowebgl-1440.png' })
+process.exit(0)
