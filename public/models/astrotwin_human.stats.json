@@ -1,0 +1,750 @@
+{
+ "generator": "scripts/blender/build_astrotwin.py",
+ "blender": "5.3.0",
+ "objects": {
+  "skin": {
+   "layer": "layer_skin",
+   "raw_tris": 313268,
+   "tris": 48000,
+   "verts": 24002,
+   "voxel_mm": 4.0,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "suit_body": {
+   "layer": "layer_suit",
+   "raw_tris": 204700,
+   "tris": 33990,
+   "verts": 16997,
+   "voxel_mm": 5.12,
+   "islands_before_cleanup": 2,
+   "faces_removed_as_specks": 30
+  },
+  "suit_panels": {
+   "layer": "layer_suit",
+   "raw_tris": 123644,
+   "tris": 16000,
+   "verts": 8026,
+   "voxel_mm": 4.48,
+   "islands_before_cleanup": 13,
+   "faces_removed_as_specks": 0
+  },
+  "suit_core": {
+   "layer": "layer_suit",
+   "raw_tris": 22172,
+   "tris": 1500,
+   "verts": 752,
+   "voxel_mm": 0.8,
+   "islands_before_cleanup": 2,
+   "faces_removed_as_specks": 0
+  },
+  "suit_helmet": {
+   "layer": "layer_suit",
+   "raw_tris": 181580,
+   "tris": 9000,
+   "verts": 4500,
+   "voxel_mm": 2.88,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "suit_visor": {
+   "layer": "layer_suit",
+   "raw_tris": 21768,
+   "tris": 3000,
+   "verts": 1502,
+   "voxel_mm": 2.56,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_pectoral_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 4856,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_deltoid_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 8512,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_biceps_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 2324,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_triceps_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 2336,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_forearm_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 7988,
+   "tris": 1400,
+   "verts": 700,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_obliques_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 4784,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_latissimus_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 7744,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_gluteus_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 7312,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_quadriceps_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 16440,
+   "tris": 1400,
+   "verts": 700,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_hamstrings_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 7840,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_gastrocnemius_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 4332,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_tibialis_L": {
+   "layer": "layer_muscle",
+   "raw_tris": 1584,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_pectoral_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 4872,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_deltoid_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 8496,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_biceps_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 2348,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_triceps_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 2324,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_forearm_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 7964,
+   "tris": 1400,
+   "verts": 700,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_obliques_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 4756,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_latissimus_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 7748,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_gluteus_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 7304,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_quadriceps_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 16464,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_hamstrings_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 7840,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_gastrocnemius_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 4388,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_tibialis_R": {
+   "layer": "layer_muscle",
+   "raw_tris": 1576,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_trapezius": {
+   "layer": "layer_muscle",
+   "raw_tris": 10872,
+   "tris": 1400,
+   "verts": 702,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "muscle_abdomen": {
+   "layer": "layer_muscle",
+   "raw_tris": 6220,
+   "tris": 1400,
+   "verts": 716,
+   "voxel_mm": 4.16,
+   "islands_before_cleanup": 8,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_skull": {
+   "layer": "layer_skeleton",
+   "raw_tris": 113240,
+   "tris": 9000,
+   "verts": 4500,
+   "voxel_mm": 2.08,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_spine": {
+   "layer": "layer_skeleton",
+   "raw_tris": 82948,
+   "tris": 9000,
+   "verts": 4502,
+   "voxel_mm": 2.08,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_ribcage": {
+   "layer": "layer_skeleton",
+   "raw_tris": 177984,
+   "tris": 14998,
+   "verts": 7535,
+   "voxel_mm": 2.08,
+   "islands_before_cleanup": 18,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_pelvis": {
+   "layer": "layer_skeleton",
+   "raw_tris": 69616,
+   "tris": 6000,
+   "verts": 2998,
+   "voxel_mm": 2.08,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_arm_L": {
+   "layer": "layer_skeleton",
+   "raw_tris": 24132,
+   "tris": 3500,
+   "verts": 1748,
+   "voxel_mm": 2.34,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_hand_L": {
+   "layer": "layer_skeleton",
+   "raw_tris": 22572,
+   "tris": 4500,
+   "verts": 2254,
+   "voxel_mm": 1.43,
+   "islands_before_cleanup": 2,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_leg_L": {
+   "layer": "layer_skeleton",
+   "raw_tris": 50120,
+   "tris": 4000,
+   "verts": 2000,
+   "voxel_mm": 2.34,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_foot_L": {
+   "layer": "layer_skeleton",
+   "raw_tris": 32208,
+   "tris": 3500,
+   "verts": 1754,
+   "voxel_mm": 1.69,
+   "islands_before_cleanup": 2,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_arm_R": {
+   "layer": "layer_skeleton",
+   "raw_tris": 24168,
+   "tris": 3500,
+   "verts": 1748,
+   "voxel_mm": 2.34,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_hand_R": {
+   "layer": "layer_skeleton",
+   "raw_tris": 22524,
+   "tris": 4500,
+   "verts": 2252,
+   "voxel_mm": 1.43,
+   "islands_before_cleanup": 2,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_leg_R": {
+   "layer": "layer_skeleton",
+   "raw_tris": 50132,
+   "tris": 4000,
+   "verts": 2000,
+   "voxel_mm": 2.34,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "skeleton_foot_R": {
+   "layer": "layer_skeleton",
+   "raw_tris": 32132,
+   "tris": 3500,
+   "verts": 1754,
+   "voxel_mm": 1.69,
+   "islands_before_cleanup": 2,
+   "faces_removed_as_specks": 0
+  },
+  "heart": {
+   "layer": "layer_organs",
+   "raw_tris": 47576,
+   "tris": 6000,
+   "verts": 3000,
+   "voxel_mm": 1.82,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "lungs": {
+   "layer": "layer_organs",
+   "raw_tris": 74948,
+   "tris": 7000,
+   "verts": 3502,
+   "voxel_mm": 2.52,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "brain": {
+   "layer": "layer_organs",
+   "raw_tris": 93184,
+   "tris": 14000,
+   "verts": 7002,
+   "voxel_mm": 1.54,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "digestive": {
+   "layer": "layer_organs",
+   "raw_tris": 177200,
+   "tris": 13998,
+   "verts": 6989,
+   "voxel_mm": 1.96,
+   "islands_before_cleanup": 1,
+   "faces_removed_as_specks": 0
+  },
+  "kidneys": {
+   "layer": "layer_organs",
+   "raw_tris": 19400,
+   "tris": 2000,
+   "verts": 1004,
+   "voxel_mm": 1.68,
+   "islands_before_cleanup": 2,
+   "faces_removed_as_specks": 0
+  }
+ },
+ "containment_vs_skin_sdf": {
+  "skin": {
+   "min_mm": -1.05,
+   "max_mm": 14.42,
+   "inside_frac": 0.95146,
+   "outside_frac": 0.99083
+  },
+  "suit_body": {
+   "min_mm": 1.18,
+   "max_mm": 1000.0,
+   "inside_frac": 0.0,
+   "outside_frac": 1.0
+  },
+  "suit_panels": {
+   "min_mm": -54.58,
+   "max_mm": 1000.0,
+   "inside_frac": 0.23137,
+   "outside_frac": 0.77859
+  },
+  "suit_core": {
+   "min_mm": 10.83,
+   "max_mm": 29.13,
+   "inside_frac": 0.0,
+   "outside_frac": 1.0
+  },
+  "suit_helmet": {
+   "min_mm": -25.33,
+   "max_mm": 1000.0,
+   "inside_frac": 0.07778,
+   "outside_frac": 0.92644
+  },
+  "suit_visor": {
+   "min_mm": 55.77,
+   "max_mm": 1000.0,
+   "inside_frac": 0.0,
+   "outside_frac": 1.0
+  },
+  "muscle_pectoral_L": {
+   "min_mm": -21.99,
+   "max_mm": 6.07,
+   "inside_frac": 0.96866,
+   "outside_frac": 0.03134
+  },
+  "muscle_deltoid_L": {
+   "min_mm": -20.95,
+   "max_mm": -3.8,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_biceps_L": {
+   "min_mm": -20.92,
+   "max_mm": -4.18,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_triceps_L": {
+   "min_mm": -18.74,
+   "max_mm": -4.19,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_forearm_L": {
+   "min_mm": -16.95,
+   "max_mm": -4.08,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_obliques_L": {
+   "min_mm": -16.86,
+   "max_mm": -0.83,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_latissimus_L": {
+   "min_mm": -16.86,
+   "max_mm": 0.73,
+   "inside_frac": 0.99858,
+   "outside_frac": 0.00142
+  },
+  "muscle_gluteus_L": {
+   "min_mm": -21.82,
+   "max_mm": -4.11,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_quadriceps_L": {
+   "min_mm": -21.9,
+   "max_mm": -4.03,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_hamstrings_L": {
+   "min_mm": -19.88,
+   "max_mm": -4.13,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_gastrocnemius_L": {
+   "min_mm": -21.89,
+   "max_mm": -4.15,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_tibialis_L": {
+   "min_mm": -14.4,
+   "max_mm": -4.2,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_pectoral_R": {
+   "min_mm": -21.98,
+   "max_mm": 5.93,
+   "inside_frac": 0.96154,
+   "outside_frac": 0.03846
+  },
+  "muscle_deltoid_R": {
+   "min_mm": -20.89,
+   "max_mm": -3.78,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_biceps_R": {
+   "min_mm": -20.92,
+   "max_mm": -4.19,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_triceps_R": {
+   "min_mm": -18.73,
+   "max_mm": -4.21,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_forearm_R": {
+   "min_mm": -16.94,
+   "max_mm": -4.09,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_obliques_R": {
+   "min_mm": -16.86,
+   "max_mm": -1.09,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_latissimus_R": {
+   "min_mm": -16.86,
+   "max_mm": 1.36,
+   "inside_frac": 0.99858,
+   "outside_frac": 0.00427
+  },
+  "muscle_gluteus_R": {
+   "min_mm": -21.83,
+   "max_mm": -4.05,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_quadriceps_R": {
+   "min_mm": -21.95,
+   "max_mm": -4.01,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_hamstrings_R": {
+   "min_mm": -19.88,
+   "max_mm": -4.13,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_gastrocnemius_R": {
+   "min_mm": -21.9,
+   "max_mm": -4.15,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_tibialis_R": {
+   "min_mm": -14.49,
+   "max_mm": -4.21,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_trapezius": {
+   "min_mm": -18.84,
+   "max_mm": -4.09,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "muscle_abdomen": {
+   "min_mm": -18.84,
+   "max_mm": -4.12,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_skull": {
+   "min_mm": -60.67,
+   "max_mm": -2.73,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_spine": {
+   "min_mm": -92.09,
+   "max_mm": -2.87,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_ribcage": {
+   "min_mm": -93.75,
+   "max_mm": -2.95,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_pelvis": {
+   "min_mm": -125.67,
+   "max_mm": -5.32,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_arm_L": {
+   "min_mm": -58.13,
+   "max_mm": -9.46,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_hand_L": {
+   "min_mm": -41.21,
+   "max_mm": -2.93,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_leg_L": {
+   "min_mm": -85.92,
+   "max_mm": -10.45,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_foot_L": {
+   "min_mm": -65.05,
+   "max_mm": -2.92,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_arm_R": {
+   "min_mm": -58.61,
+   "max_mm": -9.52,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_hand_R": {
+   "min_mm": -43.44,
+   "max_mm": -2.96,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_leg_R": {
+   "min_mm": -86.31,
+   "max_mm": -10.39,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "skeleton_foot_R": {
+   "min_mm": -64.92,
+   "max_mm": -2.91,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "heart": {
+   "min_mm": -163.03,
+   "max_mm": -14.09,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "lungs": {
+   "min_mm": -142.28,
+   "max_mm": -9.59,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "brain": {
+   "min_mm": -51.82,
+   "max_mm": -5.63,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "digestive": {
+   "min_mm": -125.14,
+   "max_mm": -1.35,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  },
+  "kidneys": {
+   "min_mm": -44.44,
+   "max_mm": -14.69,
+   "inside_frac": 1.0,
+   "outside_frac": 0.0
+  }
+ },
+ "files": {
+  "blend_bytes": 6152815,
+  "glb_raw_bytes": 4736368,
+  "glb_draco_bytes": 683724
+ },
+ "total_tris": 260886,
+ "build_seconds": 44.0
+}

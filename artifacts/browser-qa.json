@@ -1,0 +1,151 @@
+{
+  "url": "http://127.0.0.1:4173/?qa=1",
+  "checks": [
+    "Visor WebGL carga sin fallback",
+    "Cinco disecciones rápidas actualizan capas",
+    "Geometrías estables tras ciclos de capas",
+    "Selección de órgano actualiza contexto",
+    "Cámara posterior funcional",
+    "Reset de cámara funcional",
+    "Cuatro escenarios generan anillo y alerta",
+    "Pausa congela telemetría",
+    "Reporte JSON descargable",
+    "Reset elimina alertas",
+    "Carga completa offline tras instalación",
+    "Móvil 390px sin desbordamiento horizontal",
+    "Preferencia de movimiento reducido admite interacción",
+    "Sin errores de consola o ejecución"
+  ],
+  "errors": [],
+  "performance": [
+    {
+      "layer": "Aislar Traje biométrico",
+      "fps": 59.488102379513016,
+      "dpr": 1,
+      "calls": 17,
+      "triangles": 65518,
+      "memory": {
+        "geometries": 35,
+        "textures": 0
+      },
+      "renderer": "ANGLE (Intel, Mesa Intel(R) UHD Graphics (CML GT2), OpenGL ES 3.2)",
+      "layers": {
+        "skeleton": false,
+        "organs": false,
+        "muscle": false,
+        "skin": false,
+        "suit": true
+      },
+      "camera": [
+        0,
+        1.03,
+        4.1
+      ]
+    },
+    {
+      "layer": "Aislar Cuerpo holográfico",
+      "fps": 60.01984126984128,
+      "dpr": 1,
+      "calls": 7,
+      "triangles": 50016,
+      "memory": {
+        "geometries": 35,
+        "textures": 0
+      },
+      "renderer": "ANGLE (Intel, Mesa Intel(R) UHD Graphics (CML GT2), OpenGL ES 3.2)",
+      "layers": {
+        "skeleton": false,
+        "organs": false,
+        "muscle": false,
+        "skin": true,
+        "suit": false
+      },
+      "camera": [
+        0,
+        1.03,
+        4.1
+      ]
+    },
+    {
+      "layer": "Aislar Tejido muscular",
+      "fps": 60.0049590875279,
+      "dpr": 1,
+      "calls": 32,
+      "triangles": 38416,
+      "memory": {
+        "geometries": 61,
+        "textures": 0
+      },
+      "renderer": "ANGLE (Intel, Mesa Intel(R) UHD Graphics (CML GT2), OpenGL ES 3.2)",
+      "layers": {
+        "skeleton": false,
+        "organs": false,
+        "muscle": true,
+        "skin": false,
+        "suit": false
+      },
+      "camera": [
+        0,
+        1.03,
+        4.1
+      ]
+    },
+    {
+      "layer": "Aislar Sistema óseo",
+      "fps": 60.00495908752789,
+      "dpr": 1,
+      "calls": 19,
+      "triangles": 120014,
+      "memory": {
+        "geometries": 61,
+        "textures": 0
+      },
+      "renderer": "ANGLE (Intel, Mesa Intel(R) UHD Graphics (CML GT2), OpenGL ES 3.2)",
+      "layers": {
+        "skeleton": true,
+        "organs": false,
+        "muscle": false,
+        "skin": true,
+        "suit": false
+      },
+      "camera": [
+        0,
+        1.03,
+        4.1
+      ]
+    },
+    {
+      "layer": "Aislar Órganos internos",
+      "fps": 59.99100134978917,
+      "dpr": 1,
+      "calls": 24,
+      "triangles": 163012,
+      "memory": {
+        "geometries": 61,
+        "textures": 0
+      },
+      "renderer": "ANGLE (Intel, Mesa Intel(R) UHD Graphics (CML GT2), OpenGL ES 3.2)",
+      "layers": {
+        "skeleton": true,
+        "organs": true,
+        "muscle": false,
+        "skin": true,
+        "suit": false
+      },
+      "camera": [
+        0,
+        1.03,
+        4.1
+      ]
+    }
+  ],
+  "geometryBaseline": {
+    "geometries": 61,
+    "textures": 0
+  },
+  "geometryAfter": {
+    "geometries": 61,
+    "textures": 0
+  },
+  "passed": true
+}

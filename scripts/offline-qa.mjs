@@ -1,0 +1,12 @@
+import {chromium} from '@playwright/test';
+const browser=await chromium.launch({headless:true,channel:'chromium',args:['--enable-gpu','--use-gl=angle','--use-angle=gl']});
+const context=await browser.newContext();const page=await context.newPage();
+page.on('console',m=>console.log('CONSOLE',m.type(),m.text()));
+page.on('pageerror',e=>console.log('PAGEERROR',e.stack));
+page.on('requestfailed',r=>console.log('REQUESTFAILED',r.url(),r.failure()));
+await page.goto('http://127.0.0.1:4173/?qa=1');
+await page.evaluate(async()=>{await navigator.serviceWorker.ready;if(!navigator.serviceWorker.controller)await new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true}));});
+console.log('CACHES',await page.evaluate(async()=>{let out={};for(const key of await caches.keys()){const cache=await caches.open(key);out[key]=(await cache.keys()).map(r=>r.url);}return out;}));
+await context.setOffline(true);await page.reload();await page.waitForTimeout(4000);
+console.log('OFFLINE',await page.evaluate(()=>({title:document.title,html:document.documentElement.outerHTML.slice(0,700),controller:!!navigator.serviceWorker.controller,qa:window.__ASTROTWIN_QA__})));
+await browser.close();

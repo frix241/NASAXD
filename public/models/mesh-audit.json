@@ -1,0 +1,455 @@
+{
+  "blender": "5.3.0",
+  "layers": [
+    "layer_skeleton",
+    "layer_organs",
+    "layer_muscle",
+    "layer_skin",
+    "layer_suit"
+  ],
+  "meshes": [
+    {
+      "name": "skin",
+      "layer": "layer_skin",
+      "vertices": 24002,
+      "triangles": 48000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "suit_body",
+      "layer": "layer_suit",
+      "vertices": 16997,
+      "triangles": 33990,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "suit_panels",
+      "layer": "layer_suit",
+      "vertices": 8026,
+      "triangles": 16000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "suit_core",
+      "layer": "layer_suit",
+      "vertices": 752,
+      "triangles": 1500,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "suit_helmet",
+      "layer": "layer_suit",
+      "vertices": 4500,
+      "triangles": 9000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "suit_visor",
+      "layer": "layer_suit",
+      "vertices": 1502,
+      "triangles": 3000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_pectoral_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_deltoid_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_biceps_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_triceps_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_forearm_L",
+      "layer": "layer_muscle",
+      "vertices": 700,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_obliques_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_latissimus_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_gluteus_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_quadriceps_L",
+      "layer": "layer_muscle",
+      "vertices": 700,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_hamstrings_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_gastrocnemius_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_tibialis_L",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_pectoral_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_deltoid_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_biceps_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_triceps_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_forearm_R",
+      "layer": "layer_muscle",
+      "vertices": 700,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_obliques_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_latissimus_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_gluteus_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_quadriceps_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_hamstrings_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_gastrocnemius_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_tibialis_R",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_trapezius",
+      "layer": "layer_muscle",
+      "vertices": 702,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "muscle_abdomen",
+      "layer": "layer_muscle",
+      "vertices": 716,
+      "triangles": 1400,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_skull",
+      "layer": "layer_skeleton",
+      "vertices": 4500,
+      "triangles": 9000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_spine",
+      "layer": "layer_skeleton",
+      "vertices": 4502,
+      "triangles": 9000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_ribcage",
+      "layer": "layer_skeleton",
+      "vertices": 7535,
+      "triangles": 14998,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_pelvis",
+      "layer": "layer_skeleton",
+      "vertices": 2998,
+      "triangles": 6000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_arm_L",
+      "layer": "layer_skeleton",
+      "vertices": 1748,
+      "triangles": 3500,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_hand_L",
+      "layer": "layer_skeleton",
+      "vertices": 2254,
+      "triangles": 4500,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_leg_L",
+      "layer": "layer_skeleton",
+      "vertices": 2000,
+      "triangles": 4000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_foot_L",
+      "layer": "layer_skeleton",
+      "vertices": 1754,
+      "triangles": 3500,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_arm_R",
+      "layer": "layer_skeleton",
+      "vertices": 1748,
+      "triangles": 3500,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_hand_R",
+      "layer": "layer_skeleton",
+      "vertices": 2252,
+      "triangles": 4500,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_leg_R",
+      "layer": "layer_skeleton",
+      "vertices": 2000,
+      "triangles": 4000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "skeleton_foot_R",
+      "layer": "layer_skeleton",
+      "vertices": 1754,
+      "triangles": 3500,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "heart",
+      "layer": "layer_organs",
+      "vertices": 3000,
+      "triangles": 6000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "lungs",
+      "layer": "layer_organs",
+      "vertices": 3502,
+      "triangles": 7000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "brain",
+      "layer": "layer_organs",
+      "vertices": 7002,
+      "triangles": 14000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "digestive",
+      "layer": "layer_organs",
+      "vertices": 6989,
+      "triangles": 13998,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "kidneys",
+      "layer": "layer_organs",
+      "vertices": 1004,
+      "triangles": 2000,
+      "non_finite_vertices": 0,
+      "invalid_normals": 0,
+      "degenerate_triangles": 0
+    }
+  ],
+  "triangles": 260886,
+  "passed": true
+}

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "checks": [
+    "Preset coherente con preferencias persistidas",
+    "Vista de órganos después de recarga",
+    "Selección de traje preserva contexto",
+    "Recarga offline del build final"
+  ],
+  "errors": []
+}

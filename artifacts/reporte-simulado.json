@@ -1,0 +1,24 @@
+{
+  "mission": "ARES-01",
+  "subject": "AST-001 (ficticio)",
+  "createdAt": "2026-11-14T06:09:17.174Z",
+  "scenario": "radiation",
+  "elapsedSeconds": 2.248899999999907,
+  "vitals": {
+    "bpm": 80.1,
+    "spo2": 97.4,
+    "systolic": 119.4,
+    "diastolic": 78.2,
+    "temperature": 36.78,
+    "radiation": 40.02,
+    "respiratoryRate": 15.2
+  },
+  "alert": {
+    "organ": "suit",
+    "title": "Radiación ambiental elevada (simulada)",
+    "message": "Exposición ambiental ficticia de 40.0 µSv/h en la simulación; no es dosis personal.",
+    "recommendation": "Incrementa el blindaje del traje simulado o abandona el escenario de radiación. Es una alerta de demo, no un diagnóstico."
+  },
+  "source": "simulated",
+  "note": "Prototipo experimental. Telemetría simulada; no diagnóstico."
+}
