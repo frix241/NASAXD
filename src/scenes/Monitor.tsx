@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { DESTINATIONS, STATUS_WORD, worst, type Destination, type Status } from '../config/rules'
+import { useEffect, useState } from 'react'
+import { DESTINATIONS, STATUS_WORD, statusPulse, statusSpo2, worst, type Destination, type Status } from '../config/rules'
 import { statusPhrase, ZONE_LABEL, ZONE_METRICS, type Issue, type Zone } from '../sim/issues'
 import type { MetricKey } from '../sim/simulator'
 import { currentAlert, useStore } from '../store'
@@ -64,6 +64,51 @@ function AlertPanel({ issue, more }: { issue: Issue; more: number }) {
   )
 }
 
+// Valores ficticios para mostrar el flujo de tripulación hasta conectar telemetría real.
+const DEMO_CREW = [
+  { id: 'crew-01', label: 'Tripulante 01', pulse: 72, spo2: 98 },
+  { id: 'crew-02', label: 'Tripulante 02', pulse: 96, spo2: 94 },
+  { id: 'crew-03', label: 'Tripulante 03', pulse: 70, spo2: 97 },
+]
+
+function CrewPanel() {
+  const [followUp, setFollowUp] = useState(false)
+  const crew = DEMO_CREW.map((member) => ({
+    ...member,
+    status: worst([statusPulse(member.pulse), statusSpo2(member.spo2)]),
+  }))
+  const alert = crew.find((member) => member.status !== 'ok')
+  const concern = alert ? [
+    statusPulse(alert.pulse) !== 'ok' ? 'pulso elevado' : null,
+    statusSpo2(alert.spo2) !== 'ok' ? 'oxígeno bajo' : null,
+  ].filter(Boolean).join(' y ') : ''
+
+  return (
+    <aside className="crew-panel holo" aria-label="Estado simulado de la tripulación">
+      <header className="crew-head">
+        <h2>Tripulación</h2><span className="badge">SIMULACIÓN</span>
+      </header>
+      <p className="crew-note">Datos de demostración, no telemetría real.</p>
+      <div className="crew-list">
+        {crew.map((member) => (
+          <div key={member.id} className={`crew-member s-${member.status}`}>
+            <div className="crew-member-head"><b>{member.label}</b><StatusTag status={member.status} /></div>
+            <div className="crew-readings"><span>Pulso <b>{member.pulse}</b> lpm</span><span>Oxígeno <b>{member.spo2}</b>%</span></div>
+          </div>
+        ))}
+      </div>
+      {alert && (
+        <div className={`crew-alert s-${alert.status}`} role="alert" aria-live="assertive">
+          <p><StatusTag status={alert.status} word="Revisar" /> {alert.label}: {concern}; comprueba cómo se encuentra.</p>
+          <button className="btn ghost small" onClick={() => setFollowUp(true)} disabled={followUp}>
+            {followUp ? 'Seguimiento registrado' : 'Registrar seguimiento'}
+          </button>
+        </div>
+      )}
+    </aside>
+  )
+}
+
 export default function Monitor() {
   const r = useStore((s) => s.readings)
   const sim = useStore((s) => s.sim)
@@ -87,11 +132,13 @@ export default function Monitor() {
   return (
     <div className="monitor">
       <TopBar />
-      <div className="twin-col">
+      <CrewPanel />
+      <div className={`twin-col${highlight ? ' is-focused' : ''}`}>
         <div className="twin-view">{webgl ? <Twin zones={zones} /> : <TwinFlat zones={zones} />}</div>
         <div className="zones" role="group" aria-label="Zonas del cuerpo">
           {ZONES.map((z) => (
             <button key={z} className={`zone-chip s-${zones[z]}`} aria-pressed={highlight === z}
+              aria-label={`${ZONE_LABEL[z]}: ${STATUS_WORD[zones[z]]}, ${chipValue[z]}`}
               onClick={() => setHighlight(highlight === z ? null : z)}>
               <span>{ZONE_LABEL[z]}</span>
               <span className="line"><StatusTag status={zones[z]} /><span className="num muted">{chipValue[z]}</span></span>

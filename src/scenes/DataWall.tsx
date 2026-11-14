@@ -5,7 +5,6 @@ import { EXERCISE_GOAL_MIN } from '../sim/simulator'
 import { useStore } from '../store'
 import { STATUS_COLOR } from '../three/Twin'
 import { Bars, ChangeBars, Heatmap, ICE, Legend, Lines, nf, SERIES } from '../ui/charts'
-import { Icon } from '../ui/Icon'
 import { StatusTag } from './Monitor'
 
 type PanelId = 'sleep' | 'body' | 'exercise' | 'water' | 'heart' | 'rad' | 'labs' | 'change'
@@ -180,31 +179,103 @@ function range(vals: (number | null)[]): { min: number; max: number; ticks: numb
   return { min, max, ticks: [min, +((min + max) / 2).toPrecision(4), max] }
 }
 
-const ORDER: PanelId[] = ['sleep', 'body', 'labs', 'exercise', 'water', 'heart', 'rad', 'change']
+type CategoryId = 'body' | 'activity' | 'vitals' | 'exposure'
+const CATEGORIES: { id: CategoryId; title: string; summary: string; topics: PanelId[] }[] = [
+  { id: 'body', title: 'Cuerpo', summary: 'Músculo y hueso', topics: ['body'] },
+  { id: 'activity', title: 'Actividad y descanso', summary: 'Ejercicio y sueño', topics: ['exercise', 'sleep'] },
+  { id: 'vitals', title: 'Signos vitales', summary: 'Hidratación, presión y pulso', topics: ['water', 'heart'] },
+  { id: 'exposure', title: 'Exposición y laboratorio', summary: 'Radiación, análisis y cambios', topics: ['rad', 'labs', 'change'] },
+]
+const PANEL_TITLES: Record<PanelId, string> = {
+  sleep: 'Sueño', body: 'Músculo y hueso', exercise: 'Ejercicio semanal', water: 'Hidratación',
+  heart: 'Presión y pulso', rad: 'Radiación', labs: 'Análisis de sangre', change: 'Cambio tras el vuelo',
+}
+
+function CategorySummary({ id }: { id: CategoryId }) {
+  const { sim, r } = useData()
+  switch (id) {
+    case 'body': return <span className="data-summary-line"><span>Rutina</span><b>{r.exercise.text} %</b><StatusTag status={r.exercise.status} /></span>
+    case 'activity': return (
+      <span className="data-summary-line">
+        <span>Sueño <b>{r.sleep.text} h</b><StatusTag status={r.sleep.status} /></span>
+        <span>Ejercicio <b>{r.exercise.text} %</b><StatusTag status={r.exercise.status} /></span>
+      </span>
+    )
+    case 'vitals': return (
+      <span className="data-summary-line">
+        <span>Pulso <b>{r.pulse.text} lpm</b><StatusTag status={r.pulse.status} /></span>
+        <span>Agua <b>{r.hydration.text} %</b><StatusTag status={r.hydration.status} /></span>
+      </span>
+    )
+    case 'exposure': return (
+      <span className="data-summary-line">
+        <span>Radiación <b>{nf(sim.radTotal, 1)} mSv</b><StatusTag status={r.radiation.status} /></span>
+        <span className="data-sample">{LABS.isSample ? 'Lab de ejemplo' : 'Lab disponible'}</span>
+      </span>
+    )
+  }
+}
 
 export default function DataWall() {
+  const [category, setCategory] = useState<CategoryId | null>(null)
   const [open, setOpen] = useState<PanelId | null>(null)
   useEffect(() => {
-    if (!open) return
-    const f = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(null) }
+    if (!category && !open) return
+    const f = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      if (open) setOpen(null)
+      else setCategory(null)
+    }
     window.addEventListener('keydown', f)
     return () => window.removeEventListener('keydown', f)
-  }, [open])
+  }, [category, open])
+  const selectedCategory = CATEGORIES.find((item) => item.id === category)
   return (
     <>
       <div className="scene-head">
-        <h1>Datos completos</h1>
-        <p>Toca un panel para verlo en grande. Pasa el dedo o el cursor por un gráfico para ver cada valor.</p>
+        <h1>Datos de misión</h1>
+        <p>Resumen y gráficos en los laterales; centro despejado para la visión.</p>
       </div>
-      <div className="wall">{ORDER.map((id) => <Content key={id} id={id} big={false} onOpen={setOpen} />)}</div>
-      {open && (
-        <div className="modal" role="dialog" aria-modal="true" onClick={() => setOpen(null)}>
-          <div style={{ position: 'relative', width: 'min(1100px, 100%)', height: 'min(640px, 100%)', display: 'grid' }} onClick={(e) => e.stopPropagation()}>
-            <button className="close" aria-label="Cerrar" autoFocus onClick={() => setOpen(null)}><Icon name="close" size={18} /></button>
-            <Content id={open} big onOpen={setOpen} />
+      <div className="data-workspace">
+        <aside className="data-rail" aria-label="Resumen por categoría">
+          <div className="data-categories">
+            {CATEGORIES.map((item) => (
+              <button key={item.id} className="data-category holo" aria-expanded={category === item.id}
+                onClick={() => { setCategory(category === item.id ? null : item.id); setOpen(null) }}>
+                <span className="data-category-title">{item.title}</span>
+                <CategorySummary id={item.id} />
+                <span className="data-category-open" aria-hidden="true">{category === item.id ? '⌄' : '›'}</span>
+              </button>
+            ))}
           </div>
-        </div>
-      )}
+          {selectedCategory && (
+            <div className="data-topics" aria-label={`Temas de ${selectedCategory.title}`}>
+              <h2>{selectedCategory.title}</h2>
+              <div className="data-topic-list">
+                {selectedCategory.topics.map((id) => (
+                  <button key={id} className="data-topic holo" aria-pressed={open === id} onClick={() => setOpen(id)}>
+                    <span>{PANEL_TITLES[id]}</span><span aria-hidden="true">›</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+        <aside className="data-selected" aria-label={open ? `Gráfico: ${PANEL_TITLES[open]}` : 'Detalle de datos'}>
+          {open ? (
+            <div className="data-detail">
+              <button className="btn ghost small data-back" autoFocus onClick={() => setOpen(null)}>← Volver a temas</button>
+              <Content id={open} big onOpen={setOpen} />
+            </div>
+          ) : (
+            <div className="data-context holo">
+              <span className="data-context-mark" aria-hidden="true">+</span>
+              <b>{selectedCategory ? 'Elige un tema' : 'Vista general'}</b>
+              <span className="muted">{selectedCategory ? `Abre un gráfico de ${selectedCategory.title.toLowerCase()}.` : 'Selecciona una categoría para ver sus temas y gráficos.'}</span>
+            </div>
+          )}
+        </aside>
+      </div>
     </>
   )
 }
