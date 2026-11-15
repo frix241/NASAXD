@@ -1,7 +1,7 @@
 /**
  * Asistente de AstroTwin.
  *
- * The local rules always provide an answer; Groq optionally rephrases it through the Vite server.
+ * The local rules always provide an answer; Groq optionally rephrases it through the server API.
  */
 import type { Task, TaskId } from '../config/tasks'
 import { radioScript, type Result, type Visit } from '../sim/community'
@@ -147,7 +147,7 @@ function snapshotCommunity(c: AssistantContext): string {
   ].filter(Boolean).join('\n')
 }
 
-/** Ask Groq through the local server. Returns null when the model cannot answer. */
+/** Ask Groq through the server API. Returns null when the model cannot answer. */
 async function askModel(text: string, c: AssistantContext, base: string): Promise<string | null> {
   const community = c.profile === 'community'
   const ctrl = new AbortController()

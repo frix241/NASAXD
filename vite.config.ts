@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
   // La clave de Groq vive en .env.local (fuera del repositorio) y NO lleva prefijo VITE_:
   // así nunca entra en el código que llega al navegador. El servidor la añade al reenviar.
   const env = loadEnv(mode, process.cwd(), '')
-  const key = env.GROQ_API_KEY
+  const key = env.GROQ_API_KEY || process.env.GROQ_API_KEY
   const to = (path: string): ProxyOptions => ({
     target: 'https://api.groq.com', changeOrigin: true, rewrite: () => path, headers: { Authorization: `Bearer ${key}` },
   })
@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
     build: { chunkSizeWarningLimit: 1800 },
     define: {
       __ASSISTANT_LLM__: JSON.stringify(Boolean(key)),
-      __ASSISTANT_MODEL__: JSON.stringify(env.GROQ_MODEL || 'openai/gpt-oss-120b'),
+      __ASSISTANT_MODEL__: JSON.stringify(env.GROQ_MODEL || process.env.GROQ_MODEL || 'openai/gpt-oss-120b'),
     },
     server: { proxy: groq },
     preview: { proxy: groq },

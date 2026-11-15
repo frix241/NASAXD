@@ -33,6 +33,17 @@ El asistente siempre responde con reglas, así funciona sin internet. En **los d
 - **Micrófono:** los navegadores solo lo permiten en `https` o en `localhost`. Para abrir la app desde otro equipo de la red con micrófono: `DEV_HTTPS=1 npx vite --port 5174 --host 0.0.0.0` y entrar por `https://<ip>:5174/` (hay que aceptar el aviso del certificado propio). La voz se convierte en texto con Whisper a través de `/api/groq-stt`.
 - En pruebas automáticas se usan solo las reglas, para que sean repetibles y no gasten la clave.
 
+## Publicar en Vercel
+
+1. Importa `frix241/NASAXD` desde GitHub y selecciona la rama `master` (o la rama con este cambio).
+2. Usa la raíz del repositorio. `vercel.json` configura Vite, `npm run build` y la salida `dist`.
+3. En **Settings → Environment Variables**, agrega `GROQ_API_KEY` con tu clave de [Groq](https://console.groq.com/keys) para Production y Preview. Opcional: `GROQ_MODEL` (por defecto `openai/gpt-oss-120b`).
+4. Despliega. Si agregas o cambias las variables después, haz **Redeploy**: la disponibilidad del modelo se determina también durante la compilación.
+
+Las funciones `api/groq.mjs` y `api/groq-stt.mjs` conectan el chat y Whisper con Groq en Vercel. La clave permanece en el servidor: no uses el prefijo `VITE_`. Sin clave, sin red o si falla Groq, el chat mantiene las respuestas por reglas. El micrófono requiere HTTPS y permiso del navegador.
+
+Pruebas del servidor sin consumir la API: `node --test server/groq-proxy.node.mjs`.
+
 ## Dónde está cada cosa
 | Qué | Archivo |
 |---|---|
