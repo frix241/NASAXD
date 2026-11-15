@@ -32,14 +32,14 @@ export function DemoPanel() {
   const story = useStore((s) => s.storyCaption)
   if (!open) return null
   return (
-    <aside className="demo" aria-label="Modo demostración">
-      <h2>Modo demostración</h2>
+    <aside className="demo" aria-label="Demo mode">
+    <h2>Demo mode</h2>
       <p>{p.text.demoNote}</p>
       {p.events.map(([id, label]) => (
         <button key={id} className="btn ghost small" onClick={() => scenario(id)}>{label}</button>
       ))}
       <button className="btn ghost small" onClick={() => { stopStory(); reset() }}>{p.text.restart}</button>
-      <button className="btn small" onClick={story ? stopStory : playStory}>{story ? 'Detener historia' : 'Modo historia'}</button>
+      <button className="btn small" onClick={story ? stopStory : playStory}>{story ? 'Stop story' : 'Story mode'}</button>
     </aside>
   )
 }

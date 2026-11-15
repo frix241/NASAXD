@@ -20,7 +20,7 @@ describe('newVisit', () => {
       expect(v.region).toBe(region)
     }
     const v = newVisit()
-    expect(v.alias).toBe('Persona 1')
+    expect(v.alias).toBe('Person 1')
     expect(v.startedAt).toMatch(/^\d{2}:\d{2}$/)
     expect([v.cough, v.feverTouch, v.warmEnough, v.ateDrank, v.breaths, v.tempC, v.spo2]).toEqual(Array(7).fill(null))
   })
@@ -32,7 +32,7 @@ describe('señales de alarma', () => {
       for (const kind of ['child', 'adult', 'elder'] as const) {
         const r = assess(withAlarm({ ...newVisit(), kind }, k))
         expect(r.status).toBe('bad')
-        expect(r.label).toBe('Derivo a la posta')
+        expect(r.label).toBe('Refer to the health post')
         expect(r.findings[0].id).toBe(`alarma-${k}`)
         expect(r.onTheWay.length).toBeGreaterThan(0)
       }
@@ -118,9 +118,9 @@ describe('sensores opcionales', () => {
 
 describe('incertidumbre', () => {
   it('la confianza depende de cuántas preguntas se respondieron', () => {
-    expect(assess(newVisit()).confidence).toMatchObject({ level: 'baja', answered: 0, text: 'Con pocos datos: seré más cautelosa.' })
-    expect(assess({ ...newVisit(), cough: false, ateDrank: true }).confidence).toMatchObject({ level: 'media', text: 'Con algunos datos: revisa lo que falta.' })
-    expect(assess(healthy()).confidence).toMatchObject({ level: 'alta', text: 'Con datos suficientes.' })
+    expect(assess(newVisit()).confidence).toMatchObject({ level: 'baja', answered: 0, text: 'There is limited information, so I will be more cautious.' })
+    expect(assess({ ...newVisit(), cough: false, ateDrank: true }).confidence).toMatchObject({ level: 'media', text: 'Some information is available; check what is missing.' })
+    expect(assess(healthy()).confidence).toMatchObject({ level: 'alta', text: 'There is enough information.' })
   })
   it('con pocos datos deriva antes que con datos completos', () => {
     const few = assess({ ...newVisit(), cough: true })
@@ -143,7 +143,7 @@ describe('incertidumbre', () => {
     expect(near.status).toBe('warn')
     expect(far.status).toBe('bad')
     expect(far.findings[0].id).toBe('posta-lejos')
-    expect(far.actions[0]).toContain('lejos')
+    expect(far.actions[0]).toContain('far away')
   })
 })
 
@@ -159,7 +159,7 @@ describe('frío del entorno y vulnerabilidad', () => {
   it('sin nada que vigilar: atiendo yo', () => {
     const r = assess(healthy())
     expect(r.status).toBe('ok')
-    expect(r.label).toBe('Atiendo yo')
+    expect(r.label).toBe('I will provide care')
     expect(r.onTheWay).toEqual([])
     expect(r.zones).toEqual({ head: 'ok', chest: 'ok', hands: 'ok', feet: 'ok' })
   })
@@ -178,7 +178,7 @@ describe('simular helada', () => {
     expect(v.cold).toBe('helada')
     const r = assess(v)
     expect(r.status).toBe('warn')
-    expect(r.label).toBe('Vigilo y vuelvo a revisar')
+    expect(r.label).toBe('Monitor and check again')
     expect(r.onTheWay).toEqual([])
   })
   it('funciona en las tres regiones', () => {
@@ -212,7 +212,7 @@ const CASES: Visit[] = [
   healthy({ kind: 'adult', breaths: 18, cold: 'helada' }),
   healthy({ kind: 'adult', breaths: 18, cold: 'frio', hoursToPost: 1 }),
 ]
-const LABELS = { ok: 'Atiendo yo', warn: 'Vigilo y vuelvo a revisar', bad: 'Derivo a la posta' }
+const LABELS = { ok: 'I will provide care', warn: 'Monitor and check again', bad: 'Refer to the health post' }
 const allText = (v: Visit, r: Result): string[] => {
   const sheet = referral(v, r)
   return [
@@ -232,16 +232,16 @@ describe('salidas', () => {
       expect(r.reason.length).toBeGreaterThan(5)
       expect(r.label).toBe(LABELS[r.status])
       expect(r.onTheWay.length > 0).toBe(r.status === 'bad')
-      if (r.status === 'bad') expect(r.actions[0]).toContain('posta')
+      if (r.status === 'bad') expect(r.actions[0]).toContain('health post')
     }
   })
   it('las acciones cambian según el caso', () => {
     const baby = assess(simulateFrost({ ...newVisit(), ageMonths: 6 }))
-    expect(baby.actions.join(' ')).toContain('piel con piel')
+    expect(baby.actions.join(' ')).toContain('skin-to-skin')
     const child = assess(simulateFrost(newVisit()))
-    expect(child.actions).toEqual(['Vuelve a contar la respiración en 1 hora.', 'Abriga por capas y cubre cabeza, manos y pies.'])
-    expect(assess(healthy({ ateDrank: false })).actions[0]).toContain('líquidos')
-    expect(assess(healthy({ kind: 'elder', breaths: 18, cold: 'helada' })).actions.join(' ')).toContain('viento')
+    expect(child.actions).toEqual(['Count breaths again in 1 hour.', 'Dress in layers and cover the head, hands, and feet.'])
+    expect(assess(healthy({ ateDrank: false })).actions[0]).toContain('fluids')
+    expect(assess(healthy({ kind: 'elder', breaths: 18, cold: 'helada' })).actions.join(' ')).toContain('wind')
   })
   it('el guion de radio tiene exactamente 5 líneas con contenido', () => {
     for (const v of CASES) {
@@ -258,26 +258,26 @@ describe('salidas', () => {
     const r = assess(v)
     const sheet = referral(v, r)
     const row = Object.fromEntries(sheet.rows)
-    expect(row['Alias']).toBe('Persona 1')
-    expect(row['Quién es']).toBe('Niño o niña de 2 años')
-    expect(row['Hora']).toBe(v.startedAt)
-    expect(row['Lugar']).toContain('4300')
-    expect(row['Frío del entorno']).toBe('Helada')
-    expect(row['Señales de alarma']).toBe('Le cuesta respirar')
-    expect(row['Lo observado']).toContain('tos')
-    expect(row['Respiración contada']).toContain('62')
-    expect(row['Temperatura']).toBe('38,4 °C')
-    expect(row['Saturación']).toBe('80 %')
-    expect(row['Decisión']).toBe('Derivo a la posta')
-    expect(row['Razón']).toBe(r.reason)
-    expect(row['Confianza']).toContain('5 de 5')
-    expect(row['Distancia a la posta']).toBe('2 horas')
+    expect(row['Alias']).toBe('Person 1')
+    expect(row['Person']).toBe('2-year-old child')
+    expect(row['Time']).toBe(v.startedAt)
+    expect(row['Location']).toContain('4300')
+    expect(row['Environmental cold']).toBe('Frost')
+    expect(row['Warning signs']).toBe('Has difficulty breathing')
+    expect(row['Observations']).toContain('Has a cough')
+    expect(row['Counted breaths']).toContain('62')
+    expect(row['Temperature']).toBe('38.4 °C')
+    expect(row['Oxygen saturation']).toBe('80%')
+    expect(row['Decision']).toBe('Refer to the health post')
+    expect(row['Reason']).toBe(r.reason)
+    expect(row['Confidence']).toContain('5 of 5')
+    expect(row['Distance to health post']).toBe('2 hours')
     expect(sheet.onTheWay).toEqual(r.onTheWay)
 
     const empty = Object.fromEntries(referral(newVisit(), assess(newVisit())).rows)
-    expect(empty['Señales de alarma']).toBe('Ninguna')
-    expect(empty['Temperatura']).toBeUndefined()
-    expect(empty['Saturación']).toBeUndefined()
+    expect(empty['Warning signs']).toBe('None')
+    expect(empty['Temperature']).toBeUndefined()
+    expect(empty['Oxygen saturation']).toBeUndefined()
   })
   it('ningún texto usa palabras de diagnóstico', () => {
     const banned = /neumon[ií]a|diagn[oó]stic|hipotermia|bronquiolitis|infecci[oó]n|influenza|gripe/i

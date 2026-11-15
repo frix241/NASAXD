@@ -1,14 +1,13 @@
 /**
- * Textos por idioma. Estructura lista para Quechua, pero SIN traducciones inventadas:
- * mientras una clave no tenga traducción revisada, se muestra en español.
+ * English interface copy. Quechua remains pending native-speaker review.
  */
 import { useStore } from './store'
 
 export type Dict = Record<string, string>
-export const QU_PENDING = 'Quechua: pendiente de revisión por hablantes nativos'
+export const QU_PENDING = 'Quechua: pending review by native speakers'
 
-/** Devuelve t(clave). `qu` solo debe contener textos ya revisados por hablantes nativos. */
-export function useT<D extends Dict>(es: D, qu: Partial<Record<keyof D, string>> = {}) {
+/** Returns t(key). `qu` should only contain translations reviewed by native speakers. */
+export function useT<D extends Dict>(en: D, qu: Partial<Record<keyof D, string>> = {}) {
   const lang = useStore((s) => s.lang)
-  return (key: keyof D): string => (lang === 'qu' ? qu[key] ?? es[key] : es[key])
+  return (key: keyof D): string => (lang === 'qu' ? qu[key] ?? en[key] : en[key])
 }

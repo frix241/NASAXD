@@ -277,23 +277,23 @@ export function setDestination(s: SimState, d: Destination): SimState {
 // ── Evaluación ──────────────────────────────────────────────────────────────
 export interface Reading { status: Status; value: number; text: string; unit: string; label: string }
 
-const fmt = (v: number, d = 0) => v.toFixed(d).replace('.', ',')
+const fmt = (v: number, d = 0) => v.toFixed(d)
 
 export function evaluate(s: SimState): Record<MetricKey, Reading> {
   const v = s.vitals
   const base = DESTINATIONS[s.destination].radBase
   const ex = s.exercisingLeft > 0
   return {
-    pulse: { label: 'Pulso', status: statusPulse(v.pulse, ex), value: v.pulse, text: fmt(v.pulse), unit: 'lpm' },
-    bp: { label: 'Presión', status: statusSys(v.sys), value: v.sys, text: `${fmt(v.sys)}/${fmt(v.dia)}`, unit: 'mmHg' },
-    spo2: { label: 'Oxígeno', status: statusSpo2(v.spo2), value: v.spo2, text: fmt(v.spo2), unit: '%' },
-    hydration: { label: 'Hidratación', status: statusPercent(v.hydration), value: v.hydration, text: fmt(v.hydration), unit: '%' },
-    temp: { label: 'Temperatura', status: statusTemp(v.temp), value: v.temp, text: fmt(v.temp, 1), unit: '°C' },
-    resp: { label: 'Respiración', status: ex ? 'ok' : statusResp(v.resp), value: v.resp, text: fmt(v.resp), unit: 'rpm' },
-    sleep: { label: 'Sueño', status: statusSleep(s.sleepHours), value: s.sleepHours, text: fmt(s.sleepHours, 1), unit: 'h' },
-    exercise: { label: 'Ejercicio', status: statusPercent(s.exerciseWeek), value: s.exerciseWeek, text: fmt(s.exerciseWeek), unit: '%' },
-    radiation: { label: 'Radiación', status: statusRadiation(s.radRate, base), value: s.radRate / base, text: fmt(s.radRate / base, 1), unit: '× normal' },
-    mood: { label: 'Ánimo', status: statusMood(s.mood), value: s.mood, text: fmt(s.mood), unit: '/100' },
-    glucose: { label: 'Glucosa', status: statusGlucose(s.glucose), value: s.glucose, text: fmt(s.glucose), unit: 'mg/dL' },
+    pulse: { label: 'Heart rate', status: statusPulse(v.pulse, ex), value: v.pulse, text: fmt(v.pulse), unit: 'bpm' },
+    bp: { label: 'Blood pressure', status: statusSys(v.sys), value: v.sys, text: `${fmt(v.sys)}/${fmt(v.dia)}`, unit: 'mmHg' },
+    spo2: { label: 'Oxygen', status: statusSpo2(v.spo2), value: v.spo2, text: fmt(v.spo2), unit: '%' },
+    hydration: { label: 'Hydration', status: statusPercent(v.hydration), value: v.hydration, text: fmt(v.hydration), unit: '%' },
+    temp: { label: 'Temperature', status: statusTemp(v.temp), value: v.temp, text: fmt(v.temp, 1), unit: '°C' },
+    resp: { label: 'Breathing', status: ex ? 'ok' : statusResp(v.resp), value: v.resp, text: fmt(v.resp), unit: 'breaths/min' },
+    sleep: { label: 'Sleep', status: statusSleep(s.sleepHours), value: s.sleepHours, text: fmt(s.sleepHours, 1), unit: 'h' },
+    exercise: { label: 'Exercise', status: statusPercent(s.exerciseWeek), value: s.exerciseWeek, text: fmt(s.exerciseWeek), unit: '%' },
+    radiation: { label: 'Radiation', status: statusRadiation(s.radRate, base), value: s.radRate / base, text: fmt(s.radRate / base, 1), unit: '× normal' },
+    mood: { label: 'Mood', status: statusMood(s.mood), value: s.mood, text: fmt(s.mood), unit: '/100' },
+    glucose: { label: 'Glucose', status: statusGlucose(s.glucose), value: s.glucose, text: fmt(s.glucose), unit: 'mg/dL' },
   }
 }

@@ -12,7 +12,7 @@ interface LogoProps {
   animate?: boolean
   /** Alto del isotipo en px. Las letras se escalan con él. */
   size?: number
-  /** Texto bajo el nombre. Por defecto, "Comunidad" en la variante `community`. */
+  /** Text below the name. Defaults to "Community" for the `community` variant. */
   sub?: string
   className?: string
 }
@@ -40,7 +40,7 @@ const RAYS = [-75, -50, -25, 0, 25, 50, 75].map((deg) => {
 export function Logo({ variant = 'space', compact = false, animate = false, size = 120, sub, className = '' }: LogoProps) {
   const id = useId().replace(/[^a-zA-Z0-9]/g, '')
   const community = variant === 'community'
-  const under = sub ?? (community ? 'Comunidad' : '')
+  const under = sub ?? (community ? 'Community' : '')
   const label = `AstroTwin${under ? ` ${under}` : ''}`
   const figure = (
     <>

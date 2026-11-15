@@ -8,36 +8,36 @@ import { TopBar } from '../Monitor'
 import '../../community-out.css'
 import '../../community-shared.css'
 
-const es = {
-  title: 'Clima y riesgo',
-  sub: 'Las próximas 48 horas afuera.',
-  demo: 'Datos de demostración',
-  empty: 'Sin datos de clima todavía',
-  emptyHint: 'Cuando haya datos, aquí verás el frío de las próximas 48 horas.',
-  temp: 'Temperatura afuera',
-  tempUnit: 'en grados (°C)',
-  risk: 'Riesgo por frío',
-  riskUnit: 'de 0 a 100',
-  frostLine: '0 °C: helada',
-  riskWord: 'Riesgo',
-  of100: 'de 100',
-  of: 'de',
-  coldest: 'Lo más frío',
-  below: 'Horas bajo cero',
-  top: 'Riesgo más alto',
-  keys: 'Toca el gráfico o usa las flechas para ver cada hora.',
-  meaning: 'Qué significa para',
-  frostYes: 'Viene helada',
-  frostNo: 'Sin helada',
-  s1Frost: 'Se espera helada: la temperatura baja hasta',
-  s1Calm: 'No se espera helada en las próximas 48 horas. Lo más frío será',
-  s2Fragile: 'siente más el frío por su edad: abrígale en capas y vuelve a revisar al amanecer.',
-  s2AdultA: 'Abriga bien a',
-  s2AdultB: 'dale bebidas tibias y vuelve a revisar al amanecer.',
-  s2CalmA: 'Mantén a',
-  s2CalmB: 'con abrigo seco durante la noche.',
-  frost: 'Simular helada',
-  note: 'Apoyo a la decisión con reglas basadas en protocolos MINSA. No reemplaza a la posta de salud.',
+const en = {
+  title: 'Weather and risk',
+  sub: 'Outside conditions for the next 48 hours.',
+  demo: 'Demonstration data',
+  empty: 'No weather data yet',
+  emptyHint: 'When data is available, you will see the next 48 hours of cold conditions here.',
+  temp: 'Outdoor temperature',
+  tempUnit: 'in degrees (°C)',
+  risk: 'Cold-related risk',
+  riskUnit: 'out of 100',
+  frostLine: '0 °C: frost',
+  riskWord: 'Risk',
+  of100: 'out of 100',
+  of: 'of',
+  coldest: 'Coldest',
+  below: 'Hours below freezing',
+  top: 'Highest risk',
+  keys: 'Select the chart or use the arrow keys to view each hour.',
+  meaning: 'What this means for',
+  frostYes: 'Frost expected',
+  frostNo: 'No frost',
+  s1Frost: 'Frost is expected: the temperature will fall to',
+  s1Calm: 'No frost is expected in the next 48 hours. The coldest temperature will be',
+  s2Fragile: 'is more sensitive to cold because of age: dress them in layers and check again at dawn.',
+  s2AdultA: 'Keep',
+  s2AdultB: 'warm, offer warm drinks, and check again at dawn.',
+  s2CalmA: 'Keep',
+  s2CalmB: 'in dry warm clothing overnight.',
+  frost: 'Simulate frost',
+  note: 'Decision support using rules based on MINSA protocols. Does not replace care at a health post.',
 }
 
 const deg = (v: number) => `${nf(v, 0).replace('-', '−')} °C`
@@ -110,7 +110,7 @@ function Plot({ values, labels, min, max, ticks, fmt, refLine, area, mark, xLabe
 
 /** Clima de las próximas 48 horas y qué significa para la persona atendida. */
 export default function Climate() {
-  const t = useT(es, {})
+  const t = useT(en, {})
   const visit = useStore((s) => s.visit)
   const frostOn = useStore((s) => s.frostOn)
   const frost = useStore((s) => s.frost)

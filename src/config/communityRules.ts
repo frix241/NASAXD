@@ -7,7 +7,7 @@
  * las normas del MINSA (AIEPI) y con personal de salud de la zona.
  */
 export const COMMUNITY_RULES = {
-  note: 'Valores de ejemplo. Validar con normas MINSA (AIEPI) antes de uso real.',
+  note: 'Sample values. Validate against MINSA (AIEPI) guidelines before real-world use.',
 
   // Respiraciones por minuto, contadas a mano durante un minuto completo.
   // "Respira rápido" = igual o más que el valor. Referencia AIEPI/OMS para niños;
@@ -72,35 +72,35 @@ const R = COMMUNITY_RULES
 
 /** Lista legible de umbrales pendientes de validar. Se muestra al usuario. */
 export const PENDING_VALIDATION: { id: string; what: string; value: string }[] = [
-  { id: 'resp-menor-2-meses', what: 'Respira rápido, menor de 2 meses', value: `${R.breathing.under2Months} o más por minuto` },
-  { id: 'resp-2-11-meses', what: 'Respira rápido, de 2 a 11 meses', value: `${R.breathing.from2To11Months} o más por minuto` },
-  { id: 'resp-1-4-anios', what: 'Respira rápido, de 1 a 4 años', value: `${R.breathing.from1To4Years} o más por minuto` },
-  { id: 'resp-adulto', what: 'Respira rápido, adulto', value: `${R.breathing.adult} o más por minuto` },
-  { id: 'resp-adulto-mayor', what: 'Respira rápido, adulto mayor', value: `${R.breathing.elder} o más por minuto` },
+  { id: 'resp-menor-2-meses', what: 'Fast breathing, under 2 months', value: `${R.breathing.under2Months} or more per minute` },
+  { id: 'resp-2-11-meses', what: 'Fast breathing, 2 to 11 months', value: `${R.breathing.from2To11Months} or more per minute` },
+  { id: 'resp-1-4-anios', what: 'Fast breathing, 1 to 4 years', value: `${R.breathing.from1To4Years} or more per minute` },
+  { id: 'resp-adulto', what: 'Fast breathing, adult', value: `${R.breathing.adult} or more per minute` },
+  { id: 'resp-adulto-mayor', what: 'Fast breathing, older adult', value: `${R.breathing.elder} or more per minute` },
   {
-    id: 'resp-altitud', what: 'Margen de respiración por altura',
-    value: `+${R.breathing.altitude.midAdd} desde ${R.breathing.altitude.midFrom} m; +${R.breathing.altitude.highAdd} sobre ${R.breathing.altitude.highFrom} m`,
+    id: 'resp-altitud', what: 'Breathing adjustment for elevation',
+    value: `+${R.breathing.altitude.midAdd} from ${R.breathing.altitude.midFrom} m; +${R.breathing.altitude.highAdd} above ${R.breathing.altitude.highFrom} m`,
   },
-  { id: 'resp-muy-rapida', what: 'Respira muy rápido (derivar)', value: `umbral + ${R.breathing.veryFastMargin} por minuto` },
-  { id: 'sat-baja', what: `Saturación baja, bajo ${R.spo2.mid.from} m`, value: `menos de ${R.spo2.low.watch} % vigilar; menos de ${R.spo2.low.refer} % derivar` },
+  { id: 'resp-muy-rapida', what: 'Very fast breathing (refer)', value: `threshold + ${R.breathing.veryFastMargin} per minute` },
+  { id: 'sat-baja', what: `Low oxygen saturation, below ${R.spo2.mid.from} m`, value: `below ${R.spo2.low.watch}% monitor; below ${R.spo2.low.refer}% refer` },
   {
-    id: 'sat-media', what: `Saturación baja, de ${R.spo2.mid.from} a ${R.spo2.high.above} m`,
-    value: `menos de ${R.spo2.mid.watch} % vigilar; menos de ${R.spo2.mid.refer} % derivar`,
+    id: 'sat-media', what: `Low oxygen saturation, ${R.spo2.mid.from} to ${R.spo2.high.above} m`,
+    value: `below ${R.spo2.mid.watch}% monitor; below ${R.spo2.mid.refer}% refer`,
   },
-  { id: 'sat-alta', what: `Saturación baja, sobre ${R.spo2.high.above} m`, value: `menos de ${R.spo2.high.watch} % vigilar; menos de ${R.spo2.high.refer} % derivar` },
-  { id: 'temp-fiebre', what: 'Fiebre con termómetro', value: `${coma(R.temp.fever)} °C o más` },
-  { id: 'temp-fiebre-bebe', what: 'Fiebre en menor de 2 meses (derivar)', value: `${coma(R.temp.feverYoungInfant)} °C o más` },
-  { id: 'temp-fiebre-alta', what: 'Fiebre alta (derivar)', value: `${coma(R.temp.highFever)} °C o más` },
-  { id: 'temp-frio', what: 'Frío en el cuerpo (vigilar)', value: `menos de ${coma(R.temp.coldWatch)} °C` },
-  { id: 'temp-muy-frio', what: 'Mucho frío en el cuerpo (derivar)', value: `menos de ${coma(R.temp.coldRefer)} °C` },
-  { id: 'posta-lejos', what: 'Posta lejos', value: `${R.post.farHours} horas o más` },
-  { id: 'posta-lejos-senales', what: 'Con posta lejos, se deriva antes', value: `desde ${R.post.farWarnings} señales para vigilar` },
-  { id: 'varias-senales', what: 'Varias señales juntas (derivar)', value: `${R.manyWarnings} o más señales para vigilar` },
+  { id: 'sat-alta', what: `Low oxygen saturation, above ${R.spo2.high.above} m`, value: `below ${R.spo2.high.watch}% monitor; below ${R.spo2.high.refer}% refer` },
+  { id: 'temp-fiebre', what: 'Fever measured with a thermometer', value: `${coma(R.temp.fever)} °C or higher` },
+  { id: 'temp-fiebre-bebe', what: 'Fever under 2 months (refer)', value: `${coma(R.temp.feverYoungInfant)} °C or higher` },
+  { id: 'temp-fiebre-alta', what: 'High fever (refer)', value: `${coma(R.temp.highFever)} °C or higher` },
+  { id: 'temp-frio', what: 'Low body temperature (monitor)', value: `below ${coma(R.temp.coldWatch)} °C` },
+  { id: 'temp-muy-frio', what: 'Very low body temperature (refer)', value: `below ${coma(R.temp.coldRefer)} °C` },
+  { id: 'posta-lejos', what: 'Health post is far away', value: `${R.post.farHours} hours or more` },
+  { id: 'posta-lejos-senales', what: 'Earlier referral when the health post is far away', value: `from ${R.post.farWarnings} signs to monitor` },
+  { id: 'varias-senales', what: 'Multiple signs together (refer)', value: `${R.manyWarnings} or more signs to monitor` },
   {
-    id: 'confianza', what: 'Datos para la confianza',
-    value: `alta: ${R.confidence.highMin} de ${R.confidence.total} preguntas; media: ${R.confidence.mediumMin}; baja: menos de ${R.confidence.mediumMin}`,
+    id: 'confianza', what: 'Information used to determine confidence',
+    value: `high: ${R.confidence.highMin} of ${R.confidence.total} questions; medium: ${R.confidence.mediumMin}; low: fewer than ${R.confidence.mediumMin}`,
   },
-  { id: 'helada-caida', what: 'Caída de temperatura en la helada simulada', value: `${R.frost.drop} °C bajo la madrugada normal` },
+  { id: 'helada-caida', what: 'Temperature drop in simulated frost', value: `${R.frost.drop} °C below a typical early-morning temperature` },
 ]
 
-function coma(n: number): string { return n.toFixed(1).replace('.', ',') }
+function coma(n: number): string { return n.toFixed(1) }

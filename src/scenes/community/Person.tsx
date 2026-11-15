@@ -8,39 +8,39 @@ import { TopBar } from '../Monitor'
 import '../../community-out.css'
 import '../../community-shared.css'
 
-const es = {
-  title: 'Persona',
-  twin: 'Gemelo de la persona atendida',
-  zones: 'Zonas del cuerpo',
-  head: 'Cabeza', chest: 'Pecho', hands: 'Manos', feet: 'Pies',
-  ok: 'Bien', warn: 'Vigilar', bad: 'Atender',
-  decision: 'Qué hacer ahora',
-  actions: 'Haz esto ahora',
-  confidence: 'Qué tan segura es esta guía',
-  answered: 'Respondiste',
-  of: 'de',
-  alta: 'Confianza alta', media: 'Confianza media', baja: 'Confianza baja',
-  findings: 'Lo que encontré',
-  noFindings: 'Todavía no hay hallazgos. Toca Evaluar y responde las preguntas.',
-  who: 'Quién es',
-  child: 'Niña o niño menor de 5 años', elder: 'Adulto mayor', adult: 'Adulto',
-  year: 'año', years: 'años', month: 'mes', months: 'meses',
-  cold: 'Frío del entorno',
-  normal: 'Normal', frio: 'Frío', helada: 'Helada',
-  altitude: 'm de altura',
-  post: 'Distancia a la posta',
-  hour: 'hora de camino', hours: 'horas de camino',
-  evaluate: 'Evaluar',
-  sheet: 'Hoja de derivación',
-  frost: 'Simular helada',
-  demo: 'Datos de demostración',
-  note: 'Apoyo a la decisión con reglas basadas en protocolos MINSA. No reemplaza a la posta de salud.',
+const en = {
+  title: 'Person',
+  twin: 'Digital twin of the person being assessed',
+  zones: 'Body areas',
+  head: 'Head', chest: 'Chest', hands: 'Hands', feet: 'Feet',
+  ok: 'Good', warn: 'Monitor', bad: 'Refer',
+  decision: 'What to do now',
+  actions: 'Do this now',
+  confidence: 'Confidence in this guidance',
+  answered: 'Answered',
+  of: 'of',
+  alta: 'High confidence', media: 'Medium confidence', baja: 'Low confidence',
+  findings: 'Findings',
+  noFindings: 'No findings yet. Select Assessment and answer the questions.',
+  who: 'Person',
+  child: 'Child under 5', elder: 'Older adult', adult: 'Adult',
+  year: 'year', years: 'years', month: 'month', months: 'months',
+  cold: 'Environmental cold',
+  normal: 'Normal', frio: 'Cold', helada: 'Frost',
+  altitude: 'm elevation',
+  post: 'Distance to health post',
+  hour: 'hour away', hours: 'hours away',
+  evaluate: 'Assessment',
+  sheet: 'Referral form',
+  frost: 'Simulate frost',
+  demo: 'Demonstration data',
+  note: 'Decision support using rules based on MINSA protocols. Does not replace care at a health post.',
 }
 
 const ZONES: BodyZone[] = ['head', 'chest', 'hands', 'feet']
 const COLD_STATUS: Record<'normal' | 'frio' | 'helada', Status> = { normal: 'ok', frio: 'warn', helada: 'bad' }
 const CONF_STATUS: Record<'alta' | 'media' | 'baja', Status> = { alta: 'ok', media: 'warn', baja: 'bad' }
-const num = (v: number) => String(Math.round(v * 10) / 10).replace('.', ',')
+const num = (v: number) => String(Math.round(v * 10) / 10)
 
 /** Figura plana de respaldo si el dispositivo no tiene WebGL: las cuatro zonas con su estado. */
 function FlatFigure({ zones, label }: { zones: Record<BodyZone, Status>; label: string }) {
@@ -63,7 +63,7 @@ function FlatFigure({ zones, label }: { zones: Record<BodyZone, Status>; label: 
 
 /** Pantalla principal del perfil comunidad: la decisión, el gemelo y los datos de la persona. */
 export default function Person() {
-  const t = useT(es, {})
+  const t = useT(en, {})
   const visit = useStore((s) => s.visit)
   const result = useStore((s) => s.result)
   const webgl = useStore((s) => s.webgl)

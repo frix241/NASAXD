@@ -81,7 +81,7 @@ function NavDots() {
   const setScene = useStore((s) => s.setScene)
   const scenes = useProfile().scenes
   return (
-    <nav className="dots" aria-label="Escenas">
+    <nav className="dots" aria-label="Scenes">
       {scenes.map((name, i) => (
         <button key={name} aria-label={name} aria-current={i === scene} onClick={() => setScene(i)}>
           <i /><span>{name}</span>
@@ -115,7 +115,7 @@ export default function App() {
   useSceneNav()
 
   useEffect(() => { if (!hasWebGL()) useStore.getState().set({ webgl: false }) }, [])
-  // Cambio de modo: transición breve de 0,4 s
+  // Brief transition when switching modes.
   const firstMode = useRef(true)
   useEffect(() => {
     if (firstMode.current) { firstMode.current = false; return }

@@ -13,12 +13,12 @@ export function StatusTag({ status, word }: { status: Status; word?: string }) {
   return <span className={`status s-${status}`}><Icon name={status} size={12} />{word ?? STATUS_WORD[status]}</span>
 }
 
-/** Interruptor de modo: Misión espacial | Colegio. También con la tecla C. */
+/** Mode switch. Also available with the C key. */
 export function ModeSwitch() {
   const profile = useStore((s) => s.profile)
   const setProfile = useStore((s) => s.setProfile)
   return (
-    <span className="seg mode" role="group" aria-label="Modo">
+    <span className="seg mode" role="group" aria-label="Mode">
       {(Object.keys(PROFILES) as ProfileId[]).map((id) => (
         <button key={id} aria-pressed={id === profile} onClick={() => setProfile(id)}>{PROFILES[id].switchLabel}</button>
       ))}
@@ -54,9 +54,9 @@ export function TopBar() {
         </span>
       </span>
       {community && (
-        <span className="seg" role="group" aria-label="Tema">
-          <button aria-pressed={theme === 'day'} onClick={() => setTheme('day')}>Luz del día</button>
-          <button aria-pressed={theme === 'night'} onClick={() => setTheme('night')}>Noche</button>
+        <span className="seg" role="group" aria-label="Theme">
+          <button aria-pressed={theme === 'day'} onClick={() => setTheme('day')}>Daylight</button>
+          <button aria-pressed={theme === 'night'} onClick={() => setTheme('night')}>Night</button>
         </span>
       )}
       <span className={`phrase s-${st}`} role="status"><Icon name={st} />{community ? result.label : statusPhrase(issues)}</span>
@@ -82,8 +82,8 @@ function AlertPanel({ issue, more }: { issue: Issue; more: number }) {
       <div className="row">
         <button className="btn" onClick={() => act(issue.action, issue.key)}>{issue.actionLabel}</button>
         <span className="hint">
-          {!p.alertsAutoClose ? 'Márcala cuando la hagas.' : red ? 'Confirma para continuar.' : 'Este aviso se cierra solo.'}
-          {p.alertsAutoClose && more > 0 && ` Hay ${more} más.`}
+          {!p.alertsAutoClose ? 'Mark it when complete.' : red ? 'Acknowledge to continue.' : 'This alert closes automatically.'}
+          {p.alertsAutoClose && more > 0 && ` ${more} more.`}
         </span>
       </div>
       {!red && p.alertsAutoClose && <div className="timer"><i style={{ animationDuration: '10s' }} /></div>}
@@ -100,14 +100,14 @@ function Measure({ f, current }: { f: Field; current: number }) {
     <div className="measure">
       <label>{f.label}
         <span className="m-ctl">
-          <button type="button" aria-label={`Bajar ${f.label}`} onClick={() => setV(fix(v - f.step))}>−</button>
+          <button type="button" aria-label={`Decrease ${f.label}`} onClick={() => setV(fix(v - f.step))}>−</button>
           <input type="number" inputMode="decimal" value={v} min={f.min} max={f.max} step={f.step}
             onChange={(e) => setV(e.target.value === '' ? f.min : +e.target.value)} onBlur={() => setV(fix(v))} />
-          <button type="button" aria-label={`Subir ${f.label}`} onClick={() => setV(fix(v + f.step))}>+</button>
+          <button type="button" aria-label={`Increase ${f.label}`} onClick={() => setV(fix(v + f.step))}>+</button>
           <span className="muted">{f.unit}</span>
         </span>
       </label>
-      <button type="button" className="btn small" onClick={() => measure(f.field, fix(v))}>Guardar</button>
+      <button type="button" className="btn small" onClick={() => measure(f.field, fix(v))}>Save</button>
     </div>
   )
 }
@@ -130,27 +130,27 @@ function ExplainPanel() {
   const reading = r[key]
   const current = (f: Field) => f.field === 'sleep' ? sim.sleepHours : f.field === 'mood' ? sim.mood : f.field === 'glucose' ? sim.glucose : sim.vitals[f.field]
   return (
-    <section className={`explain s-${reading.status}`} ref={box} aria-label={`Explicación: ${reading.label}`}>
+    <section className={`explain s-${reading.status}`} ref={box} aria-label={`Explanation: ${reading.label}`}>
       <header>
         <h2>{reading.label}</h2>
         <StatusTag status={reading.status} />
         <span className="num muted">{reading.text} {reading.unit}</span>
-        <button className="tool" aria-label="Cerrar explicación" onClick={() => setExplain(null)}><Icon name="close" size={16} /></button>
+        <button className="tool" aria-label="Close explanation" onClick={() => setExplain(null)}><Icon name="close" size={16} /></button>
       </header>
       {tabs.length > 1 && (
-        <div className="seg tabs" role="group" aria-label="Indicadores de esta zona">
+        <div className="seg tabs" role="group" aria-label="Metrics in this area">
           {tabs.map((k) => <button key={k} aria-pressed={k === key} onClick={() => setExplain(k)}>{r[k].label}</button>)}
         </div>
       )}
       <dl>
         <dt>{L.what}</dt><dd>{e.what}</dd>
-        <dt>{L.why}</dt><dd>{e.why}{e.hazard && <span className="hazard">Riesgo del espacio: {e.hazard.toLowerCase()}</span>}</dd>
+        <dt>{L.why}</dt><dd>{e.why}{e.hazard && <span className="hazard">Space hazard: {e.hazard.toLowerCase()}</span>}</dd>
         <dt>{L.how}</dt><dd>{e.how}</dd>
         <dt>{L.alert}</dt><dd>{e.alert}</dd>
       </dl>
       {e.fields && (
           <div className="measures">
-            <h3>Registrar una medición</h3>
+            <h3>Record a measurement</h3>
             {e.fields.map((f) => <Measure key={f.field + key} f={f} current={current(f)} />)}
           </div>
       )}
@@ -158,17 +158,17 @@ function ExplainPanel() {
   )
 }
 
-/** Una fila del monitor. Qué se muestra y cómo lo decide el perfil activo. */
+/** A monitor row. Display and behavior depend on the active profile. */
 function Vital({ row, hl }: { row: VitalRow; hl: boolean }) {
   const setExplain = useStore((s) => s.setExplain)
   const open = useStore((s) => s.explain === row.key)
   const r = useStore((s) => s.readings[row.key])
   const pulse = useStore((s) => s.readings.pulse.value)
   const sim = useStore((s) => s.sim)
-  const note = row.key === 'pulse' && sim.exercisingLeft > 0 ? 'en ejercicio' : null
+  const note = row.key === 'pulse' && sim.exercisingLeft > 0 ? 'exercising' : null
   return (
     <div className={`vital${row.wide ? ' wide-m' : ''} s-${r.status}${hl ? ' hl' : ''}`} role="button" tabIndex={0} aria-expanded={open}
-      aria-label={`${row.label}: ${r.text} ${row.unit || r.unit}. Tocar para ver la explicación`}
+      aria-label={`${row.label}: ${r.text} ${row.unit || r.unit}. Select to view the explanation`}
       onClick={() => setExplain(open ? null : row.key)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExplain(open ? null : row.key) } }}>
       <i className="flash" key={r.status} />
@@ -207,7 +207,7 @@ export default function Monitor() {
       <TopBar />
       <div className="twin-col">
         <div className="twin-view">{webgl ? <Twin zones={zones} gear={p.id} hidden={p.hiddenZones} label={p.text.twinLabel} /> : <TwinFlat zones={zones} />}</div>
-        <div className="zones" role="group" aria-label="Zonas del cuerpo">
+        <div className="zones" role="group" aria-label="Body areas">
           {p.zoneOrder.map((z) => (
             <button key={z} className={`zone-chip s-${zones[z]}`} aria-pressed={highlight === z}
               onClick={() => setHighlight(highlight === z ? null : z)}>

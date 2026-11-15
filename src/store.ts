@@ -24,8 +24,8 @@ interface Store {
   frostOn: boolean
   theme: 'day' | 'night'
   setTheme: (t: 'day' | 'night') => void
-  lang: 'es' | 'qu'
-  setLang: (l: 'es' | 'qu') => void
+  lang: 'en' | 'qu'
+  setLang: (l: 'en' | 'qu') => void
   /** Qué hoja se está imprimiendo, si alguna */
   printing: 'derivacion' | null
   profile: ProfileId
@@ -84,13 +84,13 @@ function applyAction(sim: SimState, action: ActionId): SimState {
   return sim
 }
 const ACTION_SAID: Record<ActionId, string> = {
-  shelter: 'Vas al refugio. La radiación baja ahí dentro.',
-  water: 'Agua registrada. Tu hidratación va a subir.',
-  rest: 'Descanso registrado.',
-  earth: 'Aviso enviado a la Tierra. Te responderán pronto.',
-  exercise: 'Ejercicio en marcha. El pulso alto ahora es normal.',
-  mood: 'Chequeo de ánimo guardado.',
-  ack: 'Anotado.',
+  shelter: 'You are going to the shelter. Radiation levels are lower inside.',
+  water: 'Water logged. Your hydration will increase.',
+  rest: 'Rest logged.',
+  earth: 'Message sent to Earth. They will respond soon.',
+  exercise: 'Exercise started. A high heart rate is normal right now.',
+  mood: 'Mood check-in saved.',
+  ack: 'Noted.',
 }
 
 /** El modo se guarda solo en memoria. `?modo=colegio` lo abre directo en modo colegio. */
@@ -120,7 +120,7 @@ export const useStore = create<Store>((set, get) => ({
     set({ profile, ...initial(profile), scene: Math.min(get().scene, PROFILES[profile].scenes.length - 1) })
   },
   printing: null,
-  theme: 'day', lang: 'es',
+  theme: 'day', lang: 'en',
   setVisit: (patch) => { const visit = { ...get().visit, ...patch }; set({ visit, result: assess(visit) }) },
   toggleDanger: (sign) => { const v = get().visit; const visit = { ...v, danger: { ...v.danger, [sign]: !v.danger[sign] } }; set({ visit, result: assess(visit) }) },
   newPerson: () => { const visit = { ...newVisit(get().visit.region), cold: get().visit.cold }; set({ visit, result: assess(visit) }) },
@@ -184,7 +184,7 @@ export const useStore = create<Store>((set, get) => ({
       tasksDone,
       points: s.points + task.points,
       streak: count === 3 ? s.streak + 1 : s.streak,
-      toast: `${task.title}: hecho. +${task.points} puntos`,
+      toast: `${task.title}: done. +${task.points} points`,
     })
   },
   setHighlight: (z) => {
@@ -192,7 +192,7 @@ export const useStore = create<Store>((set, get) => ({
     set({ highlight: z, explain: z ? p.zones.metrics[z][0] ?? null : null })
   },
   setExplain: (k) => set({ explain: k, highlight: k ? PROFILES[get().profile].zones.of[k] : null }),
-  measure: (field, value) => set({ ...derive(setMeasurement(get().sim, field, value)), toast: 'Medición guardada.' }),
+  measure: (field, value) => set({ ...derive(setMeasurement(get().sim, field, value)), toast: 'Measurement saved.' }),
   say: (t) => set({ toast: t }),
   reset: () => set(initial(get().profile)),
 }))

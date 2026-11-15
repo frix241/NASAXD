@@ -6,21 +6,21 @@ import { TopBar } from '../Monitor'
 import '../../community-out.css'
 import '../../community-shared.css'
 
-const es = {
-  title: 'Hoja de derivación',
-  noNeed: 'Ahora no hace falta derivar. La hoja queda lista por si cambia algo.',
-  data: 'Datos para la posta',
-  way: 'En el camino',
-  radio: 'Para dictar por radio o teléfono',
-  radioHint: 'Lee las líneas en orden, despacio.',
-  print: 'Imprimir hoja',
-  back: 'Volver a evaluar',
-  demo: 'Datos de demostración',
-  note: 'Apoyo a la decisión con reglas basadas en protocolos MINSA. No reemplaza a la posta de salud.',
-  received: 'Recibido en la posta por',
-  time: 'Hora',
-  agent: 'Agente comunitario',
-  foot: 'Apoyo a la decisión con reglas basadas en protocolos MINSA. No es un diagnóstico. Valores de ejemplo, validar con normas MINSA (AIEPI).',
+const en = {
+  title: 'Referral form',
+  noNeed: 'Referral is not needed right now. The form is ready if anything changes.',
+  data: 'Information for the health post',
+  way: 'On the way',
+  radio: 'For radio or phone',
+  radioHint: 'Read the lines in order, slowly.',
+  print: 'Print form',
+  back: 'Back to assessment',
+  demo: 'Demonstration data',
+  note: 'Decision support using rules based on MINSA protocols. Does not replace care at a health post.',
+  received: 'Received at health post by',
+  time: 'Time',
+  agent: 'Community health worker',
+  foot: 'Decision support using rules based on MINSA protocols. Not a diagnosis. Sample values; validate against MINSA (AIEPI) guidelines.',
 }
 
 function useSheet() {
@@ -35,7 +35,7 @@ function useSheet() {
 
 /** Hoja de derivación en pantalla, con la versión para dictar por radio. */
 export default function Referral() {
-  const t = useT(es, {})
+  const t = useT(en, {})
   const { result, sheet, radio } = useSheet()
   const frostOn = useStore((s) => s.frostOn)
   const setScene = useStore((s) => s.setScene)
@@ -96,7 +96,7 @@ export default function Referral() {
 
 /** La misma hoja, lista para imprimir en una hoja A4 en blanco y negro. En pantalla no se ve. */
 export function ReferralPrint() {
-  const t = useT(es, {})
+  const t = useT(en, {})
   const { sheet, radio } = useSheet()
   const printing = useStore((s) => s.printing)
   const frostOn = useStore((s) => s.frostOn)

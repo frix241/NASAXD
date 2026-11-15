@@ -7,9 +7,9 @@ import raw from '../../data/inspiration4_laboratorios_tidy.csv?raw'
 
 export const TIMEPOINTS = ['L-92', 'L-44', 'L-3', 'R+1', 'R+45', 'R+82', 'R+194'] as const
 export const TIMEPOINT_HINT: Record<string, string> = {
-  'L-92': '92 días antes del vuelo', 'L-44': '44 días antes', 'L-3': '3 días antes',
-  'R+1': '1 día después de volver', 'R+45': '45 días después', 'R+82': '82 días después',
-  'R+194': '194 días después',
+  'L-92': '92 days before flight', 'L-44': '44 days before', 'L-3': '3 days before',
+  'R+1': '1 day after return', 'R+45': '45 days after', 'R+82': '82 days after',
+  'R+194': '194 days after',
 }
 
 export interface LabData {

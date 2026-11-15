@@ -5,7 +5,7 @@ import { useSize } from './hooks'
 export const SERIES = ['#3987e5', '#d95926', '#9085e9', '#d55181'] // validada para daltonismo sobre #050a14
 export const ICE = '#6db3ff'
 const GRID = 'rgba(109,179,255,0.13)'
-export const nf = (v: number, d = 0) => v.toFixed(d).replace('.', ',')
+export const nf = (v: number, d = 0) => v.toFixed(d)
 
 type Tip = { x: number; y: number; node: ReactNode } | null
 interface Ctx { w: number; h: number; tip: (t: Tip) => void }
@@ -124,7 +124,7 @@ export function Lines({ series, labels, min, max, ticks, refLines = [], unit = '
                 {series.map((s) => (
                   <div key={s.name}>
                     <i style={{ display: 'inline-block', width: 10, borderTop: `2px ${s.dash ? 'dashed' : 'solid'} ${s.color}`, verticalAlign: 'middle', marginRight: 6 }} />
-                    {series.length > 1 && `${s.name}: `}<b>{s.values[i] === null ? 'sin dato' : `${nf(s.values[i]!, d)}${unit}`}</b>
+                    {series.length > 1 && `${s.name}: `}<b>{s.values[i] === null ? 'no data' : `${nf(s.values[i]!, d)}${unit}`}</b>
                   </div>
                 ))}
               </>
@@ -225,10 +225,10 @@ export function ChangeBars({ rows, limit, columns = 1 }: { rows: { name: string;
               const x0 = c * colW; const bx = x0 + label + 6; const bw = colW - label - num - 18
               const zero = bx + bw / 2; const cy = rh * (k + 0.5)
               const len = r.pct === null ? 0 : (Math.max(-limit, Math.min(limit, r.pct)) / limit) * (bw / 2)
-              const text = r.pct === null ? 'sin dato' : `${r.pct > 0 ? '+' : ''}${nf(r.pct, 1)} %`
+              const text = r.pct === null ? 'no data' : `${r.pct > 0 ? '+' : ''}${nf(r.pct, 1)}%`
               const show = () => {
                 setHover(i)
-                tip({ x: zero, y: cy - rh / 2 + 4, node: <><span className="muted">{r.name}: </span><b>{text}</b>{r.pct !== null && <span className="muted"> {r.pct > 0 ? 'subió' : r.pct < 0 ? 'bajó' : 'igual'}</span>}</> })
+                tip({ x: zero, y: cy - rh / 2 + 4, node: <><span className="muted">{r.name}: </span><b>{text}</b>{r.pct !== null && <span className="muted"> {r.pct > 0 ? 'increased' : r.pct < 0 ? 'decreased' : 'unchanged'}</span>}</> })
               }
               return (
                 <g key={r.name} opacity={hover < 0 || hover === i ? 1 : 0.5}>

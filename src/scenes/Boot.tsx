@@ -91,7 +91,7 @@ function Sequence() {
         <ul className="in-checks">
           {checks.map((c, i) => (
             <li key={c} className={done > i ? 'done' : ''} style={{ '--i': i } as React.CSSProperties}>
-              <Tick done={done > i} /><span>{c}</span><span className="st">{done > i ? 'listo' : 'comprobando'}</span>
+              <Tick done={done > i} /><span>{c}</span><span className="st">{done > i ? 'ready' : 'checking'}</span>
             </li>
           ))}
         </ul>
@@ -118,7 +118,7 @@ export default function Boot() {
     <div className="boot" style={{ position: 'absolute', inset: 0 }}>
       <Sequence key={p.id} />
       <div className="boot-mode"><ModeSwitch /></div>
-      <button className="btn ghost skip" onClick={finish}>Saltar</button>
+      <button className="btn ghost skip" onClick={finish}>Skip</button>
     </div>
   )
 }

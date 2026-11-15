@@ -26,7 +26,7 @@ export default function Route() {
       <TopBar />
       <div className="scene-head" style={{ marginTop: 14 }}>
         <h1>{p.text.routeTitle}</h1>
-        <p>{doneCount === TASKS.length ? p.text.routeAllDone : `${doneCount} de ${TASKS.length} hechas. ${p.text.routeHint}`}</p>
+        <p>{doneCount === TASKS.length ? p.text.routeAllDone : `${doneCount} of ${TASKS.length} completed. ${p.text.routeHint}`}</p>
       </div>
       <div className="route">
         <ol className="path" style={{ '--done': doneCount / TASKS.length } as React.CSSProperties}>
@@ -34,10 +34,10 @@ export default function Route() {
             <li key={i.key} className={`station urgent s-${i.level}`}>
               <span className="node" aria-hidden="true"><Icon name={i.level} size={18} /></span>
               <div>
-                <span className="tag">{i.level === 'bad' ? 'Primero esto' : 'Conviene hacerlo pronto'}</span>
+                <span className="tag">{i.level === 'bad' ? 'Do this first' : 'Recommended soon'}</span>
                 <h3>{i.title}</h3>
                 <p className="what">{i.why}</p>
-                <p className="meta"><span>Dura {i.minutes} min</span><span>Cuida: {p.zones.label[i.zone].toLowerCase()}</span><span>+{ALERT_TASK_POINTS} puntos</span></p>
+                <p className="meta"><span>{i.minutes} min</span><span>Cares for: {p.zones.label[i.zone].toLowerCase()}</span><span>+{ALERT_TASK_POINTS} points</span></p>
               </div>
               <button className="btn" onClick={() => act(i.action, i.key)}>{i.actionLabel}</button>
             </li>
@@ -51,22 +51,22 @@ export default function Route() {
                 <div>
                   <h3>{t.title}</h3>
                   <p className="what">{t.what}</p>
-                  <p className="meta"><span>Dura {t.minutes} min</span><span>Cuida: {t.cares.toLowerCase()}</span><span>{t.effect}</span></p>
+                  <p className="meta"><span>{t.minutes} min</span><span>Cares for: {t.cares.toLowerCase()}</span><span>{t.effect}</span></p>
                 </div>
                 {ok
-                  ? <span className="status s-ok"><Icon name="ok" size={12} />Hecho, +{t.points}</span>
-                  : <button className="btn ghost" onClick={() => complete(t.id)}>Marcar hecho, +{t.points}</button>}
+                  ? <span className="status s-ok"><Icon name="ok" size={12} />Done, +{t.points}</span>
+                  : <button className="btn ghost" onClick={() => complete(t.id)}>Mark done, +{t.points}</button>}
               </li>
             )
           })}
         </ol>
-        <aside className="score" aria-label="Tu progreso">
-          <div className="holo"><div className="muted">Puntos</div><div className="n">{shownPoints}</div></div>
-          <div className="holo"><div className="muted">Racha</div><div className="n">{streak} <small style={{ fontSize: 14, fontWeight: 400 }}>días</small></div></div>
+        <aside className="score" aria-label="Your progress">
+          <div className="holo"><div className="muted">Points</div><div className="n">{shownPoints}</div></div>
+          <div className="holo"><div className="muted">Streak</div><div className="n">{streak} <small style={{ fontSize: 14, fontWeight: 400 }}>days</small></div></div>
           <div className="holo">
-            <div className="muted">Nivel</div><div className="n">{level}</div>
+            <div className="muted">Level</div><div className="n">{level}</div>
             <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={POINTS_PER_LEVEL} aria-valuenow={inLevel}><i style={{ width: `${inLevel}%` }} /></div>
-            <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>Faltan {POINTS_PER_LEVEL - inLevel} para el nivel {level + 1}</div>
+            <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>{POINTS_PER_LEVEL - inLevel} points to level {level + 1}</div>
           </div>
         </aside>
       </div>

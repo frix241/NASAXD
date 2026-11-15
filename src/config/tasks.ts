@@ -8,12 +8,12 @@ export interface Task {
 }
 
 export const SPACE_TASKS: Task[] = [
-  { id: 'measure', title: 'Mediciones de rutina', what: 'En el Monitor, toca Presión y Glucosa y registra lo que marcan tus aparatos.', minutes: 5, cares: 'Corazón y azúcar en sangre', zone: 'heart', points: 15, action: 'ack', effect: 'Tus datos quedan al día' },
-  { id: 'resistance', title: 'Ejercicio de resistencia', what: 'Usa la máquina de fuerza: piernas, espalda y brazos.', minutes: 30, cares: 'Músculos y huesos', zone: 'muscles', points: 30, action: 'exercise', effect: 'Sube tu ejercicio semanal' },
-  { id: 'water', title: 'Agua', what: 'Bebe una bolsa de agua completa.', minutes: 2, cares: 'Riñones y presión', zone: 'kidneys', points: 10, action: 'water', effect: 'Sube tu hidratación' },
-  { id: 'rest', title: 'Descanso', what: 'Luz baja, ojos cerrados, sin pantallas.', minutes: 20, cares: 'Cabeza y corazón', zone: 'head', points: 15, action: 'rest', effect: 'Recupera sueño y baja la presión' },
-  { id: 'mood', title: 'Chequeo de ánimo', what: 'Cuenta en voz alta cómo te sientes hoy.', minutes: 3, cares: 'Ánimo', zone: 'head', points: 10, action: 'mood', effect: 'Sube tu ánimo' },
-  { id: 'shelter', title: 'Revisión del refugio', what: 'Comprueba que el refugio tenga agua, comida y camino libre.', minutes: 5, cares: 'Todo el cuerpo ante la radiación', zone: 'body', points: 15, action: 'ack', effect: 'Refugio listo para una tormenta' },
+  { id: 'measure', title: 'Routine measurements', what: 'On the Monitor, tap Blood Pressure and Glucose and enter the readings from your devices.', minutes: 5, cares: 'Heart and blood sugar', zone: 'heart', points: 15, action: 'ack', effect: 'Your data is up to date' },
+  { id: 'resistance', title: 'Resistance exercise', what: 'Use the strength machine: legs, back, and arms.', minutes: 30, cares: 'Muscles and bones', zone: 'muscles', points: 30, action: 'exercise', effect: 'Increases your weekly exercise' },
+  { id: 'water', title: 'Water', what: 'Drink a full pouch of water.', minutes: 2, cares: 'Kidneys and blood pressure', zone: 'kidneys', points: 10, action: 'water', effect: 'Improves your hydration' },
+  { id: 'rest', title: 'Rest', what: 'Dim the lights, close your eyes, and avoid screens.', minutes: 20, cares: 'Head and heart', zone: 'head', points: 15, action: 'rest', effect: 'Restores sleep and lowers blood pressure' },
+  { id: 'mood', title: 'Mood check-in', what: 'Say out loud how you feel today.', minutes: 3, cares: 'Mood', zone: 'head', points: 10, action: 'mood', effect: 'Improves your mood' },
+  { id: 'shelter', title: 'Shelter check', what: 'Make sure the shelter has water, food, and a clear path.', minutes: 5, cares: 'Whole-body protection from radiation', zone: 'body', points: 15, action: 'ack', effect: 'Shelter ready for a storm' },
 ]
 
 export const POINTS_PER_LEVEL = 100

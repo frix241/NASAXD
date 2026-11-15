@@ -3,22 +3,22 @@ import { useT } from '../../i18n'
 import { useStore } from '../../store'
 import { Pictogram } from './Pictogram'
 
-const es = {
-  start: 'Empezar a contar',
-  again: 'Contar otra vez',
-  tap: 'Toca en cada respiración',
-  space: 'También sirve la barra espaciadora.',
-  stop: 'Parar',
-  seconds: 'segundos',
-  left: 'Segundos que faltan',
-  how: 'Mira el pecho. Cuenta un minuto entero.',
-  done: 'Minuto completo. Total guardado.',
-  stopped: 'Paraste antes del minuto. No se guardó. Vuelve a empezar o pon el número a mano.',
-  value: 'Respiraciones en un minuto',
-  none: 'Sin contar',
-  more: 'Una respiración más',
-  less: 'Una respiración menos',
-  clear: 'Quitar',
+const en = {
+  start: 'Start counting',
+  again: 'Count again',
+  tap: 'Tap for each breath',
+  space: 'You can also use the spacebar.',
+  stop: 'Stop',
+  seconds: 'seconds',
+  left: 'Seconds remaining',
+  how: 'Watch the chest. Count for a full minute.',
+  done: 'Full minute complete. Total saved.',
+  stopped: 'Stopped before one minute. Nothing was saved. Start again or enter the number manually.',
+  value: 'Breaths per minute',
+  none: 'Not counted',
+  more: 'One more breath',
+  less: 'One fewer breath',
+  clear: 'Clear',
 }
 const qu = {}
 
@@ -29,7 +29,7 @@ type Phase = 'idle' | 'running' | 'done' | 'stopped'
 
 /** Cronómetro de 60 s para contar respiraciones a mano. Al terminar guarda el total en la visita. */
 export function BreathTimer() {
-  const t = useT(es, qu)
+  const t = useT(en, qu)
   const breaths = useStore((s) => s.visit.breaths)
   const setVisit = useStore((s) => s.setVisit)
   const [phase, setPhase] = useState<Phase>('idle')

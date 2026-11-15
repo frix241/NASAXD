@@ -55,29 +55,29 @@ const noDanger = (): Record<DangerSign, boolean> =>
 
 /** Cómo se dice cada señal de alarma, en palabras simples (sin punto final). */
 export const DANGER_TEXT: Record<DangerSign, string> = {
-  noDrink: 'no puede beber ni lactar',
-  vomits: 'vomita todo',
-  convulsions: 'tuvo convulsiones',
-  sleepy: 'está muy dormida o no despierta',
-  breathless: 'le cuesta respirar',
-  chestIndrawing: 'se le hunde el pecho al respirar',
-  blueLips: 'tiene los labios morados',
+  noDrink: 'cannot drink or breastfeed',
+  vomits: 'vomits everything',
+  convulsions: 'had a seizure',
+  sleepy: 'is very drowsy or cannot be woken',
+  breathless: 'has difficulty breathing',
+  chestIndrawing: 'chest pulls in while breathing',
+  blueLips: 'has bluish lips',
 }
 const DANGER_ZONES: Record<DangerSign, BodyZone[]> = {
   noDrink: ['head'], vomits: ['head'], convulsions: ['head'], sleepy: ['head'],
   breathless: ['chest'], chestIndrawing: ['chest'], blueLips: ['chest', 'head'],
 }
 
-export const STATUS_LABEL: Record<Status, string> = { ok: 'Atiendo yo', warn: 'Vigilo y vuelvo a revisar', bad: 'Derivo a la posta' }
-export const COLD_LABEL: Record<Cold, string> = { normal: 'Normal', frio: 'Frío', helada: 'Helada' }
+export const STATUS_LABEL: Record<Status, string> = { ok: 'I will provide care', warn: 'Monitor and check again', bad: 'Refer to the health post' }
+export const COLD_LABEL: Record<Cold, string> = { normal: 'Normal', frio: 'Cold', helada: 'Frost' }
 const CONFIDENCE_TEXT = {
-  baja: 'Con pocos datos: seré más cautelosa.',
-  media: 'Con algunos datos: revisa lo que falta.',
-  alta: 'Con datos suficientes.',
+  baja: 'There is limited information, so I will be more cautious.',
+  media: 'Some information is available; check what is missing.',
+  alta: 'There is enough information.',
 } as const
 
 // ── Ayudas ──────────────────────────────────────────────────────────────────
-const num = (n: number, decimals = 0) => n.toFixed(decimals).replace('.', ',')
+const num = (n: number, decimals = 0) => n.toFixed(decimals)
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 const noDot = (s: string) => s.replace(/\.$/, '')
 const pad2 = (n: number) => String(n).padStart(2, '0')
@@ -86,7 +86,7 @@ const isChild = (v: Visit) => v.kind === 'child'
 const isBaby = (v: Visit) => isChild(v) && v.ageMonths < R.babyMonths
 const isYoungInfant = (v: Visit) => isChild(v) && v.ageMonths < R.youngInfantMonths
 const isVulnerable = (v: Visit) => v.kind === 'child' || v.kind === 'elder'
-const hoursText = (h: number) => (h === 1 ? '1 hora' : `${num(h, Number.isInteger(h) ? 0 : 1)} horas`)
+const hoursText = (h: number) => (h === 1 ? '1 hour' : `${num(h, Number.isInteger(h) ? 0 : 1)} hours`)
 
 /** Desde cuántas respiraciones por minuto se considera "respira rápido", según edad y altitud. */
 export function fastBreathingFrom(v: Pick<Visit, 'kind' | 'ageMonths' | 'altitude'>): number {
@@ -109,19 +109,19 @@ export function spo2Limits(altitude: number): { watch: number; refer: number } {
 
 /** Quién es la persona y su edad, en palabras simples. */
 export function whoText(v: Visit): string {
-  if (v.kind === 'elder') return 'Persona adulta mayor'
-  if (v.kind === 'adult') return 'Persona adulta'
+  if (v.kind === 'elder') return 'Older adult'
+  if (v.kind === 'adult') return 'Adult'
   const m = Math.max(0, Math.round(v.ageMonths))
-  if (m < 1) return 'Bebé de menos de 1 mes'
-  if (m < 12) return `Bebé de ${m} ${m === 1 ? 'mes' : 'meses'}`
+  if (m < 1) return 'Baby under 1 month old'
+  if (m < 12) return `${m}-month-old baby`
   const y = Math.floor(m / 12)
-  return `Niño o niña de ${y} ${y === 1 ? 'año' : 'años'}`
+  return `${y}-year-old child`
 }
 
 export function newVisit(region: Destination = 'sierraAlta'): Visit {
   const now = new Date()
   return {
-    alias: 'Persona 1', kind: 'child', ageMonths: 24, danger: noDanger(), cough: null, feverTouch: null, warmEnough: null,
+    alias: 'Person 1', kind: 'child', ageMonths: 24, danger: noDanger(), cough: null, feverTouch: null, warmEnough: null,
     ateDrank: null, breaths: null, cold: 'normal', altitude: DESTINATIONS[region].altitude ?? 0, hoursToPost: 2, tempC: null, spo2: null,
     startedAt: `${pad2(now.getHours())}:${pad2(now.getMinutes())}`, region,
   }
@@ -137,31 +137,31 @@ interface Rule extends Finding {
 
 function actionText(a: Action, v: Visit): string {
   switch (a) {
-    case 'go': return v.hoursToPost >= R.post.farHours ? 'Sal ya hacia la posta: está lejos.' : 'Sal ya hacia la posta.'
+    case 'go': return v.hoursToPost >= R.post.farHours ? 'Leave for the health post now; it is far away.' : 'Leave for the health post now.'
     case 'wrap': return isBaby(v)
-      ? 'Pon al bebé en contacto piel con piel y cúbrelo bien.'
-      : 'Abriga por capas y cubre cabeza, manos y pies.'
-    case 'liquids': return isBaby(v) ? 'Da pecho más seguido.' : isChild(v) ? 'Da líquidos tibios o pecho más seguido.' : 'Da líquidos tibios seguido.'
-    case 'recount': return 'Vuelve a contar la respiración en 1 hora.'
-    case 'count': return 'Cuenta la respiración durante un minuto.'
-    case 'remeasure': return 'Vuelve a medir la saturación en 1 hora.'
-    case 'wind': return 'Protege la vivienda del viento: tapa rendijas y cierra la puerta.'
-    case 'complete': return 'Completa las preguntas que faltan.'
-    case 'review': return 'Vuelve a revisar en 2 horas.'
-    case 'keep': return 'Mantén el abrigo y los líquidos tibios.'
-    case 'tomorrow': return 'Vuelve a revisar mañana, o antes si algo cambia.'
+      ? 'Hold the baby skin-to-skin and keep them well covered.'
+      : 'Dress in layers and cover the head, hands, and feet.'
+    case 'liquids': return isBaby(v) ? 'Breastfeed more often.' : isChild(v) ? 'Offer warm fluids or breastfeed more often.' : 'Offer warm fluids often.'
+    case 'recount': return 'Count breaths again in 1 hour.'
+    case 'count': return 'Count breaths for one full minute.'
+    case 'remeasure': return 'Measure oxygen saturation again in 1 hour.'
+    case 'wind': return 'Protect the home from wind: seal gaps and close the door.'
+    case 'complete': return 'Answer the remaining questions.'
+    case 'review': return 'Check again in 2 hours.'
+    case 'keep': return 'Keep the person warm and offer warm fluids.'
+    case 'tomorrow': return 'Check again tomorrow, or sooner if anything changes.'
   }
 }
 
 function travelAdvice(v: Visit): string[] {
   const cannotDrink = v.danger.noDrink || v.danger.vomits || v.danger.convulsions || v.danger.sleepy
   return [
-    isBaby(v) ? 'Lleva al bebé en contacto piel con piel y bien cubierto.' : 'Abriga por capas y cubre cabeza, manos y pies.',
-    cannotDrink ? 'No des nada por la boca si no puede tragar.'
-      : isBaby(v) ? 'Da pecho en el camino, si puede lactar.'
-      : 'Da sorbos de líquido tibio, solo si puede beber.',
-    'No dejes sola a la persona.',
-    'Avisa a la posta antes de salir, si hay señal.',
+    isBaby(v) ? 'Carry the baby skin-to-skin and well covered.' : 'Dress in layers and cover the head, hands, and feet.',
+    cannotDrink ? 'Do not give anything by mouth if the person cannot swallow.'
+      : isBaby(v) ? 'Breastfeed on the way, if possible.'
+      : 'Offer small sips of warm fluid, only if the person can drink.',
+    'Do not leave the person alone.',
+    'Notify the health post before leaving, if there is a signal.',
   ]
 }
 
@@ -172,66 +172,66 @@ export function assess(v: Visit): Result {
   const add = (id: string, status: Status, text: string, zones: BodyZone[], acts: Action[], env = false) =>
     rules.push({ id, status, text, zones, acts, env })
 
-  // 0. Confianza: cuántas preguntas clave se respondieron. Los sensores opcionales no cuentan en contra.
+  // 0. Confidence: number of key questions answered. Optional sensors do not count against it.
   const answered = [v.cough, v.feverTouch, v.warmEnough, v.ateDrank, v.breaths].filter((x) => x !== null).length
   const total = R.confidence.total
   const level = answered >= R.confidence.highMin ? 'alta' : answered >= R.confidence.mediumMin ? 'media' : 'baja'
   const confidence: Result['confidence'] = { level, answered, total, text: CONFIDENCE_TEXT[level] }
 
-  // 1. Señales de alarma: cualquiera deriva siempre.
+  // 1. Warning signs: any one of them always triggers referral.
   const alarms = DANGER_SIGNS.filter((k) => v.danger[k])
-  for (const k of alarms) add(`alarma-${k}`, 'bad', `Señal de alarma: ${DANGER_TEXT[k]}.`, DANGER_ZONES[k], ['go', 'wrap'])
+  for (const k of alarms) add(`alarma-${k}`, 'bad', `Warning sign: ${DANGER_TEXT[k]}.`, DANGER_ZONES[k], ['go', 'wrap'])
 
-  // 2. Fiebre: manda el termómetro si existe; si no, el tacto.
+  // 2. Fever: use the thermometer when available; otherwise use touch.
   const feverFrom = isYoungInfant(v) ? R.temp.feverYoungInfant : R.temp.fever
   const feverByThermo = v.tempC !== null && v.tempC >= feverFrom
   const fever = v.tempC !== null ? feverByThermo : v.feverTouch === true
 
-  // 3. Respiración contada, con umbral por edad y altitud.
+  // 3. Counted breathing, with thresholds based on age and elevation.
   const fastFrom = fastBreathingFrom(v)
   if (v.breaths !== null && v.breaths >= fastFrom) {
-    const count = `${num(v.breaths)} por minuto`
+    const count = `${num(v.breaths)} breaths per minute`
     if (v.breaths >= fastFrom + R.breathing.veryFastMargin) {
-      add('respiracion-muy-rapida', 'bad', `Respira muy rápido: ${count}.`, ['chest'], ['go', 'wrap'])
+      add('respiracion-muy-rapida', 'bad', `Breathing is very fast: ${count}.`, ['chest'], ['go', 'wrap'])
     } else if (v.cough === true || fever) {
-      const extra = v.cough === true && fever ? 'tos y fiebre' : v.cough === true ? 'tos' : 'fiebre'
-      add('respiracion-rapida-con-senales', 'bad', `Respira rápido (${count}) y tiene ${extra}.`, fever ? ['chest', 'head'] : ['chest'], ['go', 'wrap'])
+      const extra = v.cough === true && fever ? 'a cough and fever' : v.cough === true ? 'a cough' : 'a fever'
+      add('respiracion-rapida-con-senales', 'bad', `Breathing is fast (${count}) with ${extra}.`, fever ? ['chest', 'head'] : ['chest'], ['go', 'wrap'])
     } else {
-      add('respiracion-rapida', 'warn', `Respira rápido: ${count}.`, ['chest'], ['recount'])
+      add('respiracion-rapida', 'warn', `Breathing is fast: ${count}.`, ['chest'], ['recount'])
     }
   }
 
-  // 4. Sensores opcionales.
+  // 4. Optional sensors.
   if (v.spo2 !== null) {
     const lim = spo2Limits(v.altitude)
-    if (v.spo2 < lim.refer) add('saturacion-muy-baja', 'bad', `Saturación muy baja para esta altura: ${num(v.spo2)} %.`, ['chest'], ['go', 'wrap'])
-    else if (v.spo2 < lim.watch) add('saturacion-baja', 'warn', `Saturación algo baja para esta altura: ${num(v.spo2)} %.`, ['chest'], ['remeasure'])
+    if (v.spo2 < lim.refer) add('saturacion-muy-baja', 'bad', `Oxygen saturation is very low for this elevation: ${num(v.spo2)}%.`, ['chest'], ['go', 'wrap'])
+    else if (v.spo2 < lim.watch) add('saturacion-baja', 'warn', `Oxygen saturation is slightly low for this elevation: ${num(v.spo2)}%.`, ['chest'], ['remeasure'])
   }
   if (v.tempC !== null) {
     const t = `${num(v.tempC, 1)} °C`
-    if (v.tempC < R.temp.coldRefer) add('cuerpo-muy-frio', 'bad', `Está muy frío: ${t}.`, ['hands', 'feet'], ['go', 'wrap'])
-    else if (v.tempC < R.temp.coldWatch) add('cuerpo-frio', 'warn', `Tiene el cuerpo frío: ${t}.`, ['hands', 'feet'], ['wrap', 'liquids'])
+    if (v.tempC < R.temp.coldRefer) add('cuerpo-muy-frio', 'bad', `Body temperature is very low: ${t}.`, ['hands', 'feet'], ['go', 'wrap'])
+    else if (v.tempC < R.temp.coldWatch) add('cuerpo-frio', 'warn', `Body temperature is low: ${t}.`, ['hands', 'feet'], ['wrap', 'liquids'])
   }
   if (fever) {
-    const t = v.tempC !== null ? `: ${num(v.tempC, 1)} °C` : ' al tacto'
-    if (isYoungInfant(v)) add('fiebre-bebe-pequeno', 'bad', `Bebé menor de 2 meses con fiebre${t}.`, ['head'], ['go', 'liquids'])
-    else if (v.tempC !== null && v.tempC >= R.temp.highFever) add('fiebre-alta', 'bad', `Tiene fiebre alta${t}.`, ['head'], ['go', 'liquids'])
-    else add('fiebre', 'warn', `Tiene fiebre${t}.`, ['head'], ['liquids', 'review'])
+    const t = v.tempC !== null ? `: ${num(v.tempC, 1)} °C` : ' to the touch'
+    if (isYoungInfant(v)) add('fiebre-bebe-pequeno', 'bad', `A baby under 2 months has a fever${t}.`, ['head'], ['go', 'liquids'])
+    else if (v.tempC !== null && v.tempC >= R.temp.highFever) add('fiebre-alta', 'bad', `The person has a high fever${t}.`, ['head'], ['go', 'liquids'])
+    else add('fiebre', 'warn', `The person has a fever${t}.`, ['head'], ['liquids', 'review'])
   }
 
-  // 5. Lo observado.
-  if (v.cough === true) add('tos', 'warn', 'Tiene tos.', ['chest'], [v.breaths === null ? 'count' : 'recount'])
-  if (v.warmEnough === false) add('abrigo', 'warn', 'No tiene abrigo suficiente.', ['hands', 'feet'], ['wrap'])
-  if (v.ateDrank === false) add('liquidos', 'warn', 'No comió ni tomó líquidos hoy.', [], ['liquids'])
+  // 5. Observations.
+  if (v.cough === true) add('tos', 'warn', 'The person has a cough.', ['chest'], [v.breaths === null ? 'count' : 'recount'])
+  if (v.warmEnough === false) add('abrigo', 'warn', 'The person does not have enough warm clothing.', ['hands', 'feet'], ['wrap'])
+  if (v.ateDrank === false) add('liquidos', 'warn', 'The person has not eaten or had fluids today.', [], ['liquids'])
 
-  // 6. Frío del entorno. Con helada, niños pequeños y adultos mayores suben un nivel.
+  // 6. Environmental cold. Frost increases the risk level for young children and older adults.
   if (v.cold === 'helada') {
     if (isVulnerable(v)) {
-      add('helada', 'warn', v.kind === 'child' ? 'Hay helada y es un niño pequeño.' : 'Hay helada y es una persona mayor.', ['hands', 'feet'], ['wrap', 'wind'], true)
-    } else add('helada', 'ok', 'Hay helada: cuidar el abrigo.', [], ['wrap', 'wind'], true)
-  } else if (v.cold === 'frio') add('frio', 'ok', 'Hace frío: cuidar el abrigo.', [], ['wrap'], true)
+      add('helada', 'warn', v.kind === 'child' ? 'Frost is expected and this is a young child.' : 'Frost is expected and this is an older adult.', ['hands', 'feet'], ['wrap', 'wind'], true)
+    } else add('helada', 'ok', 'Frost is expected: keep warm.', [], ['wrap', 'wind'], true)
+  } else if (v.cold === 'frio') add('frio', 'ok', 'It is cold: keep warm.', [], ['wrap'], true)
 
-  // 7. Cautela: varias señales juntas, pocos datos o posta lejos adelantan la derivación.
+  // 7. Caution: multiple signs, limited information, or a distant health post can trigger earlier referral.
   const hasBad = rules.some((r) => r.status === 'bad')
   const warns = rules.filter((r) => r.status === 'warn')
   const personWarns = warns.filter((r) => !r.env)
@@ -240,31 +240,31 @@ export function assess(v: Visit): Result {
   if (!hasBad && warns.length > 0) {
     const main = noDot(warns[0].text)
     if (warns.length >= R.manyWarnings) {
-      add('varias-senales', 'bad', 'Hay varias señales juntas.', [], ['go', 'wrap'])
-      reason = `${main} y hay otras señales a la vez.`
+      add('varias-senales', 'bad', 'Several warning signs are present together.', [], ['go', 'wrap'])
+      reason = `${main}, with other warning signs at the same time.`
     } else if (level === 'baja' && personWarns.length > 0) {
-      add('pocos-datos', 'bad', 'Hay una señal y faltan datos: mejor derivar.', [], ['go', 'wrap'])
-      reason = `${noDot(personWarns[0].text)} y faltan datos: mejor derivar.`
+      add('pocos-datos', 'bad', 'There is a warning sign and information is missing: referral is safer.', [], ['go', 'wrap'])
+      reason = `${noDot(personWarns[0].text)} Information is missing, so referral is safer.`
     } else if (far && warns.length >= R.post.farWarnings) {
-      add('posta-lejos', 'bad', 'Hay señales y la posta está lejos: mejor salir ya.', [], ['go', 'wrap'])
-      reason = `${main} y la posta está lejos: mejor salir ya.`
+      add('posta-lejos', 'bad', 'There are warning signs and the health post is far away: leave now.', [], ['go', 'wrap'])
+      reason = `${main}, and the health post is far away: leave now.`
     }
   }
-  // Sin nada que vigilar pero casi sin datos: no se puede decir "atiendo yo".
+  // With no signs to monitor but very little information, "I will provide care" is not appropriate.
   if (rules.every((r) => r.status === 'ok') && level === 'baja') {
-    add('faltan-datos', 'warn', 'Faltan datos para decidir.', [], ['complete', v.breaths === null ? 'count' : 'review'])
+    add('faltan-datos', 'warn', 'More information is needed to decide.', [], ['complete', v.breaths === null ? 'count' : 'review'])
   }
 
-  // 8. Resultado.
+  // 8. Result.
   const sorted = rules.map((r, i) => ({ r, i })).sort((a, b) => ORDER[a.r.status] - ORDER[b.r.status] || a.i - b.i).map((x) => x.r)
   const status: Status = alarms.length > 0 || sorted.some((r) => r.status === 'bad') ? 'bad' : sorted.some((r) => r.status === 'warn') ? 'warn' : 'ok'
 
   if (!reason) {
-    if (alarms.length > 0) reason = `Hay una señal de alarma: ${DANGER_TEXT[alarms[0]]}.`
+    if (alarms.length > 0) reason = `There is a warning sign: ${DANGER_TEXT[alarms[0]]}.`
     else if (status === 'ok') {
-      reason = v.cold === 'helada' ? 'No hay señales para vigilar, pero hay helada.'
-        : v.cold === 'frio' ? 'No hay señales para vigilar, pero hace frío.'
-        : 'No hay señales para vigilar.'
+      reason = v.cold === 'helada' ? 'There are no warning signs, but frost is expected.'
+        : v.cold === 'frio' ? 'There are no warning signs, but it is cold.'
+        : 'There are no warning signs to monitor.'
     }
     else reason = sorted[0].text
   }
@@ -303,54 +303,54 @@ export function simulateFrost(v: Visit): Visit {
 // ── Hoja de derivación y guion de radio ─────────────────────────────────────
 function observed(v: Visit): string[] {
   const out: string[] = []
-  if (v.cough !== null) out.push(v.cough ? 'tiene tos' : 'sin tos')
-  if (v.feverTouch !== null) out.push(v.feverTouch ? 'fiebre al tacto' : 'sin fiebre al tacto')
-  if (v.warmEnough !== null) out.push(v.warmEnough ? 'abrigo suficiente' : 'poco abrigo')
-  if (v.ateDrank !== null) out.push(v.ateDrank ? 'comió y tomó líquidos' : 'no comió ni tomó líquidos')
+  if (v.cough !== null) out.push(v.cough ? 'has a cough' : 'no cough')
+  if (v.feverTouch !== null) out.push(v.feverTouch ? 'feels feverish to the touch' : 'does not feel feverish to the touch')
+  if (v.warmEnough !== null) out.push(v.warmEnough ? 'enough warm clothing' : 'not enough warm clothing')
+  if (v.ateDrank !== null) out.push(v.ateDrank ? 'ate and drank fluids' : 'did not eat or drink fluids')
   return out
 }
 const breathsText = (v: Visit) =>
-  v.breaths === null ? 'No se contó' : `${num(v.breaths)} por minuto${v.breaths >= fastBreathingFrom(v) ? ' (rápida)' : ''}`
+  v.breaths === null ? 'Not counted' : `${num(v.breaths)} per minute${v.breaths >= fastBreathingFrom(v) ? ' (fast)' : ''}`
 
 export function referral(v: Visit, r: Result): Referral {
   const alarms = DANGER_SIGNS.filter((k) => v.danger[k]).map((k) => cap(DANGER_TEXT[k]))
   const obs = observed(v)
   const rows: [string, string][] = [
     ['Alias', v.alias],
-    ['Quién es', whoText(v)],
-    ['Hora', v.startedAt],
-    ['Lugar', `${DESTINATIONS[v.region].label}, unos ${num(v.altitude)} m`],
-    ['Frío del entorno', COLD_LABEL[v.cold]],
-    ['Señales de alarma', alarms.length > 0 ? alarms.join('; ') : 'Ninguna'],
-    ['Lo observado', obs.length > 0 ? cap(obs.join('; ')) : 'Sin datos'],
-    ['Respiración contada', breathsText(v)],
+    ['Person', whoText(v)],
+    ['Time', v.startedAt],
+    ['Location', `${DESTINATIONS[v.region].label}, about ${num(v.altitude)} m`],
+    ['Environmental cold', COLD_LABEL[v.cold]],
+    ['Warning signs', alarms.length > 0 ? alarms.join('; ') : 'None'],
+    ['Observations', obs.length > 0 ? cap(obs.join('; ')) : 'No data'],
+    ['Counted breaths', breathsText(v)],
   ]
-  if (v.tempC !== null) rows.push(['Temperatura', `${num(v.tempC, 1)} °C`])
-  if (v.spo2 !== null) rows.push(['Saturación', `${num(v.spo2)} %`])
+  if (v.tempC !== null) rows.push(['Temperature', `${num(v.tempC, 1)} °C`])
+  if (v.spo2 !== null) rows.push(['Oxygen saturation', `${num(v.spo2)}%`])
   rows.push(
-    ['Decisión', r.label],
-    ['Razón', r.reason],
-    ['Confianza', `${cap(r.confidence.level)} (${r.confidence.answered} de ${r.confidence.total} preguntas)`],
-    ['Distancia a la posta', hoursText(v.hoursToPost)],
+    ['Decision', r.label],
+    ['Reason', r.reason],
+    ['Confidence', `${({ alta: 'High', media: 'Medium', baja: 'Low' } as const)[r.confidence.level]} (${r.confidence.answered} of ${r.confidence.total} questions)`],
+    ['Distance to health post', hoursText(v.hoursToPost)],
   )
-  return { title: r.status === 'bad' ? 'Hoja de derivación' : 'Hoja de visita', rows, onTheWay: r.onTheWay }
+  return { title: r.status === 'bad' ? 'Referral form' : 'Visit form', rows, onTheWay: r.onTheWay }
 }
 
 /** Cinco líneas cortas para dictar por radio o teléfono. */
 export function radioScript(v: Visit, r: Result): string[] {
   const alarms = DANGER_SIGNS.filter((k) => v.danger[k]).map((k) => DANGER_TEXT[k])
   const obs = observed(v)
-  const signs = alarms.length > 0 ? `Señales de alarma: ${alarms.join(', ')}.`
-    : `Sin señales de alarma. ${obs.length > 0 ? `${cap(obs.join(', '))}.` : 'Sin más datos.'}`
-  const sensors = [v.tempC !== null ? `Temperatura: ${num(v.tempC, 1)} grados.` : '', v.spo2 !== null ? `Saturación: ${num(v.spo2)}.` : ''].filter(Boolean).join(' ')
+  const signs = alarms.length > 0 ? `Warning signs: ${alarms.join(', ')}.`
+    : `No warning signs. ${obs.length > 0 ? `${cap(obs.join(', '))}.` : 'No further information.'}`
+  const sensors = [v.tempC !== null ? `Temperature: ${num(v.tempC, 1)} degrees.` : '', v.spo2 !== null ? `Oxygen saturation: ${num(v.spo2)}%.` : ''].filter(Boolean).join(' ')
   const doing = r.status === 'bad'
-    ? `En el camino: ${isBaby(v) ? 'piel con piel y bien cubierto' : 'abrigo por capas'}, no queda sola y aviso al salir.`
-    : `Por ahora: ${r.actions.map((a) => noDot(a).toLowerCase()).join('; ')}.`
+    ? `On the way: ${isBaby(v) ? 'skin-to-skin and well covered' : 'dress in layers'}, do not leave the person alone, and notify the health post when leaving.`
+    : `For now: ${r.actions.map((a) => noDot(a).toLowerCase()).join('; ')}.`
   return [
-    `Persona: ${v.alias}. ${whoText(v)}.`,
+    `Person: ${v.alias}. ${whoText(v)}.`,
     signs,
-    `Respiración: ${breathsText(v).toLowerCase()}. Frío: ${COLD_LABEL[v.cold].toLowerCase()}.${sensors ? ` ${sensors}` : ''}`,
-    `Decisión: ${r.label.toLowerCase()}. Posta a ${hoursText(v.hoursToPost)}.`,
+    `Breathing: ${breathsText(v).toLowerCase()}. Cold: ${COLD_LABEL[v.cold].toLowerCase()}.${sensors ? ` ${sensors}` : ''}`,
+    `Decision: ${r.label.toLowerCase()}. Health post is ${hoursText(v.hoursToPost)} away.`,
     doing,
   ]
 }

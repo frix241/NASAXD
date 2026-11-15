@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useT } from '../../i18n'
 import { Pictogram } from './Pictogram'
 
-const es = {
-  read: 'Leer en voz alta',
-  stop: 'Callar',
-  noVoice: 'Este dispositivo no tiene voz',
+const en = {
+  read: 'Read aloud',
+  stop: 'Stop speaking',
+  noVoice: 'This device has no speech voice',
 }
 const qu = {}
 
@@ -18,19 +18,19 @@ function hasVoice(): boolean {
   }
 }
 
-/** Voz en español si el dispositivo tiene alguna; primero las de Perú y Latinoamérica. */
-function spanishVoice(): SpeechSynthesisVoice | null {
-  const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith('es'))
+/** Uses an English voice when available. */
+function englishVoice(): SpeechSynthesisVoice | null {
+  const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith('en'))
   if (!voices.length) return null
   const lang = (v: SpeechSynthesisVoice) => v.lang.toLowerCase().replace('_', '-')
-  return voices.find((v) => lang(v) === 'es-pe')
-    ?? voices.find((v) => ['es-419', 'es-us', 'es-mx', 'es-co', 'es-bo', 'es-ec', 'es-cl', 'es-ar'].includes(lang(v)))
+  return voices.find((v) => lang(v) === 'en-us')
+    ?? voices.find((v) => ['en-gb', 'en-au', 'en-ca', 'en-in'].includes(lang(v)))
     ?? voices[0]
 }
 
 /** Botón que lee un texto en voz alta. El segundo toque lo calla. Nunca rompe la pantalla si no hay voz. */
 export function ReadAloud({ text, className = '' }: { text: string; className?: string }) {
-  const t = useT(es, qu)
+  const t = useT(en, qu)
   const [ok, setOk] = useState(hasVoice)
   const [speaking, setSpeaking] = useState(false)
   /** Identifica la lectura en curso: los avisos de lecturas viejas se ignoran */
@@ -53,9 +53,9 @@ export function ReadAloud({ text, className = '' }: { text: string; className?: 
       const synth = window.speechSynthesis
       synth.cancel()
       const u = new window.SpeechSynthesisUtterance(text)
-      const voice = spanishVoice()
+      const voice = englishVoice()
       if (voice) u.voice = voice
-      u.lang = voice?.lang ?? 'es-PE'
+      u.lang = voice?.lang ?? 'en-US'
       u.rate = 0.9
       const mine = ++turn.current
       u.onend = () => { if (turn.current === mine) setSpeaking(false) }

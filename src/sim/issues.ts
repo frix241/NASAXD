@@ -12,8 +12,8 @@ export const SPACE_ZONES: ZoneMap = {
     sleep: 'head', mood: 'head', exercise: 'muscles', radiation: 'body', temp: 'body', glucose: 'body',
   },
   label: {
-    heart: 'Corazón', kidneys: 'Riñones', bones: 'Huesos', head: 'Cabeza y sueño',
-    muscles: 'Músculos', body: 'Cuerpo entero',
+    heart: 'Heart', kidneys: 'Kidneys', bones: 'Bones', head: 'Head and sleep',
+    muscles: 'Muscles', body: 'Whole body',
   },
   metrics: {
     heart: ['pulse', 'bp', 'spo2', 'resp'], kidneys: ['hydration'], bones: ['exercise'],
@@ -37,35 +37,35 @@ type Copy = Omit<Issue, 'key' | 'level' | 'zone'>
 function copy(key: MetricKey, bad: boolean, r: Reading, s: SimState): Copy {
   switch (key) {
     case 'radiation': return bad
-      ? { title: 'Tormenta solar', why: `La radiación está ${r.text} veces más alta de lo normal. Las paredes del refugio te protegen.`, action: 'shelter', actionLabel: 'Ir al refugio', minutes: 5 }
-      : { title: 'Radiación algo alta', why: `Está ${r.text} veces sobre lo normal. Quédate en las zonas centrales de la nave.`, action: 'ack', actionLabel: 'Entendido', minutes: 1 }
+      ? { title: 'Solar storm', why: `Radiation is ${r.text} times higher than normal. The shelter walls will protect you.`, action: 'shelter', actionLabel: 'Go to shelter', minutes: 5 }
+      : { title: 'Radiation slightly high', why: `It is ${r.text} times above normal. Stay in the central areas of the spacecraft.`, action: 'ack', actionLabel: 'Got it', minutes: 1 }
     case 'temp': return bad
-      ? { title: 'Temperatura fuera de lo normal', why: `Tu cuerpo marca ${r.text} °C. Descansa, toma agua y cuéntale a la Tierra.`, action: 'earth', actionLabel: 'Avisar a la Tierra', minutes: 3 }
-      : { title: 'Temperatura un poco alta', why: `Marcas ${r.text} °C. Toma agua y vuelve a mirar en media hora.`, action: 'water', actionLabel: 'Beber agua', minutes: 2 }
+      ? { title: 'Temperature outside the normal range', why: `Your body temperature is ${r.text} °C. Rest, drink water, and report it to Earth.`, action: 'earth', actionLabel: 'Notify Earth', minutes: 3 }
+      : { title: 'Temperature slightly high', why: `Your temperature is ${r.text} °C. Drink water and check again in 30 minutes.`, action: 'water', actionLabel: 'Drink water', minutes: 2 }
     case 'spo2': return bad
-      ? { title: 'Poco oxígeno en la sangre', why: `Está en ${r.text} %. Deja lo que haces, respira hondo y avisa a la Tierra.`, action: 'earth', actionLabel: 'Avisar a la Tierra', minutes: 3 }
-      : { title: 'Oxígeno un poco bajo', why: `Está en ${r.text} %. Respira lento y profundo unos minutos.`, action: 'ack', actionLabel: 'Entendido', minutes: 3 }
+      ? { title: 'Low blood oxygen', why: `It is at ${r.text}%. Stop what you are doing, take a deep breath, and notify Earth.`, action: 'earth', actionLabel: 'Notify Earth', minutes: 3 }
+      : { title: 'Blood oxygen slightly low', why: `It is at ${r.text}%. Breathe slowly and deeply for a few minutes.`, action: 'ack', actionLabel: 'Got it', minutes: 3 }
     case 'bp': return bad
-      ? { title: 'Presión alta', why: `Tu presión está en ${r.text}. Siéntate y respira lento. Si no baja en 15 minutos, avisa a la Tierra.`, action: 'rest', actionLabel: 'Descansar ahora', minutes: 15 }
-      : { title: 'Presión algo alta', why: s.sleepHours < 7
-          ? `Está en ${r.text}. Dormir poco sube la presión. Descansa y toma agua.`
-          : `Está en ${r.text}. Toma agua y evita esfuerzos por un rato.`, action: 'water', actionLabel: 'Beber agua', minutes: 2 }
+      ? { title: 'High blood pressure', why: `Your blood pressure is ${r.text}. Sit down and breathe slowly. If it does not come down in 15 minutes, notify Earth.`, action: 'rest', actionLabel: 'Rest now', minutes: 15 }
+      : { title: 'Blood pressure slightly high', why: s.sleepHours < 7
+          ? `It is ${r.text}. Not getting enough sleep raises blood pressure. Rest and drink water.`
+          : `It is ${r.text}. Drink water and avoid exertion for a while.`, action: 'water', actionLabel: 'Drink water', minutes: 2 }
     case 'pulse': return bad
-      ? { title: 'Pulso muy rápido en reposo', why: `Tu corazón late ${r.text} veces por minuto sin hacer ejercicio. Descansa y avisa a la Tierra.`, action: 'earth', actionLabel: 'Avisar a la Tierra', minutes: 3 }
-      : { title: 'Pulso algo rápido', why: `Late ${r.text} veces por minuto. Siéntate y respira lento.`, action: 'rest', actionLabel: 'Descansar ahora', minutes: 10 }
+      ? { title: 'Very fast resting heart rate', why: `Your heart beats ${r.text} times per minute while you are not exercising. Rest and notify Earth.`, action: 'earth', actionLabel: 'Notify Earth', minutes: 3 }
+      : { title: 'Heart rate slightly fast', why: `Your heart beats ${r.text} times per minute. Sit down and breathe slowly.`, action: 'rest', actionLabel: 'Rest now', minutes: 10 }
     case 'hydration': return bad
-      ? { title: 'Te falta agua', why: `Tu cuerpo está al ${r.text} % de agua. Con poca agua sube la presión y te cansas más.`, action: 'water', actionLabel: 'Beber agua', minutes: 2 }
-      : { title: 'Toma un poco de agua', why: `Estás al ${r.text} % de agua. Un vaso ahora evita que baje más.`, action: 'water', actionLabel: 'Beber agua', minutes: 2 }
+      ? { title: 'You need water', why: `Your body is at ${r.text}% hydration. Dehydration can raise blood pressure and make you more tired.`, action: 'water', actionLabel: 'Drink water', minutes: 2 }
+      : { title: 'Drink some water', why: `Your hydration is at ${r.text}%. A glass of water now can keep it from dropping further.`, action: 'water', actionLabel: 'Drink water', minutes: 2 }
     case 'sleep': return bad
-      ? { title: 'Dormiste muy poco', why: `Anoche dormiste ${r.text} horas. Con poco sueño sube la presión y baja el ánimo.`, action: 'rest', actionLabel: 'Tomar una siesta', minutes: 20 }
-      : { title: 'Te faltó sueño', why: `Anoche dormiste ${r.text} horas. Busca un descanso corto hoy.`, action: 'rest', actionLabel: 'Tomar una siesta', minutes: 20 }
-    case 'resp': return { title: bad ? 'Respiración fuera de lo normal' : 'Respiración algo rápida', why: `Respiras ${r.text} veces por minuto. Detente y respira lento.`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Avisar a la Tierra' : 'Entendido', minutes: 3 }
-    case 'exercise': return { title: bad ? 'Muy poco ejercicio esta semana' : 'Falta ejercicio esta semana', why: `Llevas el ${r.text} % de la meta. Sin ejercicio se pierden músculo y hueso.`, action: 'exercise', actionLabel: 'Hacer ejercicio', minutes: 30 }
-    case 'mood': return { title: bad ? 'Ánimo muy bajo' : 'Ánimo bajo', why: 'Tu ánimo bajó. Un descanso o hablar con alguien ayuda.', action: 'mood', actionLabel: 'Chequeo de ánimo', minutes: 3 }
+      ? { title: 'You slept very little', why: `You slept ${r.text} hours last night. Too little sleep can raise blood pressure and lower your mood.`, action: 'rest', actionLabel: 'Take a nap', minutes: 20 }
+      : { title: 'You need more sleep', why: `You slept ${r.text} hours last night. Try to take a short rest today.`, action: 'rest', actionLabel: 'Take a nap', minutes: 20 }
+    case 'resp': return { title: bad ? 'Breathing outside the normal range' : 'Breathing slightly fast', why: `You are breathing ${r.text} times per minute. Stop and breathe slowly.`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Notify Earth' : 'Got it', minutes: 3 }
+    case 'exercise': return { title: bad ? 'Very little exercise this week' : 'You need more exercise this week', why: `You have completed ${r.text}% of your goal. Without exercise, muscle and bone are lost.`, action: 'exercise', actionLabel: 'Exercise', minutes: 30 }
+    case 'mood': return { title: bad ? 'Very low mood' : 'Low mood', why: 'Your mood is lower. Resting or talking with someone may help.', action: 'mood', actionLabel: 'Mood check-in', minutes: 3 }
     case 'glucose': return r.value < 70
-      ? { title: bad ? 'Azúcar en sangre muy baja' : 'Azúcar en sangre algo baja', why: `Tu glucosa marca ${r.text} mg/dL. Come algo dulce ahora y vuelve a medir en 15 minutos.${bad ? ' Avisa a la Tierra.' : ''}`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Avisar a la Tierra' : 'Ya comí algo', minutes: 15 }
-      : { title: bad ? 'Azúcar en sangre alta' : 'Azúcar en sangre algo alta', why: `Tu glucosa marca ${r.text} mg/dL en ayunas. ${bad ? 'Repite la medición y cuéntale a la Tierra.' : 'Toma agua, muévete un poco y mide otra vez mañana en ayunas.'}`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Avisar a la Tierra' : 'Entendido', minutes: 5 }
-    default: return { title: r.label, why: '', action: 'ack', actionLabel: 'Entendido', minutes: 1 }
+      ? { title: bad ? 'Very low blood sugar' : 'Slightly low blood sugar', why: `Your glucose is ${r.text} mg/dL. Eat something sweet now and check again in 15 minutes.${bad ? ' Notify Earth.' : ''}`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Notify Earth' : 'I ate something', minutes: 15 }
+      : { title: bad ? 'High blood sugar' : 'Slightly high blood sugar', why: `Your fasting glucose is ${r.text} mg/dL. ${bad ? 'Repeat the measurement and report it to Earth.' : 'Drink water, move around a little, and check again tomorrow before eating.'}`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Notify Earth' : 'Got it', minutes: 5 }
+    default: return { title: r.label, why: '', action: 'ack', actionLabel: 'Got it', minutes: 1 }
   }
 }
 
@@ -82,6 +82,6 @@ export function findIssues(s: SimState, readings: Record<MetricKey, Reading>): I
 }
 
 export function statusPhrase(issues: Issue[]): string {
-  if (!issues.length) return 'Todo en verde'
-  return issues.length === 1 ? '1 cosa para vigilar' : `${issues.length} cosas para vigilar`
+  if (!issues.length) return 'All clear'
+  return issues.length === 1 ? '1 item to watch' : `${issues.length} items to watch`
 }

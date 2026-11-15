@@ -11,84 +11,84 @@ import { ReadAloud } from '../../ui/community/ReadAloud'
 import { Icon } from '../../ui/Icon'
 import { TopBar } from '../Monitor'
 
-const es = {
-  title: 'Evaluar',
-  pending: 'Umbrales pendientes de validar',
-  lead: 'Apoyo para decidir. No es un diagnóstico.',
-  lang: 'Idioma',
-  langEs: 'Español',
+const en = {
+  title: 'Assessment',
+  pending: 'Thresholds pending validation',
+  lead: 'Decision support. Not a diagnosis.',
+  lang: 'Language',
+  langEs: 'English',
   langQu: 'Quechua (runasimi)',
 
-  who: 'Quién es',
-  child: 'Niño menor de 5',
-  elder: 'Adulto mayor',
-  adult: 'Adulto',
+  who: 'Person',
+  child: 'Child under 5',
+  elder: 'Older adult',
+  adult: 'Adult',
   alias: 'Alias',
-  aliasHint: 'Alias, nunca el nombre real.',
-  age: 'Edad en meses',
-  months: 'meses',
+  aliasHint: 'Use an alias, never a real name.',
+  age: 'Age in months',
+  months: 'months',
 
-  danger: 'Señales de alarma',
-  dangerLead: 'Toca las que veas ahora.',
-  noDrink: 'No puede beber o comer',
-  vomits: 'Vomita todo',
-  convulsions: 'Convulsiones',
-  sleepy: 'Muy somnoliento',
-  breathless: 'Dificultad para respirar',
-  chestIndrawing: 'Hundimiento de costillas',
-  blueLips: 'Labios morados',
-  dangerBand: 'Con una señal de alarma siempre se deriva a la posta',
+  danger: 'Warning signs',
+  dangerLead: 'Select any signs you see now.',
+  noDrink: 'Unable to drink or eat',
+  vomits: 'Vomits everything',
+  convulsions: 'Convulsions',
+  sleepy: 'Very drowsy',
+  breathless: 'Difficulty breathing',
+  chestIndrawing: 'Chest indrawing',
+  blueLips: 'Bluish lips',
+  dangerBand: 'Any warning sign means referral to a health post',
 
-  observe: 'Observación',
-  cough: 'Tiene tos',
-  feverTouch: 'Tiene fiebre (al tacto)',
-  warmEnough: 'Tiene abrigo suficiente',
-  ateDrank: 'Comió y tomó líquidos hoy',
-  yes: 'Sí',
+  observe: 'Observation',
+  cough: 'Has a cough',
+  feverTouch: 'Feels feverish to the touch',
+  warmEnough: 'Has enough warm clothing',
+  ateDrank: 'Ate and drank fluids today',
+  yes: 'Yes',
   no: 'No',
-  unknown: 'No sé',
+  unknown: "I don't know",
 
-  breathing: 'Respiración',
+  breathing: 'Breathing',
 
-  place: 'Entorno',
-  cold: 'Nivel de frío',
+  place: 'Environment',
+  cold: 'Cold level',
   coldNormal: 'Normal',
-  coldFrio: 'Frío',
-  coldHelada: 'Helada',
-  altitude: 'Altitud aproximada',
-  meters: 'metros',
-  hours: 'Distancia a la posta',
-  hoursUnit: 'horas',
+  coldFrio: 'Cold',
+  coldHelada: 'Frost',
+  altitude: 'Approximate elevation',
+  meters: 'meters',
+  hours: 'Distance to health post',
+  hoursUnit: 'hours',
 
-  sensors: 'Si tienes termómetro o pulsioxímetro (no es necesario)',
-  temp: 'Temperatura',
-  tempUnit: 'grados',
-  spo2: 'Saturación',
-  spo2Unit: 'por ciento',
-  remove: 'Quitar',
-  noData: 'Sin dato',
-  less: 'Bajar',
-  more: 'Subir',
+  sensors: 'If you have a thermometer or pulse oximeter (optional)',
+  temp: 'Temperature',
+  tempUnit: 'degrees',
+  spo2: 'Oxygen saturation',
+  spo2Unit: 'percent',
+  remove: 'Remove',
+  noData: 'No data',
+  less: 'Decrease',
+  more: 'Increase',
 
-  result: 'Resultado',
-  doNow: 'Qué hacer ahora',
-  answered: 'Respondiste',
-  of: 'de',
-  showMore: 'Ver más',
-  showLess: 'Ver menos',
-  sheet: 'Ver hoja de derivación',
-  newPerson: 'Nueva persona',
+  result: 'Result',
+  doNow: 'What to do now',
+  answered: 'Answered',
+  of: 'of',
+  showMore: 'Show more',
+  showLess: 'Show less',
+  sheet: 'View referral form',
+  newPerson: 'New person',
 }
-/** Quechua: vacío hasta que lo revisen hablantes nativos. No inventar traducciones. */
-const qu: Partial<Record<keyof typeof es, string>> = {}
-type T = (key: keyof typeof es) => string
+/** Quechua remains empty until reviewed by native speakers. */
+const qu: Partial<Record<keyof typeof en, string>> = {}
+type T = (key: keyof typeof en) => string
 
 const KINDS: PersonKind[] = ['child', 'elder', 'adult']
 const COLDS: { id: Cold; text: 'coldNormal' | 'coldFrio' | 'coldHelada' }[] = [
   { id: 'normal', text: 'coldNormal' }, { id: 'frio', text: 'coldFrio' }, { id: 'helada', text: 'coldHelada' },
 ]
 const OBSERVE = ['cough', 'feverTouch', 'warmEnough', 'ateDrank'] as const
-const comma = (n: number, digits = 0) => n.toFixed(digits).replace('.', ',')
+const comma = (n: number, digits = 0) => n.toFixed(digits)
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n))
 
 /** Botón + o − grande. Si se mantiene apretado, sigue sumando. */
@@ -203,7 +203,7 @@ function ResultPanel({ t }: { t: T }) {
 
 /** Pantalla "Evaluar": lo que el agente comunitario ve y toca durante la visita. */
 export default function Evaluate() {
-  const t = useT(es, qu)
+  const t = useT(en, qu)
   const v = useStore((s) => s.visit)
   const setVisit = useStore((s) => s.setVisit)
   const toggleDanger = useStore((s) => s.toggleDanger)
@@ -222,8 +222,8 @@ export default function Evaluate() {
         </div>
         <div className="cm-lang">
           <span className="cm-opts" role="group" aria-label={t('lang')}>
-            <button type="button" className="cm-opt" aria-pressed={lang === 'es'} onClick={() => setLang('es')}>
-              {lang === 'es' && <Icon name="ok" size={18} />}{t('langEs')}
+            <button type="button" className="cm-opt" aria-pressed={lang === 'en'} onClick={() => setLang('en')}>
+              {lang === 'en' && <Icon name="ok" size={18} />}{t('langEs')}
             </button>
             <button type="button" className="cm-opt" aria-pressed={lang === 'qu'} onClick={() => setLang('qu')}>
               {lang === 'qu' && <Icon name="ok" size={18} />}{t('langQu')}

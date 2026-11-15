@@ -7,13 +7,13 @@ export type Destination = 'leo' | 'luna' | 'marte' | 'sierraAlta' | 'sierraMedia
 
 export const DESTINATIONS: Record<Destination, { label: string; radBase: number; altitude?: number; nightTemp?: number }> = {
   // radBase: dosis normal en µSv por hora para ese destino
-  leo: { label: 'Órbita baja', radBase: 12 },
+  leo: { label: 'Low Earth orbit', radBase: 12 },
   luna: { label: 'Luna', radBase: 55 },
   marte: { label: 'Marte', radBase: 75 },
   // Perfil comunidad: altitud aproximada (m) y temperatura normal de madrugada (°C)
-  sierraAlta: { label: 'Sierra alta (Caylloma)', radBase: 10, altitude: 4300, nightTemp: -4 },
-  sierraMedia: { label: 'Sierra media (Cusco)', radBase: 10, altitude: 3400, nightTemp: 2 },
-  selvaFriaje: { label: 'Selva con friaje (Iquitos)', radBase: 10, altitude: 100, nightTemp: 21 },
+  sierraAlta: { label: 'Highlands (Caylloma)', radBase: 10, altitude: 4300, nightTemp: -4 },
+  sierraMedia: { label: 'Mid-altitude highlands (Cusco)', radBase: 10, altitude: 3400, nightTemp: 2 },
+  selvaFriaje: { label: 'Jungle cold spell (Iquitos)', radBase: 10, altitude: 100, nightTemp: 21 },
 }
 
 export const RULES = {
@@ -91,7 +91,7 @@ export function statusMood(v: number): Status {
   return x < RULES.mood.warnMin ? 'bad' : x < RULES.mood.okMin ? 'warn' : 'ok'
 }
 
-export const STATUS_WORD: Record<Status, string> = { ok: 'Bien', warn: 'Vigilar', bad: 'Atender' }
+export const STATUS_WORD: Record<Status, string> = { ok: 'Good', warn: 'Watch', bad: 'Act' }
 export const STATUS_SYMBOL: Record<Status, string> = { ok: '✓', warn: '!', bad: '✕' }
 export const worst = (list: Status[]): Status =>
   list.includes('bad') ? 'bad' : list.includes('warn') ? 'warn' : 'ok'
