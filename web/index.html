@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AstroTwin — Consola Autoalojada</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Saltar al contenido principal</a>
+
+    <header class="site-header">
+      <div class="container header-grid">
+        <div>
+          <p class="brand-eyebrow">AstroTwin · Despliegue Local / Azure VM Sin APIs Externas</p>
+          <h1>Consola Operativa y Auditoría ML</h1>
+          <p class="subtitle">
+            Resultados reales de entrenamiento, catálogo NASA, laboratorios Inspiration4,
+            entrevista matutina y copiloto az³tro con contratos 3D explícitos.
+          </p>
+        </div>
+        <div class="status-bar" aria-live="polite" id="global-status-bar">
+          <span class="badge" id="badge-api">API: comprobando…</span>
+          <span class="badge" id="badge-llm">LLM: comprobando…</span>
+          <span class="badge" id="badge-voice">Voz: comprobando…</span>
+        </div>
+        <div class="field language-picker">
+          <label for="app-language">Language / Idioma</label>
+          <select id="app-language" aria-label="Language / Idioma">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <p class="hint" id="diagnostic-status-note">
+          Alcance honesto: este panel no valida diagnósticos clínicos (datos de
+          Inspiration4 dispersos con 4 sujetos, MMASH terrestre y sano, etiquetas
+          de anomalía sintéticas). Sí operan las alertas deterministas de reglas,
+          el control de calidad de datos y la consulta de laboratorio con
+          proveniencia visible; el LLM (si está disponible) solo explica con
+          guardas, nunca decide.
+        </p>
+      </div>
+    </header>
+
+    <nav class="main-nav" aria-label="Navegación principal">
+      <div class="container">
+        <ul class="nav-list">
+          <li><a href="#sec-resultados">Resultados ML</a></li>
+          <li><a href="#sec-catalogo">Catálogo Excel y Labs</a></li>
+          <li><a href="#sec-az3tro">Copiloto az³tro y 3D</a></li>
+          <li><a href="#sec-entrevista">Entrevista y Misiones</a></li>
+          <li><a href="#sec-vitales">Motor de Anomalías (Simulado)</a></li>
+          <li><a href="#sec-voz">Voz Local (Contratos)</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main id="main" tabindex="-1" class="container">
+      <section aria-label="Separación de espacios de nombres" class="provenance-strip">
+        <article class="lane">
+          <div class="lane-tag">CARRIL 1 · simulation_synthetic</div>
+          <p>Perfiles ficticios (C001-sim..C004-sim), reglas deterministas y misiones. No es dato clínico.</p>
+        </article>
+        <article class="lane">
+          <div class="lane-tag">CARRIL 2 · real_lab_nasa_osdr</div>
+          <p>Laboratorios Inspiration4 (OSD-569/575, solo <code>calidad = ok</code>). No se asignan a perfiles simulados.</p>
+        </article>
+        <article class="lane">
+          <div class="lane-tag">CARRIL 3 · llm_context (az³tro)</div>
+          <p>Explicación en JSON validado si el modelo local responde. Si cae, el motor sigue operando sin fingir LLM.</p>
+        </article>
+      </section>
+
+      <!-- 1. RESULTADOS ML -->
+      <section id="sec-resultados" class="section-block" aria-labelledby="h-resultados">
+        <div class="section-header">
+          <h2 id="h-resultados">1. Resultados de Entrenamiento ML y Benchmark</h2>
+          <button type="button" id="btn-refresh-results">Actualizar resultados</button>
+        </div>
+        <div id="results-container" aria-live="polite">
+          <div class="state-box">Cargando resumen ML e historial CSV…</div>
+        </div>
+      </section>
+
+      <!-- 2. CATÁLOGO EXCEL Y LABORATORIOS REALES -->
+      <section id="sec-catalogo" class="section-block" aria-labelledby="h-catalogo">
+        <div class="section-header">
+          <h2 id="h-catalogo">2. Catálogo Excel NASA y Laboratorios Reales</h2>
+        </div>
+        <div class="grid-2">
+          <article class="panel" aria-labelledby="h-cat-panel">
+            <h3 id="h-cat-panel">Catálogo de Parámetros (parameter_catalog.json)</h3>
+            <div class="form-stack">
+              <div class="field">
+                <label for="catalog-search">Buscar parámetro, unidad o fuente</label>
+                <input type="search" id="catalog-search" placeholder="Ej. pulso, hueso, glucosa…" />
+              </div>
+              <div class="field">
+                <label for="catalog-sheet">Filtrar por hoja</label>
+                <select id="catalog-sheet">
+                  <option value="">Todas las hojas</option>
+                </select>
+              </div>
+            </div>
+            <div id="catalog-container" aria-live="polite">
+              <div class="state-box">Cargando catálogo…</div>
+            </div>
+          </article>
+
+          <article class="panel" aria-labelledby="h-labs-panel">
+            <h3 id="h-labs-panel">Laboratorios Inspiration4 (solo calidad = ok)</h3>
+            <div id="labs-container" aria-live="polite">
+              <div class="state-box">Cargando laboratorios reales…</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 3. COPILOTO AZ3TRO Y CONTRATOS 3D -->
+      <section id="sec-az3tro" class="section-block" aria-labelledby="h-az3tro">
+        <div class="section-header">
+          <h2 id="h-az3tro">3. Copiloto az³tro y Contratos de Integración 3D</h2>
+        </div>
+        <div class="grid-2">
+          <form class="panel form-stack" id="chat-form" novalidate>
+            <h3>Consulta contextual</h3>
+            <div class="field">
+              <label for="chat-profile">Perfil simulado (aislado)</label>
+              <select id="chat-profile">
+                <option value="C001-sim">C001-sim · Alex (Simulado)</option>
+                <option value="C002-sim">C002-sim · Mika (Simulado)</option>
+                <option value="C003-sim">C003-sim · Sam (Simulado)</option>
+                <option value="C004-sim">C004-sim · Noor (Simulado)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="chat-system">Sistema anatómico (navegación educativa)</label>
+              <select id="chat-system">
+                <option value="cardiovascular">Cardiovascular (thorax)</option>
+                <option value="neurovestibular">Neurovestibular (head)</option>
+                <option value="musculoskeletal">Musculoesquelético (musculoskeletal)</option>
+                <option value="metabolic">Metabólico (abdomen)</option>
+                <option value="sleep_circadian">Sueño y ritmo circadiano (head)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="chat-message">Pregunta operativa</label>
+              <textarea id="chat-message" rows="3" required>¿Qué muestra el estado simulado actual y qué acción operativa recomiendas?</textarea>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="chat-use-llm" checked />
+              <label for="chat-use-llm">Intentar explicación con LLM local (si no responde, mostrar no disponible)</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="chat-include-labs" />
+              <label for="chat-include-labs">Incluir conteo de referencia de laboratorios reales (namespace aislado)</label>
+            </div>
+            <div class="btn-row">
+              <button type="submit" class="btn-primary" id="btn-chat-submit">Consultar az³tro</button>
+            </div>
+          </form>
+
+          <article class="panel" aria-labelledby="h-chat-out">
+            <h3 id="h-chat-out">Respuesta validada y Contratos 3D</h3>
+            <div id="chat-output" aria-live="polite">
+              <div class="state-box">Envía una consulta para inspeccionar el motor determinista, el estado real del LLM y el contrato 3D <code>{zone, severity, reason, source, allowed_actions}</code>.</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 4. ENTREVISTA MATUTINA Y MISIONES -->
+      <section id="sec-entrevista" class="section-block" aria-labelledby="h-entrevista">
+        <div class="section-header">
+          <h2 id="h-entrevista">4. Entrevista Matutina y Propuesta de Misiones</h2>
+        </div>
+        <div class="grid-2">
+          <form class="panel form-stack" id="interview-form" novalidate>
+            <h3>Registro subjetivo (sin diagnóstico)</h3>
+            <div class="field">
+              <label for="int-profile">Perfil simulado</label>
+              <select id="int-profile">
+                <option value="C001-sim">C001-sim · Alex (Simulado)</option>
+                <option value="C002-sim">C002-sim · Mika (Simulado)</option>
+                <option value="C003-sim">C003-sim · Sam (Simulado)</option>
+                <option value="C004-sim">C004-sim · Noor (Simulado)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="int-sleep">Calidad de sueño (1 = muy mala, 5 = excelente)</label>
+              <input type="number" id="int-sleep" min="1" max="5" value="3" required />
+            </div>
+            <div class="field">
+              <label for="int-energy">Nivel de energía (1-5)</label>
+              <input type="number" id="int-energy" min="1" max="5" value="3" required />
+            </div>
+            <div class="field">
+              <label for="int-mood">Estado de ánimo (1-5)</label>
+              <input type="number" id="int-mood" min="1" max="5" value="4" required />
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="int-hydration" checked />
+              <label for="int-hydration">Hidratación matutina completada</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="int-pain-present" />
+              <label for="int-pain-present">Reportar molestia física subjetiva</label>
+            </div>
+            <div class="field">
+              <label for="int-pain-zone">Zona de molestia (si aplica)</label>
+              <select id="int-pain-zone">
+                <option value="">Ninguna</option>
+                <option value="thorax">Tórax</option>
+                <option value="head">Cabeza</option>
+                <option value="abdomen">Abdomen</option>
+                <option value="musculoskeletal">Musculoesquelético</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="int-notes">Observaciones</label>
+              <input type="text" id="int-notes" placeholder="Ej. Fatiga leve tras turno anterior" />
+            </div>
+            <div class="btn-row">
+              <button type="submit" class="btn-primary">Generar propuesta de misiones</button>
+            </div>
+          </form>
+
+          <article class="panel" aria-labelledby="h-int-out">
+            <h3 id="h-int-out">Misiones propuestas (requieren confirmación)</h3>
+            <div id="interview-output" aria-live="polite">
+              <div class="state-box">Completa la entrevista matutina para generar propuestas operativas sujetas a confirmación explícita.</div>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel" style="margin-top: 1rem;" aria-labelledby="h-daily-ctx">
+          <h3 id="h-daily-ctx">Contexto diario breve (5 preguntas opcionales · conectado al motor de vitales)</h3>
+          <p class="hint">
+            Captura solo contexto confirmado por ti (sin diagnóstico, sin audio guardado). Puedes
+            <strong>saltar</strong> cualquier pregunta sin bloqueo ni penalización. El antecedente o
+            medicación declarada requiere consentimiento explícito y <strong>nunca</strong> se envía al LLM ni a modelos ML.
+          </p>
+          <form class="form-stack" id="daily-context-form" novalidate>
+            <div class="panel" id="dc-voice-panel" style="margin-bottom: 0.75rem;">
+              <div class="btn-row">
+                <button type="button" id="dc-voice-start-btn">Iniciar entrevista guiada por voz (Q1–Q5)</button>
+              </div>
+              <div id="dc-voice-guided" hidden style="margin-top: 0.75rem;">
+                <p class="hint" id="dc-voice-step"></p>
+                <p id="dc-voice-question"><strong></strong></p>
+                <div class="btn-row">
+                  <button type="button" id="dc-voice-ptt-btn" aria-pressed="false">Mantener pulsado para responder</button>
+                  <button type="button" id="dc-voice-tts-btn">Escuchar pregunta</button>
+                  <button type="button" id="dc-voice-skip-btn">Saltar pregunta</button>
+                  <button type="button" id="dc-voice-cancel-btn">Cancelar modo voz</button>
+                </div>
+                <p class="hint" id="dc-voice-status" role="status" aria-live="polite"></p>
+                <div id="dc-voice-transcript-zone" hidden>
+                  <div class="field">
+                    <label for="dc-voice-transcript">Respuesta transcrita (revísala o edítala antes de confirmar)</label>
+                    <textarea id="dc-voice-transcript" rows="2"></textarea>
+                  </div>
+                  <div class="btn-row">
+                    <button type="button" class="btn-primary" id="dc-voice-confirm-btn">Confirmar respuesta y avanzar</button>
+                    <button type="button" id="dc-voice-retry-btn">Descartar borrador</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label for="dc-profile">Perfil simulado</label>
+                <select id="dc-profile">
+                  <option value="C001-sim">C001-sim · Alex (Simulado)</option>
+                  <option value="C002-sim">C002-sim · Mika (Simulado)</option>
+                  <option value="C003-sim">C003-sim · Sam (Simulado)</option>
+                  <option value="C004-sim">C004-sim · Noor (Simulado)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="dc-sleep">Q1. Sueño / descanso</label>
+                <select id="dc-sleep">
+                  <option value="skipped">Saltar / Prefiero no responder</option>
+                  <option value="good">Bien (good)</option>
+                  <option value="fair">Regular / ambiguo (fair)</option>
+                  <option value="poor">Mal (poor)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="dc-activity">Q2. Actividad reciente (última hora, TTL 2 h)</label>
+                <select id="dc-activity">
+                  <option value="skipped">Saltar / Prefiero no responder</option>
+                  <option value="rest">En reposo (rest)</option>
+                  <option value="activity">Actividad física reciente (activity)</option>
+                  <option value="sleep_recovery">Recién despertando (sleep_recovery)</option>
+                  <option value="ambiguous">Ambiguo / no seguro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="dc-routine">Q4. Cambio respecto a rutina habitual</label>
+                <select id="dc-routine">
+                  <option value="skipped">Saltar / Prefiero no responder</option>
+                  <option value="none">Sin cambios (none)</option>
+                  <option value="minor_change">Cambio menor (minor_change)</option>
+                  <option value="major_change">Cambio importante (major_change)</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="dc-symptoms-text">Q3. Síntomas o molestias actuales (opcional; si hay bandera roja se activa bypass determinista)</label>
+              <input type="text" id="dc-symptoms-text" placeholder="Ej. Ninguno, o 'No tengo dolor en el pecho, solo cansancio'" />
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="dc-consent-session" checked />
+              <label for="dc-consent-session">Consiento usar este contexto en la sesión demo (TTL 24 h / actividad 2 h, revocable en cualquier momento)</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="dc-consent-condition" />
+              <label for="dc-consent-condition">Q5 (Opcional, consentimiento explícito): deseo declarar una condición o medicación solo en memoria de sesión (nunca se envía a LLM ni ML)</label>
+            </div>
+            <div class="field" id="dc-condition-wrap" hidden>
+              <label for="dc-condition-note">Condición o medicación autodeclarada (no diagnóstica, solo sesión)</label>
+              <input type="text" id="dc-condition-note" placeholder="Solo con consentimiento explícito; se borra al revocar o expirar" />
+            </div>
+            <div class="btn-row">
+              <button type="submit" class="btn-primary" id="dc-submit-btn">Confirmar y conectar con vitales</button>
+              <button type="button" id="dc-revoke-btn">Revocar y borrar contexto</button>
+            </div>
+          </form>
+          <div id="daily-context-output" aria-live="polite" style="margin-top: 0.75rem;">
+            <div class="state-box">Sin contexto diario guardado para esta sesión.</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- 4B. MOTOR DE ANOMALÍAS, CONTEXTO Y ADAPTACIÓN SEGURA -->
+      <section id="sec-vitales" class="section-block" aria-labelledby="h-vitales">
+        <div class="section-header">
+          <h2 id="h-vitales">4B. Motor de Anomalías (Simulado), Calidad y Misiones Adaptativas</h2>
+        </div>
+        <p class="hint">
+          Integración no clínica del motor de línea base personal por contexto (<code>rest</code>, <code>activity</code>, <code>sleep</code>).
+          Todas las detecciones mostradas aquí son <strong>simuladas</strong>, no mutan signos vitales reales y no emiten diagnósticos médicos.
+        </p>
+
+        <article class="panel form-stack" aria-labelledby="h-multi-vitals">
+          <h3 id="h-multi-vitals">Check-in rápido de varios signos</h3>
+          <p class="hint">
+            Demo manual: ingresa las lecturas tomadas con tus medidores. Se comparan con referencias generales de adultos en reposo;
+            si algo sale de rango, la guía propone descansar y repetir. El contexto de voz se usa solo después de confirmar la transcripción.
+          </p>
+          <form id="multi-vitals-form" class="form-stack" novalidate>
+            <div class="field">
+              <label for="mv-profile">Perfil simulado (debe coincidir con la entrevista diaria)</label>
+              <select id="mv-profile">
+                <option value="C001-sim">C001-sim · Alex (Simulado)</option>
+                <option value="C002-sim">C002-sim · Mika (Simulado)</option>
+                <option value="C003-sim">C003-sim · Sam (Simulado)</option>
+                <option value="C004-sim">C004-sim · Noor (Simulado)</option>
+              </select>
+            </div>
+            <div class="grid-2">
+              <div class="field">
+                <label for="mv-heart-rate">Frecuencia cardíaca (BPM)</label>
+                <input id="mv-heart-rate" type="number" min="20" max="250" step="1" inputmode="numeric" placeholder="Ej. 72" />
+              </div>
+              <div class="field">
+                <label for="mv-respiratory-rate">Respiraciones por minuto</label>
+                <input id="mv-respiratory-rate" type="number" min="1" max="80" step="1" inputmode="numeric" placeholder="Ej. 16" />
+              </div>
+              <div class="field">
+                <label for="mv-systolic">Presión sistólica (mmHg)</label>
+                <input id="mv-systolic" type="number" min="50" max="280" step="1" inputmode="numeric" placeholder="Ej. 118" />
+              </div>
+              <div class="field">
+                <label for="mv-diastolic">Presión diastólica (mmHg)</label>
+                <input id="mv-diastolic" type="number" min="20" max="200" step="1" inputmode="numeric" placeholder="Ej. 76" />
+              </div>
+              <div class="field">
+                <label for="mv-spo2">Oxigenación SpO₂ (%)</label>
+                <input id="mv-spo2" type="number" min="50" max="100" step="1" inputmode="numeric" placeholder="Ej. 98" />
+              </div>
+              <div class="field">
+                <label for="mv-temperature">Temperatura (°C)</label>
+                <input id="mv-temperature" type="number" min="25" max="45" step="0.1" inputmode="decimal" placeholder="Ej. 37.0" />
+              </div>
+            </div>
+            <fieldset class="panel form-stack" aria-describedby="mv-mission-metrics-note">
+              <legend>Seguimiento de misión (opcional; no son signos vitales diarios)</legend>
+              <p class="hint" id="mv-mission-metrics-note">Registra solo mediciones verificadas. Ingesta de agua no mide hidratación corporal; fuerza y DXA requieren pruebas comparables; la dosis necesita un dosímetro y el límite asignado a la misión.</p>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="mv-hydration">Ingesta de líquidos registrada hoy (mL)</label>
+                  <input id="mv-hydration" type="number" min="0" max="20000" step="1" inputmode="numeric" />
+                </div>
+                <div class="field">
+                  <label for="mv-muscle-strength">Fuerza muscular (% de línea base personal)</label>
+                  <input id="mv-muscle-strength" type="number" min="0" max="200" step="0.1" inputmode="decimal" />
+                </div>
+                <div class="field">
+                  <label for="mv-bone-density">Densidad ósea (% de línea base personal)</label>
+                  <input id="mv-bone-density" type="number" min="0" max="200" step="0.1" inputmode="decimal" />
+                </div>
+                <div class="field">
+                  <label for="mv-bone-site">Sitio de medición ósea</label>
+                  <select id="mv-bone-site">
+                    <option value="">Selecciona solo si ingresas densidad ósea</option>
+                    <option value="hip_spine">Cadera / columna</option>
+                    <option value="femoral_neck">Cuello femoral</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="mv-radiation-dose">Dosis personal acumulada (mSv)</label>
+                  <input id="mv-radiation-dose" type="number" min="0" max="10000" step="0.01" inputmode="decimal" />
+                </div>
+                <div class="field">
+                  <label for="mv-radiation-limit">Límite de revisión de esta misión (mSv)</label>
+                  <input id="mv-radiation-limit" type="number" min="0.01" max="10000" step="0.01" inputmode="decimal" />
+                </div>
+              </div>
+            </fieldset>
+            <div class="field">
+              <label for="mv-symptoms">Síntomas actuales (opcional)</label>
+              <input id="mv-symptoms" type="text" maxlength="500" placeholder="Ej. dolor de pecho, mareo o ninguno" />
+              <span class="hint">También se revisan los síntomas de la entrevista guiada confirmada para el perfil activo.</span>
+            </div>
+            <div class="btn-row">
+              <button type="submit" class="btn-primary" id="mv-submit">Evaluar lecturas y ver indicaciones</button>
+            </div>
+          </form>
+          <div id="multi-vitals-output" aria-live="polite" style="margin-top: 0.75rem;">
+            <div class="state-box">Ingresa uno o más valores para comenzar.</div>
+          </div>
+        </article>
+
+        <div class="panel" style="margin-bottom: 1rem;">
+          <h3>Controles deterministas de demostración</h3>
+          <div id="vitals-preset-buttons" class="btn-row" aria-label="Presets deterministas de demostración">
+            <span class="hint">Cargando presets…</span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <form class="panel form-stack" id="vitals-analyze-form" novalidate>
+            <h3>Contexto y reglas seguras configurables</h3>
+            <div class="field">
+              <label for="vitals-profile">Perfil simulado (aislado)</label>
+              <select id="vitals-profile">
+                <option value="C001-sim">C001-sim · Alex (Simulado)</option>
+                <option value="C002-sim">C002-sim · Mika (Simulado)</option>
+                <option value="C003-sim">C003-sim · Sam (Simulado)</option>
+                <option value="C004-sim">C004-sim · Noor (Simulado)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="vitals-context">Contexto fisiológico/operativo</label>
+              <select id="vitals-context">
+                <option value="rest">Reposo (rest)</option>
+                <option value="activity">Actividad (activity)</option>
+                <option value="sleep">Sueño (sleep)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="vitals-symptoms">Síntomas reportados (opcional, con soporte de negación)</label>
+              <input type="text" id="vitals-symptoms" placeholder="Ej. Sin dolor en el pecho, fatiga leve" />
+            </div>
+
+            <fieldset class="vitals-rules-fieldset">
+              <legend>Reglas seguras de adaptación diaria</legend>
+              <div class="checkbox-row">
+                <input type="checkbox" id="rule-allow-adapt" checked />
+                <label for="rule-allow-adapt">Permitir ajuste adaptativo de misiones (siempre con confirmación)</label>
+              </div>
+              <div class="checkbox-row">
+                <input type="checkbox" id="rule-reduce-sustained" checked />
+                <label for="rule-reduce-sustained">Reducir intensidad ante desviación sostenida</label>
+              </div>
+              <div class="checkbox-row">
+                <input type="checkbox" id="rule-hold-suspect" checked />
+                <label for="rule-hold-suspect">No degradar misiones ante calidad sospechosa (pedir remedición)</label>
+              </div>
+              <div class="checkbox-row">
+                <input type="checkbox" id="rule-pause-symptoms" checked />
+                <label for="rule-pause-symptoms">Pausar carga alta ante síntomas activos reportados</label>
+              </div>
+              <div class="field">
+                <label for="rule-target-intensity">Intensidad objetivo tras desviación sostenida</label>
+                <select id="rule-target-intensity">
+                  <option value="low" selected>Baja (low)</option>
+                  <option value="paused">Pausada (paused)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="rule-duration-factor">Factor de reducción de duración (0.25 – 1.0)</label>
+                <input type="number" id="rule-duration-factor" min="0.25" max="1" step="0.05" value="0.5" />
+              </div>
+              <div class="field">
+                <label for="rule-min-quality-score">Calidad mínima de señal (0.0 – 1.0)</label>
+                <input type="number" id="rule-min-quality-score" min="0" max="1" step="0.05" value="0.6" />
+              </div>
+              <div class="field">
+                <label for="rule-min-delta-bpm">Umbral ilustrativo mínimo Δ BPM</label>
+                <input type="number" id="rule-min-delta-bpm" min="1" max="80" step="1" value="12" />
+              </div>
+            </fieldset>
+
+            <div class="btn-row">
+              <button type="submit" class="btn-primary" id="btn-vitals-evaluate">Evaluar serie simulada</button>
+            </div>
+          </form>
+
+          <article class="panel" aria-labelledby="h-vitals-out">
+            <h3 id="h-vitals-out">Resultado de Anomalías, Tendencia y Misiones</h3>
+            <div id="vitals-output" aria-live="polite">
+              <div class="state-box">Selecciona un preset determinista o evalúa la serie simulada.</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 5. SERVICIOS DE VOZ LOCALES -->
+      <section id="sec-voz" class="section-block" aria-labelledby="h-voz">
+        <div class="section-header">
+          <h2 id="h-voz">5. Voz Local: Push-to-Talk (STT/TTS sidecar) y Contratos</h2>
+        </div>
+
+        <article class="panel" id="voice-ptt-panel" aria-labelledby="h-ptt">
+          <h3 id="h-ptt">Copiloto por voz (push-to-talk explícito)</h3>
+          <p class="hint">
+            Mantén pulsado <strong>Mantener pulsado para hablar</strong> para grabar (máx. 15 s). El audio
+            se envía únicamente a la API local (127.0.0.1), nunca sale del host y no se escribe a disco.
+            La transcripción se muestra para <strong>Confirmar, Editar o Cancelar</strong>: nada cambia
+            misiones ni estados médicos sin tu confirmación. En emergencia se aplica una regla
+            determinista inmediata (sin LLM).
+          </p>
+          <div class="btn-row">
+            <button type="button" id="ptt-btn" aria-pressed="false">Mantener pulsado para hablar</button>
+            <button type="button" id="ptt-cancel-btn" disabled>Cancelar turno</button>
+          </div>
+          <p class="hint" id="ptt-status" role="status" aria-live="polite"></p>
+
+          <div id="ptt-transcript-zone" hidden>
+            <div class="field">
+              <label for="ptt-transcript">Transcripción (revísala y corrígela antes de confirmar)</label>
+              <textarea id="ptt-transcript" rows="3"></textarea>
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn-primary" id="ptt-confirm-btn">Confirmar y consultar al copiloto</button>
+              <button type="button" id="ptt-edit-btn">Editar transcripción</button>
+              <button type="button" id="ptt-discard-btn">Cancelar transcripción</button>
+            </div>
+          </div>
+
+          <div id="ptt-error-zone" role="alert"></div>
+
+          <div id="ptt-reply-zone" aria-live="polite"></div>
+          <div class="btn-row">
+            <button type="button" id="ptt-stop-audio-btn" hidden>Detener audio de la respuesta</button>
+          </div>
+        </article>
+
+        <div id="voice-container" aria-live="polite">
+          <div class="state-box">Cargando contratos STT/TTS…</div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="confirm-dialog" aria-labelledby="dialog-title">
+      <h3 id="dialog-title">Confirmar misión operativa</h3>
+      <p id="dialog-desc">Las misiones propuestas son operativas (no prescripciones médicas) y requieren confirmación explícita.</p>
+      <div class="btn-row">
+        <button type="button" class="btn-primary" id="dialog-confirm-btn">Confirmar registro</button>
+        <button type="button" id="dialog-cancel-btn">Cancelar</button>
+      </div>
+    </dialog>
+
+    <footer class="site-footer container">
+      AstroTwin Autoalojado · Prototipo educativo sin APIs externas ni diagnósticos clínicos.
+    </footer>
+
+    <script type="module" src="/static/daily_voice_guide.js"></script>
+    <script src="/static/language.js" defer></script>
+    <script src="/static/app.js" defer></script>
+    <script src="/static/vitals_panel.js" defer></script>
+    <script src="/static/multi_vitals_panel.js" defer></script>
+  </body>
+</html>
