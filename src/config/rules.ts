@@ -3,17 +3,17 @@
  * Único lugar donde viven los umbrales: cambia aquí y cambia toda la app.
  */
 export type Status = 'ok' | 'warn' | 'bad'
-export type Destination = 'leo' | 'luna' | 'marte' | 'costa' | 'sierra' | 'selva'
+export type Destination = 'leo' | 'luna' | 'marte' | 'sierraAlta' | 'sierraMedia' | 'selvaFriaje'
 
-export const DESTINATIONS: Record<Destination, { label: string; radBase: number; temp?: number; uv?: number; hum?: number }> = {
+export const DESTINATIONS: Record<Destination, { label: string; radBase: number; altitude?: number; nightTemp?: number }> = {
   // radBase: dosis normal en µSv por hora para ese destino
   leo: { label: 'Órbita baja', radBase: 12 },
   luna: { label: 'Luna', radBase: 55 },
   marte: { label: 'Marte', radBase: 75 },
-  // Modo colegio: regiones del Perú con lo normal del aula (temperatura °C, índice UV al mediodía, humedad %)
-  costa: { label: 'Costa (Lima)', radBase: 10, temp: 26, uv: 11, hum: 80 },
-  sierra: { label: 'Sierra (Cusco)', radBase: 10, temp: 17, uv: 14, hum: 40 },
-  selva: { label: 'Selva (Iquitos)', radBase: 10, temp: 31, uv: 10, hum: 85 },
+  // Perfil comunidad: altitud aproximada (m) y temperatura normal de madrugada (°C)
+  sierraAlta: { label: 'Sierra alta (Caylloma)', radBase: 10, altitude: 4300, nightTemp: -4 },
+  sierraMedia: { label: 'Sierra media (Cusco)', radBase: 10, altitude: 3400, nightTemp: 2 },
+  selvaFriaje: { label: 'Selva con friaje (Iquitos)', radBase: 10, altitude: 100, nightTemp: 21 },
 }
 
 export const RULES = {

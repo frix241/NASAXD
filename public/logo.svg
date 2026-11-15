@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <!-- Isotipo de AstroTwin: una persona, su gemelo digital (el eco en trazo) y la órbita. -->
+  <defs>
+    <mask id="b" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+      <rect width="120" height="120" fill="#fff"/>
+      <g fill="#000" stroke="#000" stroke-width="6" stroke-linejoin="round"><circle cx="50" cy="37" r="10.5"/><path d="M31 94V70a19 19 0 0 1 38 0v24z"/></g>
+    </mask>
+    <mask id="f" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+      <rect width="120" height="120" fill="#fff"/>
+      <path d="M110.07 41.77A54 18 -22 0 1 9.93 82.23" fill="none" stroke="#000" stroke-width="9"/>
+    </mask>
+  </defs>
+  <rect width="120" height="120" rx="26" fill="#050a14"/>
+  <g fill="none" stroke="#6db3ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <g mask="url(#b)">
+      <path d="M9.93 82.23A54 18 -22 0 1 110.07 41.77"/>
+      <g mask="url(#f)" transform="translate(22 0)"><circle cx="50" cy="37" r="10.5"/><path d="M31 94V70a19 19 0 0 1 38 0v24z"/></g>
+    </g>
+  </g>
+  <g mask="url(#f)" fill="#dcebff"><circle cx="50" cy="37" r="10.5"/><path d="M31 94V70a19 19 0 0 1 38 0v24z"/></g>
+  <path d="M110.07 41.77A54 18 -22 0 1 9.93 82.23" fill="none" stroke="#6db3ff" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="110.07" cy="41.77" r="4.6" fill="#dcebff"/>
+</svg>

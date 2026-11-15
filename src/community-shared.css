@@ -1,0 +1,24 @@
+/* Perfil comunidad: reglas comunes a las cuatro pantallas (Persona, Evaluar, Hoja, Clima).
+   Una sola barra superior, espacio libre al final para el micrófono flotante y sin desbordes en móvil. */
+
+/* Barra superior: mismos tamaños en todas las pantallas; los grupos se parten en filas en vez de desbordar */
+.app.mode-community .topbar { font-size: 18px; gap: 12px 24px; min-width: 0; max-width: 100%; }
+.app.mode-community .topbar .item { white-space: normal; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; max-width: 100%; }
+.app.mode-community .topbar .seg { flex-wrap: wrap; max-width: 100%; min-width: 0; border-width: 2px; border-color: var(--border); }
+.app.mode-community .topbar .seg button { font-size: 18px; min-height: 48px; padding: 6px 14px; white-space: normal; text-align: center; line-height: 1.2; }
+@media (max-width: 860px) {
+  .app.mode-community .topbar { font-size: 18px; }
+  .app.mode-community .topbar .seg button { font-size: 18px; padding: 6px 12px; }
+}
+@media (max-width: 560px) {
+  .app.mode-community .topbar { gap: 8px; }
+  .app.mode-community .topbar .item, .app.mode-community .topbar .seg { width: 100%; }
+  .app.mode-community .topbar .item { gap: 2px; }
+  .app.mode-community .topbar .item > .seg { flex-direction: column; flex-wrap: nowrap; }
+  .app.mode-community .topbar .item > .seg button + button { border-left: 0; border-top: 2px solid var(--border); }
+  .app.mode-community .topbar .seg button { flex: 1 1 auto; }
+}
+
+/* El micrófono flotante (la barra pegada de Evaluar descuenta el relleno de 150 px del contenedor) mide unos 110 px de alto: cada pantalla deja ese espacio libre al final */
+.app.mode-community .scene { padding-bottom: 150px; }
+.app.mode-community { --cm-dock-bottom: -26px; }

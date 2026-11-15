@@ -14,7 +14,7 @@ const DUST = `url("data:image/svg+xml,${encodeURIComponent(
 export function Helmet() {
   const up = useStore((s) => s.visorUp)
   const fogKey = useStore((s) => s.fogKey)
-  const school = useStore((s) => s.profile === 'school')
+  const community = useStore((s) => s.profile === 'community')
   const root = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (reducedMotion()) return
@@ -29,8 +29,8 @@ export function Helmet() {
     window.addEventListener('pointermove', move, { passive: true })
     return () => { window.removeEventListener('pointermove', move); cancelAnimationFrame(raf) }
   }, [])
-  // En el colegio no hay casco: es una pantalla en el aula, no un visor
-  if (school) return null
+  // En la comunidad no hay casco: es una pantalla a pleno sol, no un visor
+  if (community) return null
   return (
     <>
       <div className="scanlines" />

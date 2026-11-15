@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import Boot from './scenes/Boot'
 import DataWall from './scenes/DataWall'
 import Monitor from './scenes/Monitor'
-import Count from './scenes/Count'
 import Route from './scenes/Route'
-import Summary, { PrintSheets } from './scenes/Summary'
+import Climate from './scenes/community/Climate'
+import Evaluate from './scenes/community/Evaluate'
+import Person from './scenes/community/Person'
+import Referral, { ReferralPrint } from './scenes/community/Referral'
 import { useProfile, useStore } from './store'
 import { Space } from './three/Space'
 import { Assistant } from './ui/Assistant'
+import { CommunityBackdrop } from './ui/community/Backdrop'
 import { DemoPanel } from './ui/Demo'
 import { Helmet } from './ui/Helmet'
 import { hasWebGL, useTabVisible } from './ui/hooks'
@@ -44,7 +47,7 @@ function useSceneNav() {
       if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || e.ctrlKey || e.metaKey || e.altKey) return
       const s = useStore.getState()
       if (e.key === 'd' || e.key === 'D') { s.set({ demoOpen: !s.demoOpen }); return }
-      if (e.key === 'c' || e.key === 'C') { s.setProfile(s.profile === 'space' ? 'school' : 'space'); return }
+      if (e.key === 'c' || e.key === 'C') { s.setProfile(s.profile === 'space' ? 'community' : 'space'); return }
       if (document.querySelector('.modal')) return
       if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(e.key)) { e.preventDefault(); go(1) }
       if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1) }
@@ -104,6 +107,7 @@ export default function App() {
   const story = useStore((s) => s.storyCaption)
   const p = useProfile()
   const printing = useStore((s) => s.printing)
+  const theme = useStore((s) => s.theme)
   const [swap, setSwap] = useState(false)
   const visible = useTabVisible()
   const [shown, setShown] = useState(scene)
@@ -139,17 +143,20 @@ export default function App() {
 
   const kind = p.sceneKinds[Math.min(shown, p.sceneKinds.length - 1)]
   return (
-    <div className={`app mode-${p.id}${swap ? ' mode-swap' : ''}`}
-      style={{ '--ice': p.palette.ice, '--line': p.palette.line, '--line-soft': p.palette.lineSoft } as React.CSSProperties}>
-      <Space boot={shown === 0} />
+    <div className={`app mode-${p.id}${p.id === 'community' ? ` theme-${theme}` : ''}${swap ? ' mode-swap' : ''}`}
+      style={p.palette ? { '--ice': p.palette.ice, '--line': p.palette.line, '--line-soft': p.palette.lineSoft } as React.CSSProperties : undefined}>
+      {p.id !== 'community' && <Space boot={shown === 0} />}
+      {p.id === 'community' && <CommunityBackdrop />}
       <main className={`stage${phase === 'idle' ? '' : ` holo-${phase}`}`}>
         <div className={`scene${shown === 0 ? ' boot-scene' : ''}`} key={shown}>
           {kind === 'boot' && <Boot />}
           {kind === 'monitor' && <Monitor />}
           {kind === 'data' && <DataWall />}
           {kind === 'route' && <Route />}
-          {kind === 'count' && <Count />}
-          {kind === 'summary' && <Summary />}
+          {kind === 'person' && <Person />}
+          {kind === 'evaluate' && <Evaluate />}
+          {kind === 'referral' && <Referral />}
+          {kind === 'climate' && <Climate />}
         </div>
       </main>
       <Helmet />
@@ -158,7 +165,7 @@ export default function App() {
       <Toast />
       {story && <div className="story" role="status">{story}</div>}
       <DemoPanel />
-      <PrintSheets />
+      {p.id === 'community' && <ReferralPrint />}
     </div>
   )
 }

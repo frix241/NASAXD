@@ -8,10 +8,7 @@ import type { MeasureField, MetricKey } from '../sim/simulator'
 export interface Field { field: MeasureField; label: string; min: number; max: number; step: number; unit: string }
 export interface Explain { what: string; why: string; how: string; alert: string; hazard?: string; fields?: Field[] }
 
-export const EXPLAIN_LABELS = {
-  space: { what: 'Qué es', why: 'Por qué cambia en el espacio', how: 'Cómo se mide', alert: 'Cuándo avisar a la Tierra' },
-  school: { what: 'Qué mira', why: 'Por qué importa en el aula', how: 'Cómo preguntarlo', alert: 'Qué hacer' },
-}
+export const EXPLAIN_LABELS = { what: 'Qué es', why: 'Por qué cambia en el espacio', how: 'Cómo se mide', alert: 'Cuándo avisar a la Tierra' }
 
 export const SPACE_EXPLAIN: Partial<Record<MetricKey, Explain>> = {
   pulse: {
@@ -102,56 +99,5 @@ export const SPACE_EXPLAIN: Partial<Record<MetricKey, Explain>> = {
     how: 'La miden los dosímetros de la nave y el que llevas en el traje.',
     alert: 'La Tierra avisa de las tormentas. Si sube a más de 5 veces lo normal, ve al refugio sin esperar el aviso.',
     hazard: 'Radiación espacial',
-  },
-}
-
-export const SCHOOL_EXPLAIN: Partial<Record<MetricKey, Explain>> = {
-  sleep: {
-    what: 'Cuántos del aula llegaron con sueño porque durmieron poco.',
-    why: 'Con sueño cuesta atender, recordar y controlar el mal humor.',
-    how: '"Levanten la mano quienes sienten que durmieron poco." Solo cuenta las manos, sin señalar a nadie.',
-    alert: 'Pausa activa de 3 minutos y lo más difícil después del recreo. Si se repite, un mensaje a las familias sobre la hora de dormir.',
-  },
-  mood: {
-    what: 'Cuántos se ven decaídos hoy: callados, sin ganas o tristes.',
-    why: 'Un grupo decaído participa menos. A veces es solo un mal día; mirarlo seguido ayuda a notar si dura.',
-    how: 'Mira al grupo al entrar, o pregunta "¿cómo llegaron hoy?" con pulgar arriba o abajo.',
-    alert: 'Una ronda corta para decir cómo llegaron y trabajo en parejas. Si alguien sigue así varios días, conversa con la familia.',
-  },
-  breakfast: {
-    what: 'Cuántos llegaron sin desayunar.',
-    why: 'Sin desayuno hay menos energía y atención en las primeras horas.',
-    how: '"Levanten la mano quienes desayunaron hoy." Resta del total del aula. Sin comentarios sobre quién no.',
-    alert: 'Empieza con algo ligero y adelanta la lonchera si puedes. Si es frecuente, avisa a la dirección.',
-  },
-  exercise: {
-    what: 'Si hoy hubo recreo con juego y movimiento.',
-    why: 'Moverse despierta el cuerpo, mejora el ánimo y ayuda a concentrarse después.',
-    how: 'Sí, si la mayoría corrió, saltó o jugó al menos 15 minutos.',
-    alert: 'Si no hubo, 5 minutos de juego con movimiento antes de la última hora.',
-  },
-  radiation: {
-    what: 'Si el día está normal, con calor o con frío para tu región.',
-    why: 'Con calor se pierde agua y baja la atención. Con frío el cuerpo gasta energía en calentarse.',
-    how: 'Compara con lo normal de tu zona: ¿hace falta abrir todo o abrigarse más de lo usual?',
-    alert: 'Calor: ventanas abiertas, agua cada hora y recreo a la sombra. Frío: cerrar corrientes de aire y abrigarse.',
-  },
-  hydration: {
-    what: 'Cuántos no trajeron agua hoy.',
-    why: 'Con poca agua aparecen el cansancio y el dolor de cabeza, sobre todo con calor.',
-    how: '"Muestren su botella de agua." Cuenta quiénes no tienen.',
-    alert: 'Pausa para tomar agua ahora y otra después del recreo.',
-  },
-  backpack: {
-    what: 'Cuántos traen una mochila muy pesada.',
-    why: 'Cargar mucho peso todos los días cansa la espalda y los hombros.',
-    how: 'Mira quiénes se inclinan hacia adelante al cargarla o la llevan en un solo hombro.',
-    alert: 'Pide traer solo lo del día y usar las dos correas.',
-  },
-  posture: {
-    what: 'Cuántos se sientan encorvados la mayor parte del tiempo.',
-    why: 'Muchas horas sentados en mala postura cansan y distraen.',
-    how: 'Mira al grupo a media mañana: espalda doblada o cabeza muy cerca del cuaderno.',
-    alert: 'Pausa de estiramiento de 2 minutos y revisar la altura de sillas y mesas.',
   },
 }

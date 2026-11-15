@@ -6,7 +6,7 @@
  * la interfaz no necesita ningún cambio.
  */
 import type { Task, TaskId } from '../config/tasks'
-import { actionOfDay, evaluateAula, QUESTIONS, weekSummary, type Aula } from '../sim/aula'
+import { radioScript, type Result, type Visit } from '../sim/community'
 import type { Issue } from '../sim/issues'
 import type { MetricKey, Reading, SimState } from '../sim/simulator'
 
@@ -18,9 +18,10 @@ export interface AssistantContext {
   tasksDone: Partial<Record<TaskId, boolean>>
   points: number
   streak: number
-  profile: 'space' | 'school'
+  profile: 'space' | 'community'
   tasks: Task[]
-  aula: Aula
+  visit: Visit
+  result: Result
 }
 
 const avg = (v: number[]) => v.reduce((a, b) => a + b, 0) / v.length
@@ -73,34 +74,123 @@ function rules(text: string, c: AssistantContext): string {
   return 'Puedo contarte de tu pulso, presión, agua, sueño, radiación, ejercicio, ánimo y tus tareas del día. Pregúntame por una de esas.'
 }
 
-/** Modo colegio: habla con el tutor, en frases cortas y sin términos médicos. Nunca diagnostica. */
-function rulesSchool(text: string, c: AssistantContext): string {
+/**
+ * Perfil comunidad: el mismo sistema de reglas explicables. Habla con la agente comunitaria,
+ * en frases cortas. Es apoyo a la decisión con reglas basadas en protocolos MINSA, nunca un diagnóstico.
+ */
+function rulesCommunity(text: string, c: AssistantContext): string {
   const q = plain(text)
-  const r = evaluateAula(c.aula)
-  const act = actionOfDay(c.aula)
-  const today = act.level === 'ok' ? `${act.title}. ${act.text}` : `Acción del día: ${act.title.toLowerCase()}. ${act.text}`
-  const one = (k: 'sleep' | 'breakfast' | 'mood', what: string) => `Hoy ${r[k].text} de ${c.aula.total} ${what}. ${r[k].status === 'ok' ? 'Está en verde.' : today}`
-  if (c.scene === 0) return 'Estoy preparando el aula. En unos segundos verás el semáforo de hoy.'
-  if (/semana|resumen|informe|colegio/.test(q)) {
-    const w = weekSummary(c.aula).filter((x) => x.worst !== 'ok')
-    return w.length
-      ? `Esta semana hay que mirar: ${w.map((x) => x.short.toLowerCase()).join(', ')}. En el resumen puedes imprimir el informe para el director.`
-      : 'La semana va en verde en las cinco preguntas.'
-  }
-  if (/suen|dorm|cansad/.test(q)) return one('sleep', 'durmieron poco')
-  if (/desayun|hambre|comi/.test(q)) return one('breakfast', 'no desayunaron')
-  if (/animo|decaid|triste/.test(q)) return one('mood', 'están decaídos')
-  if (/calor|frio|clima|sol/.test(q)) return `El clima de hoy: ${r.radiation.text.toLowerCase()}. ${r.radiation.status === 'ok' ? 'Sin cambios en la rutina.' : today}`
-  if (/recreo|mov|juego/.test(q)) return r.exercise.status === 'ok' ? 'Hoy sí hubo recreo activo. ¡Bien!' : today
-  if (/punto|racha|nivel/.test(q)) return `El aula tiene ${c.points} puntos y ${c.streak} días de racha.`
-  if (/toca|sigue|ahora|ruta/.test(q)) return next(c)
-  if (/como|aula|hoy|hago|accion|pasando|hola/.test(q)) {
-    const bad = QUESTIONS.filter((x) => r[x.key].status !== 'ok').length
-    return bad ? today : `${act.title}. ${act.text}`
-  }
-  return 'Puedo decirte la acción del día, cómo va el sueño, el desayuno, el ánimo, el clima y el recreo del aula, o cómo va la semana.'
+  const r = c.result; const v = c.visit
+  const what = `${r.label}. ${r.reason} Primero: ${r.actions[0]} Después: ${r.actions[1]}`
+  if (c.scene === 0) return 'Estoy cargando las reglas en este equipo. No hace falta internet.'
+  if (/radio|telefono|dict|llam/.test(q)) return radioScript(v, r).filter(Boolean).join(' ')
+  if (/camino|traslad|llevar/.test(q)) return r.onTheWay.length ? `En el camino: ${r.onTheWay.join(' ')}` : 'Ahora no hace falta derivar. Si aparece una señal de alarma, la hoja de derivación te dice qué hacer en el camino.'
+  if (/segur|confian|dato|falta/.test(q)) return `${r.confidence.text} Respondiste ${r.confidence.answered} de ${r.confidence.total} preguntas. Con pocos datos recomiendo derivar antes.`
+  if (/respir|contar|cuento/.test(q)) return 'Con la persona tranquila, mira su pecho o su barriga y cuenta cada vez que sube, durante un minuto entero. Usa el cronómetro de la pantalla Evaluar.'
+  if (/helada|friaje|frio|clima/.test(q)) return v.cold === 'helada' ? 'Hay helada. Los niños pequeños y los adultos mayores se enfrían rápido: abriga por capas y cubre cabeza, manos y pies.' : `El frío está en nivel ${v.cold === 'frio' ? 'frío' : 'normal'}. Si baja la temperatura, vuelve a revisar.`
+  if (/vivienda|casa|abrig/.test(q)) return 'Tapa las rendijas de puertas y ventanas, sube la cama del suelo y que nadie duerma con ropa húmeda. Abriga por capas y cubre cabeza, manos y pies.'
+  if (/por que|razon|explica/.test(q)) return r.findings.length ? `Lo decido por estas reglas: ${r.findings.slice(0, 3).map((f) => f.text).join(' ')}` : r.reason
+  if (/diagnost|enfermedad|que tiene/.test(q)) return 'No doy diagnósticos. Soy un sistema de reglas basadas en protocolos MINSA que te ayuda a decidir si atiendes tú, vigilas o derivas a la posta.'
+  if (/hago|pasando|como|estado|hola|ahora|toca/.test(q)) return what
+  return 'Puedo decirte qué hacer con esta persona, por qué, qué tan segura estoy, cómo contar la respiración y qué dictar por radio.'
 }
 
+declare const __ASSISTANT_LLM__: boolean
+declare const __ASSISTANT_MODEL__: string
+
+const SYSTEM = `Eres el copiloto de salud de AstroTwin para una astronauta en una misión espacial. Respondes en español, en dos o tres frases cortas, sin jerga médica, sin listas ni formato.
+Reglas que no puedes romper:
+- Usa SOLO los datos que te doy. No inventes cifras ni mediciones.
+- Nunca des un diagnóstico ni nombres enfermedades. Sugiere acciones sencillas y di cuándo avisar a la Tierra.
+- Si algo está en "Atender" (rojo), empieza por eso.
+- La "respuesta base" viene de las reglas de la nave y es correcta: puedes decirla con más naturalidad o ampliarla, pero no contradecirla.
+- Si te preguntan algo que no tiene que ver con la salud de la tripulante o la misión, dilo en una frase y vuelve al tema.`
+
+/** Resumen compacto del estado para el modelo. Son datos simulados, sin nombres. */
+function snapshot(c: AssistantContext): string {
+  const word = { ok: 'Bien', warn: 'Vigilar', bad: 'Atender' }
+  const lines = Object.values(c.readings).filter((r) => r.label).map((r) => `${r.label}: ${r.text} ${r.unit} (${word[r.status]})`)
+  const left = c.tasks.filter((t) => !c.tasksDone[t.id]).map((t) => t.title)
+  return [
+    `Escena: ${['arranque', 'monitor', 'datos completos', 'ruta diaria'][c.scene] ?? 'monitor'}`,
+    `Día de misión ${c.sim.missionDay}. ${c.sim.storm ? (c.sim.sheltered ? 'Tormenta solar; está en el refugio.' : 'Tormenta solar en curso; no está en el refugio.') : 'Sin tormenta solar.'}`,
+    ...lines,
+    `Avisos activos: ${c.issues.length ? c.issues.map((i) => `${i.title} → ${i.actionLabel}`).join('; ') : 'ninguno'}`,
+    `Tareas pendientes hoy: ${left.length ? left.join(', ') : 'ninguna'}. Puntos ${c.points}, racha ${c.streak} días.`,
+  ].join('\n')
+}
+
+const SYSTEM_COMMUNITY = `Eres el copiloto de AstroTwin Comunidad. Ayudas a una agente comunitaria de salud de la sierra o la selva del Perú, sin formación médica avanzada, durante heladas y friaje. Respondes en español sencillo, en dos o tres frases cortas, sin jerga médica, sin listas ni formato.
+Reglas que no puedes romper:
+- Eres apoyo a la decisión con reglas basadas en protocolos MINSA. NUNCA das un diagnóstico ni nombras enfermedades ni medicamentos.
+- La decisión ya está tomada por las reglas (atiendo yo, vigilo o derivo a la posta). No la cambies ni la suavices. Si es "Derivo a la posta", dilo primero.
+- La decisión y las acciones son lo que la agente DEBE HACER AHORA, no algo que ya hizo. Háblale en imperativo ("deriva", "abriga", "sal ya"); nunca digas que ya lo hizo.
+- Usa SOLO los datos que te doy. No inventes cifras.
+- La "respuesta base" es correcta: puedes decirla con más naturalidad o ampliarla, pero no contradecirla.
+- Si te preguntan algo que no tiene que ver con la persona atendida, el frío o la visita, dilo en una frase y vuelve al tema.`
+
+/** Resumen de la visita para el modelo. Sin alias ni nombres: solo lo observado. */
+function snapshotCommunity(c: AssistantContext): string {
+  const v = c.visit; const r = c.result
+  const yn = (x: boolean | null) => (x === null ? 'sin responder' : x ? 'sí' : 'no')
+  const who = v.kind === 'child' ? `niño o niña menor de 5 años (${v.ageMonths} meses)` : v.kind === 'elder' ? 'adulto mayor' : 'adulto'
+  const signs = (Object.keys(v.danger) as (keyof typeof v.danger)[]).filter((k) => v.danger[k])
+  return [
+    `Persona atendida: ${who}.`,
+    `Señales de alarma marcadas: ${signs.length ? signs.join(', ') : 'ninguna'}.`,
+    `Tos: ${yn(v.cough)}. Fiebre al tacto: ${yn(v.feverTouch)}. Abrigo suficiente: ${yn(v.warmEnough)}. Comió y tomó líquidos hoy: ${yn(v.ateDrank)}.`,
+    `Respiraciones por minuto: ${v.breaths ?? 'sin contar'}. Termómetro: ${v.tempC ?? 'sin dato'}. Saturación: ${v.spo2 ?? 'sin dato'}.`,
+    `Frío del entorno: ${v.cold}. Altitud: ${v.altitude} m. Posta de salud a ${v.hoursToPost} horas.`,
+    `DECISIÓN DE LAS REGLAS: ${r.label}. Razón: ${r.reason}`,
+    `Acciones: 1) ${r.actions[0]} 2) ${r.actions[1]}`,
+    `Confianza: ${r.confidence.level} (${r.confidence.answered} de ${r.confidence.total} preguntas respondidas).`,
+    `Hallazgos: ${r.findings.map((f) => f.text).join(' ') || 'ninguno'}`,
+    r.onTheWay.length ? `En el camino a la posta: ${r.onTheWay.join(' ')}` : '',
+  ].filter(Boolean).join('\n')
+}
+
+/** Pregunta al modelo (Groq) a través del servidor local. Devuelve null si no hay respuesta a tiempo. */
+async function askModel(text: string, c: AssistantContext, base: string): Promise<string | null> {
+  const community = c.profile === 'community'
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), 9000)
+  try {
+    const res = await fetch('/api/groq', {
+      method: 'POST', signal: ctrl.signal, headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: __ASSISTANT_MODEL__, temperature: 0.3, max_completion_tokens: 700, reasoning_effort: 'low',
+        messages: [
+          { role: 'system', content: community ? SYSTEM_COMMUNITY : SYSTEM },
+          { role: 'user', content: `Datos actuales:\n${community ? snapshotCommunity(c) : snapshot(c)}\n\nRespuesta base de las reglas: ${base}\n\nPregunta de ${community ? 'la agente comunitaria' : 'la tripulante'}: ${text}` },
+        ],
+      }),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    const out = data?.choices?.[0]?.message?.content
+    if (typeof out !== 'string') return null
+    // El chat y la voz muestran texto plano: se quitan marcas de formato
+    const clean = out.replace(/[*_`#]/g, '').replace(/\s+/g, ' ').trim()
+    return clean.length > 8 ? clean : null
+  } catch {
+    return null
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/**
+ * Punto único de entrada del asistente.
+ * - Siempre hay respuesta de reglas (funciona sin internet).
+ * - En los dos perfiles, si el servidor tiene clave de Groq y hay red, el modelo redacta la respuesta
+ *   a partir de esas reglas y de los datos. Si falla o tarda, se usa la de reglas.
+ * - En comunidad rural la decisión la toman siempre las reglas locales; al modelo se le envía la visita
+ *   sin alias ni nombres, y no puede cambiar la decisión.
+ * - En pruebas automáticas se usan solo las reglas (respuestas fijas y sin gastar la clave).
+ */
 export async function askAssistant(text: string, context: AssistantContext): Promise<string> {
-  return context.profile === 'school' ? rulesSchool(text, context) : rules(text, context)
+  const base = context.profile === 'community' ? rulesCommunity(text, context) : rules(text, context)
+  const online = typeof navigator === 'undefined' || (navigator.onLine && !navigator.webdriver)
+  if (!__ASSISTANT_LLM__ || !online || context.scene === 0) return base
+  return (await askModel(text, context, base)) ?? base
 }

@@ -11,6 +11,11 @@
   --ok: #34d399;
   --warn: #f5b83d;
   --bad: #f2625f;
+  /* Superficies y bordes que cambian con el tema (los usa el perfil comunidad) */
+  --surface: rgba(5, 11, 22, 0.82);
+  --surface-2: rgba(109, 179, 255, 0.1);
+  --border: rgba(109, 179, 255, 0.55);
+  --on-accent: #04101f;
   --font: 'B612', system-ui, sans-serif;
   --mono: 'B612', system-ui, sans-serif; /* las cifras de B612 ya tienen ancho fijo */
   --pad-x: 68px;
@@ -556,3 +561,41 @@ table.week .cell { display: inline-flex; align-items: center; gap: 4px; font-wei
 .mode-space .vital .value b { font-size: 36px; }
 @media (max-width: 860px) { .explain { max-width: none; max-height: none; } .mode-space .vital .value b { font-size: 26px; } }
 @media (prefers-reduced-motion: reduce) { .explain { animation: fadeIn 0.3s linear both; } }
+
+/* ── Avatar del asistente ───────────────────────────────────── */
+.av-open { position: absolute; right: 72px; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1); }
+.av-open:hover { transform: translateY(-3px) scale(1.06); }
+.chat header .avatar { margin: -6px 2px -6px -4px; }
+.avatar { display: block; overflow: visible; }
+.av-halo { fill: color-mix(in srgb, var(--ice) 16%, var(--bg)); stroke: var(--ice); stroke-width: 1.5; }
+.av-head { fill: color-mix(in srgb, var(--ice) 30%, var(--bg)); stroke: var(--ice); stroke-width: 2; }
+.av-visor { fill: var(--bg); stroke: var(--ice); stroke-width: 1.5; }
+.av-antenna, .av-ear, .av-band, .av-flap { fill: none; stroke: var(--ice); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.av-tip, .av-pom { fill: var(--warn); }
+.av-chullo { fill: var(--bad); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+.av-community .av-band { stroke: var(--surface); stroke-width: 1.8; } .av-community .av-flap { stroke: var(--bad); stroke-width: 4; }
+.av-community .av-head { fill: #d9a066; stroke: var(--ink); stroke-width: 1.5; }
+.av-eyes ellipse { fill: var(--ice); transform-box: fill-box; transform-origin: center; animation: avBlink 4.6s infinite; }
+.av-community .av-eyes ellipse, .av-community .av-mouth { fill: var(--ink); }
+.av-mouth { fill: var(--ice); transform-box: fill-box; transform-origin: center; }
+.av-ring { fill: none; stroke: var(--ice); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.av-dots circle { fill: var(--ice); opacity: 0; }
+.avatar { animation: avFloat 5s ease-in-out infinite; }
+@keyframes avFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+@keyframes avBlink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+/* Escuchando: ondas que salen y antena encendida */
+.av-listening .av-ring { animation: avRing 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite; } .av-listening .av-ring2 { animation-delay: 0.75s; }
+.av-listening .av-tip, .av-listening .av-pom { animation: avPulse 0.7s ease-in-out infinite alternate; }
+.av-listening .av-eyes ellipse { animation: none; transform: scale(1.25); }
+@keyframes avRing { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.45); opacity: 0; } }
+@keyframes avPulse { from { opacity: 0.4; } to { opacity: 1; } }
+/* Pensando: mira hacia arriba y tres puntos */
+.av-thinking .av-eyes { transform: translate(1.5px, -2px); transition: transform 0.3s; }
+.av-thinking .av-dots circle { animation: think 1s infinite; } .av-thinking .av-dots circle:nth-child(2) { animation-delay: 0.15s; }
+.av-thinking .av-dots circle:nth-child(3) { animation-delay: 0.3s; }
+/* Hablando: la boca se mueve */
+.av-speaking .av-mouth { animation: avTalk 0.32s ease-in-out infinite alternate; }
+@keyframes avTalk { from { transform: scale(0.7, 0.6); } to { transform: scale(1.05, 2.6); } }
+@media (max-width: 860px) { .av-open { right: 70px; } }
+@media (prefers-reduced-motion: reduce) { .avatar, .avatar * { animation: none !important; } }

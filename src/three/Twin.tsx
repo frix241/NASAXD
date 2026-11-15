@@ -259,3 +259,110 @@ export function TwinFlat({ zones }: { zones: Record<Zone, Status> }) {
     </svg>
   )
 }
+
+// ── Perfil comunidad: persona abrigada ──────────────────────────────────────
+type BodyZone = import('../sim/community').BodyZone
+/** En tema claro los hologramas aditivos no se ven: se usan colores oscuros y mezcla normal. */
+const DAY = { body: '#2c4a5e', wool: '#a8452a', ok: '#0f7a4f', warn: '#a35a00', bad: '#b3261e' }
+const NIGHT = { body: ICE, wool: '#ffb07a', ok: STATUS_COLOR.ok, warn: STATUS_COLOR.warn, bad: STATUS_COLOR.bad }
+
+/**
+ * Una prenda que se pinta con el color del estado de su zona.
+ * De día es un material opaco con luz (se lee al sol); de noche, holograma.
+ */
+function Garment({ status, day, children }: { status: Status; day: boolean; children: (m: THREE.Material) => React.ReactNode }) {
+  const g = useRef<THREE.Group>(null)
+  const pal = day ? DAY : NIGHT
+  const mat = useMemo(() => (day
+    ? new THREE.MeshStandardMaterial({ color: pal.ok, roughness: 0.85, metalness: 0, side: THREE.DoubleSide })
+    : holoMat(pal.ok)), [day, pal.ok])
+  const target = useMemo(() => new THREE.Color(), [])
+  useFrame(({ clock }) => {
+    target.set(pal[status])
+    const pulse = status === 'ok' ? 0 : 0.5 + 0.5 * Math.sin(clock.elapsedTime * (status === 'bad' ? 7 : 3.5))
+    if (mat instanceof THREE.ShaderMaterial) {
+      (mat.uniforms.uColor.value as THREE.Color).lerp(target, 0.12)
+      mat.uniforms.uTime.value = clock.elapsedTime; mat.uniforms.uPulse.value = status === 'ok' ? 0 : 1
+    } else {
+      mat.color.lerp(target, 0.12)
+      mat.emissive.copy(mat.color).multiplyScalar(0.25 * pulse)
+    }
+    g.current?.scale.setScalar(1 + 0.035 * pulse)
+  })
+  return <group ref={g}>{children(mat)}</group>
+}
+
+function WarmFigure({ zones, day }: { zones: Record<BodyZone, Status>; day: boolean }) {
+  const g = useRef<THREE.Group>(null)
+  const pal = day ? DAY : NIGHT
+  const body = useMemo(() => (day ? new THREE.MeshStandardMaterial({ color: pal.body, roughness: 0.9 }) : holoMat(pal.body)), [day, pal.body])
+  const scarf = useMemo(() => (day ? new THREE.MeshStandardMaterial({ color: pal.wool, roughness: 0.9 }) : holoMat(pal.wool)), [day, pal.wool])
+  const still = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
+  useFrame(({ clock }, dt) => {
+    for (const m of [body, scarf]) if (m instanceof THREE.ShaderMaterial) m.uniforms.uTime.value = clock.elapsedTime
+    // Gira despacio de lado a lado para que siempre se vea de frente
+    if (g.current) g.current.rotation.y = still ? 0.35 : Math.sin(clock.elapsedTime * 0.45) * 0.7
+    void dt
+  })
+  return (
+    <group position={[0, 0.02, 0]}>
+      {day && <><ambientLight intensity={1.5} /><directionalLight position={[2.5, 4, 5]} intensity={2.2} /><directionalLight position={[-3, 1, 2]} intensity={0.6} /></>}
+      <group ref={g}>
+        {BODY.map((b, i) => (
+          <mesh key={i} position={b.p} scale={b.s} rotation={[i >= 14 ? Math.PI / 2 : 0, 0, b.r ?? 0]} material={body} raycast={noRay}>
+            {b.sph ? <sphereGeometry args={[b.sph, 24, 18]} /> : <capsuleGeometry args={[b.cap![0], b.cap![1], 6, 20]} />}
+          </mesh>
+        ))}
+        <mesh geometry={TORSO} material={body} scale={[1, 1, 0.6]} raycast={noRay} />
+        {/* Chalina: siempre del color de la lana */}
+        <mesh position={[0, 1.2, 0.01]} rotation={[Math.PI / 2, 0, 0]} material={scarf} raycast={noRay}><torusGeometry args={[0.19, 0.085, 10, 26]} /></mesh>
+        <mesh position={[0.12, 0.98, 0.22]} rotation={[0.1, 0, -0.12]} material={scarf} raycast={noRay}><boxGeometry args={[0.13, 0.4, 0.05]} /></mesh>
+        {/* Cabeza: chullo con punta y orejeras */}
+        <Garment status={zones.head} day={day}>{(m) => (
+          <>
+            <mesh position={[0, 1.6, 0]} material={m} raycast={noRay}><sphereGeometry args={[0.29, 24, 14, 0, Math.PI * 2, 0, Math.PI / 2]} /></mesh>
+            <mesh position={[0, 1.94, 0]} material={m} raycast={noRay}><coneGeometry args={[0.1, 0.26, 12]} /></mesh>
+            <mesh position={[-0.27, 1.42, 0]} material={m} raycast={noRay}><capsuleGeometry args={[0.065, 0.22, 4, 10]} /></mesh>
+            <mesh position={[0.27, 1.42, 0]} material={m} raycast={noRay}><capsuleGeometry args={[0.065, 0.22, 4, 10]} /></mesh>
+          </>
+        )}</Garment>
+        {/* Pecho: poncho */}
+        <Garment status={zones.chest} day={day}>{(m) => (
+          <mesh position={[0, 0.66, 0]} scale={[1, 1, 0.74]} material={m} raycast={noRay}><cylinderGeometry args={[0.2, 0.72, 0.98, 28, 1, true]} /></mesh>
+        )}</Garment>
+        {/* Manos: mitones */}
+        <Garment status={zones.hands} day={day}>{(m) => (
+          <>
+            <mesh position={[-0.6, -0.16, 0.03]} scale={[0.9, 1.2, 0.8]} material={m} raycast={noRay}><sphereGeometry args={[0.13, 14, 12]} /></mesh>
+            <mesh position={[0.6, -0.16, 0.03]} scale={[0.9, 1.2, 0.8]} material={m} raycast={noRay}><sphereGeometry args={[0.13, 14, 12]} /></mesh>
+          </>
+        )}</Garment>
+        {/* Pies: botas */}
+        <Garment status={zones.feet} day={day}>{(m) => (
+          <>
+            <mesh position={[-0.18, -1.5, 0]} material={m} raycast={noRay}><cylinderGeometry args={[0.13, 0.13, 0.34, 14]} /></mesh>
+            <mesh position={[0.18, -1.5, 0]} material={m} raycast={noRay}><cylinderGeometry args={[0.13, 0.13, 0.34, 14]} /></mesh>
+            <mesh position={[-0.18, -1.68, 0.08]} rotation={[Math.PI / 2, 0, 0]} material={m} raycast={noRay}><capsuleGeometry args={[0.12, 0.2, 4, 10]} /></mesh>
+            <mesh position={[0.18, -1.68, 0.08]} rotation={[Math.PI / 2, 0, 0]} material={m} raycast={noRay}><capsuleGeometry args={[0.12, 0.2, 4, 10]} /></mesh>
+          </>
+        )}</Garment>
+      </group>
+      <mesh position={[0, -1.87, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={noRay}>
+        <ringGeometry args={[0.74, 0.8, 48]} />
+        <meshBasicMaterial color={pal.body} transparent opacity={0.6} side={THREE.DoubleSide} depthWrite={false} />
+      </mesh>
+    </group>
+  )
+}
+
+/** Gemelo del perfil comunidad: persona abrigada; se pintan cabeza, pecho, manos y pies. */
+export function CommunityTwin({ zones, label }: { zones: Record<BodyZone, Status>; label: string }) {
+  const visible = useTabVisible()
+  const day = useStore((s) => s.theme === 'day')
+  return (
+    <Canvas dpr={[1, 2]} frameloop={visible ? 'always' : 'never'} camera={{ fov: 32, position: [0, 0, 7.6] }}
+      gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }} aria-label={label}>
+      <WarmFigure key={day ? 'day' : 'night'} zones={zones} day={day} />
+    </Canvas>
+  )
+}

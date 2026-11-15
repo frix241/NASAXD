@@ -1,0 +1,36 @@
+/* Fondo permanente del perfil comunidad. Tonos cercanos al fondo: el texto conserva su contraste. */
+.cm-backdrop { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.cm-backdrop svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.cm-backdrop path, .cm-backdrop circle { vector-effect: non-scaling-stroke; }
+
+/* Luz del día: amanecer claro */
+.app.theme-day .cm-backdrop {
+  --bd-sky0: #fbf3cf; --bd-sky1: #fbecc4; --bd-sky2: #f6dcae;
+  --bd-sun: #ffd98a; --bd-disc: #fff3c9;
+  --bd-m1: #e6dcc6; --bd-snow: #fffdf2; --bd-m2: #e0d2a6; --bd-m3: #d9c88f;
+  --bd-mist: #fff8dc; --bd-adobe: #cdb586; --bd-roof: #b99a68; --bd-door: #a68553; --bd-ichu: #c2ad6c;
+}
+/* Noche: cerros bajo la luna */
+.app.theme-night .cm-backdrop {
+  --bd-sky0: #050a14; --bd-sky1: #08132a; --bd-sky2: #10224a;
+  --bd-sun: #5d83c9; --bd-disc: #cfe0ff;
+  --bd-m1: #0f1e3d; --bd-snow: #2c4470; --bd-m2: #0b1730; --bd-m3: #081226;
+  --bd-mist: #1a2f5c; --bd-adobe: #14203a; --bd-roof: #1b2b4d; --bd-door: #c98a2e; --bd-ichu: #1c2e52;
+}
+.bd-sky0 { stop-color: var(--bd-sky0); } .bd-sky1 { stop-color: var(--bd-sky1); } .bd-sky2 { stop-color: var(--bd-sky2); }
+.bd-sun0 { stop-color: var(--bd-sun); stop-opacity: 0.75; } .bd-sun1 { stop-color: var(--bd-sun); stop-opacity: 0.32; }
+.bd-sun2 { stop-color: var(--bd-sun); stop-opacity: 0; }
+.bd-mist0 { stop-color: var(--bd-mist); stop-opacity: 0; } .bd-mist1 { stop-color: var(--bd-mist); stop-opacity: 0.75; }
+.bd-disc { fill: var(--bd-disc); }
+.bd-m1 { fill: var(--bd-m1); } .bd-snow { fill: var(--bd-snow); } .bd-m2 { fill: var(--bd-m2); } .bd-m3 { fill: var(--bd-m3); }
+.bd-house path { fill: var(--bd-adobe); } .bd-house .bd-roof { fill: var(--bd-roof); } .bd-house .bd-door { fill: var(--bd-door); }
+.bd-house .bd-smoke { fill: none; stroke: var(--bd-snow); stroke-width: 5; stroke-linecap: round; opacity: 0.7; }
+.bd-ichu { fill: none; stroke: var(--bd-ichu); stroke-width: 2; stroke-linecap: round; }
+
+/* Movimiento mínimo: el resplandor del sol respira y la neblina se desplaza muy despacio */
+.bd-glow { transform-origin: 1010px 560px; animation: bdGlow 9s ease-in-out infinite; }
+.bd-mist { animation: bdMist 26s ease-in-out infinite alternate; }
+@keyframes bdGlow { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.06); opacity: 1; } }
+@keyframes bdMist { from { transform: translateX(-30px); } to { transform: translateX(30px); } }
+@media (prefers-reduced-motion: reduce) { .bd-glow, .bd-mist { animation: none; } }
+@media print { .cm-backdrop { display: none; } }

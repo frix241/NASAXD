@@ -10,7 +10,6 @@ export const SPACE_ZONES: ZoneMap = {
   of: {
     pulse: 'heart', bp: 'heart', spo2: 'heart', resp: 'heart', hydration: 'kidneys',
     sleep: 'head', mood: 'head', exercise: 'muscles', radiation: 'body', temp: 'body', glucose: 'body',
-    breakfast: 'muscles', backpack: 'bones', posture: 'bones',
   },
   label: {
     heart: 'Corazón', kidneys: 'Riñones', bones: 'Huesos', head: 'Cabeza y sueño',
@@ -21,23 +20,6 @@ export const SPACE_ZONES: ZoneMap = {
     head: ['sleep', 'mood'], muscles: ['exercise'], body: ['radiation', 'temp', 'glucose'],
   },
 }
-/** Colegio: el mismo gemelo representa al aula. Sin corazón ni riñones: no hay medidas clínicas. */
-export const SCHOOL_ZONES: ZoneMap = {
-  of: {
-    pulse: 'body', bp: 'body', spo2: 'body', resp: 'body', temp: 'body', glucose: 'body',
-    sleep: 'head', mood: 'head', breakfast: 'muscles', exercise: 'muscles',
-    radiation: 'body', hydration: 'body', backpack: 'bones', posture: 'bones',
-  },
-  label: {
-    head: 'Sueño y ánimo', muscles: 'Energía y movimiento', body: 'Clima y agua', bones: 'Mochila y postura',
-    heart: '', kidneys: '',
-  },
-  metrics: {
-    head: ['sleep', 'mood'], muscles: ['breakfast', 'exercise'], body: ['radiation', 'hydration'],
-    bones: ['backpack', 'posture'], heart: [], kidneys: [],
-  },
-}
-
 export interface Issue {
   key: MetricKey
   level: Exclude<Status, 'ok'>

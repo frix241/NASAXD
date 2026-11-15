@@ -1,17 +1,17 @@
 /**
  * Perfiles de AstroTwin: la misma interfaz con dos significados.
  *  - `space`:  misión espacial (el original).
- *  - `school`: día escolar, para colegios del Perú. Sin mediciones clínicas ni nombres reales.
+ *  - `community`: comunidad rural (heladas y friaje). Apoyo a la decisión sin sensores; nunca un diagnóstico.
  * Todo lo que cambia entre modos vive aquí; los componentes solo leen el perfil activo.
  */
 import type { Destination } from './config/rules'
-import { SCHOOL_TASKS, SPACE_TASKS, type Task, type TaskId } from './config/tasks'
-import { SCHOOL_ZONES, SPACE_ZONES, type ActionId, type Zone, type ZoneMap } from './sim/issues'
+import { SPACE_TASKS, type Task, type TaskId } from './config/tasks'
+import { SPACE_ZONES, type ActionId, type Zone, type ZoneMap } from './sim/issues'
 import type { MetricKey, Reading, Scenario } from './sim/simulator'
 
-export type ProfileId = 'space' | 'school'
+export type ProfileId = 'space' | 'community'
 export type PanelId = 'sleep' | 'body' | 'exercise' | 'water' | 'heart' | 'rad' | 'labs' | 'change'
-export type SceneKind = 'boot' | 'monitor' | 'data' | 'route' | 'count' | 'summary'
+export type SceneKind = 'boot' | 'monitor' | 'data' | 'route' | 'person' | 'evaluate' | 'referral' | 'climate'
 
 export interface VitalRow {
   key: MetricKey
@@ -22,7 +22,7 @@ export interface VitalRow {
   gauge?: { max: number; ticks: number[] }
   spark?: { min: number; max: number }
 }
-interface StoryStep { at: number; say?: string | null; scenario?: Scenario; act?: [ActionId, MetricKey]; scene?: number; task?: TaskId; nextDay?: boolean }
+interface StoryStep { at: number; say?: string | null; scenario?: Scenario; act?: [ActionId, MetricKey]; scene?: number; task?: TaskId }
 
 export interface Profile {
   id: ProfileId
@@ -35,7 +35,7 @@ export interface Profile {
   /** Las alertas ámbar se cierran solas (misión) o se quedan como acción del día (colegio). */
   alertsAutoClose: boolean
   alertWord: { bad: string; warn: string }
-  palette: { ice: string; line: string; lineSoft: string }
+  palette: { ice: string; line: string; lineSoft: string } | null
   text: {
     day: string; clock: string; dest: string; alias: string | null
     routeTitle: string; routeAllDone: string; routeHint: string
@@ -114,64 +114,51 @@ const SPACE: Profile = {
   },
 }
 
-const SCHOOL: Profile = {
-  id: 'school',
-  switchLabel: 'Colegio',
-  hero: { starting: 'Iniciando AstroTwin Colegio…', ready: 'AstroTwin Colegio listo', checks: ['Tu aula', 'Clima de tu región', 'Sin nombres ni cuentas'] },
-  scenes: ['Arranque', 'Aula', 'Conteo rápido', 'Día escolar', 'Resumen de la semana'],
-  sceneKinds: ['boot', 'monitor', 'count', 'route', 'summary'],
-  hiddenZones: ['heart', 'kidneys'],
-  alertsAutoClose: false,
-  alertWord: { bad: 'Acción del día', warn: 'Acción del día' },
-  palette: { ice: '#6fd3c8', line: 'rgba(111, 211, 200, 0.32)', lineSoft: 'rgba(111, 211, 200, 0.15)' },
+/** Comunidad rural: heladas y friaje. Mismo motor de reglas explicables, otro contexto y otro tema. */
+const COMMUNITY: Profile = {
+  id: 'community',
+  switchLabel: 'Comunidad rural',
+  hero: { starting: 'Iniciando AstroTwin Comunidad…', ready: 'AstroTwin Comunidad listo', checks: ['Reglas cargadas en este equipo', 'Funciona sin internet', 'Sin nombres ni cuentas'] },
+  scenes: ['Arranque', 'Persona', 'Evaluar', 'Hoja de derivación', 'Clima y riesgo'],
+  sceneKinds: ['boot', 'person', 'evaluate', 'referral', 'climate'],
+  hiddenZones: [],
+  alertsAutoClose: true,
+  alertWord: { bad: 'Derivo a la posta', warn: 'Vigilo y vuelvo a revisar' },
+  palette: null, // los colores los pone el tema (Luz del día o Noche)
   text: {
-    day: 'Día escolar', clock: 'Hora', dest: 'Región', alias: null,
-    routeTitle: 'El día escolar del aula', routeAllDone: 'Día completo. ¡Buen trabajo!', routeHint: 'Cada momento cuida algo del grupo.',
-    dataTitle: 'Resumen de la semana', twinLabel: 'Gemelo del aula en 3D',
-    privacy: 'Los datos no salen de este dispositivo.',
-    demoNote: 'Tecla D para cerrar. Los cambios son simulados.', restart: 'Reiniciar',
+    day: '', clock: 'Hora', dest: 'Región', alias: null,
+    routeTitle: '', routeAllDone: '', routeHint: '',
+    dataTitle: '', twinLabel: 'Gemelo de la persona atendida',
+    privacy: 'Sin nombres ni cuentas. La evaluación se hace en este dispositivo; solo el asistente usa internet, si lo hay.',
+    demoNote: 'Tecla D para cerrar. Datos de demostración.', restart: 'Nueva persona',
   },
-  destinations: ['costa', 'sierra', 'selva'],
-  defaultDest: 'costa',
-  zones: SCHOOL_ZONES,
-  zoneOrder: ['head', 'muscles', 'body', 'bones'],
-  chip: (z, r) => ({
-    head: `${r.sleep.value} % con sueño`, muscles: r.exercise.value ? 'con recreo activo' : 'sin recreo activo',
-    body: r.radiation.text.toLowerCase(), bones: r.backpack.text === 'Sin dato' ? 'sin registrar' : `${r.backpack.value} %`,
-    heart: '', kidneys: '',
-  })[z],
-  vitals: [
-    { key: 'sleep', label: 'Sueño', unit: '', viz: 'gauge', gauge: { max: 100, ticks: [20, 40] } },
-    { key: 'breakfast', label: 'Desayuno', unit: '', viz: 'gauge', gauge: { max: 100, ticks: [20, 40] } },
-    { key: 'mood', label: 'Ánimo', unit: '', viz: 'gauge', gauge: { max: 100, ticks: [20, 40] } },
-    { key: 'radiation', label: 'Clima del día', unit: '', viz: 'none', wide: true },
-    { key: 'exercise', label: 'Recreo activo', unit: '', viz: 'none' },
-  ],
+  destinations: ['sierraAlta', 'sierraMedia', 'selvaFriaje'],
+  defaultDest: 'sierraAlta',
+  zones: SPACE_ZONES,
+  zoneOrder: [],
+  chip: () => '',
+  vitals: [],
   panels: [],
-  tasks: SCHOOL_TASKS,
-  events: [['sleepy', 'Mucho sueño hoy'], ['heat', 'Ola de calor'], ['cold', 'Friaje'], ['hardWeek', 'Tres días en rojo']],
+  tasks: [],
+  events: [['frost', 'Simular helada'], ['alarm', 'Marcar una señal de alarma']],
   story: [
-    { at: 0, scene: 1, say: 'Modo historia. Un día normal en el aula: todo en verde.' },
-    { at: 4000, scenario: 'sleepy', say: 'En el conteo de hoy, casi la mitad durmió poco. Aparece la acción del día.' },
-    { at: 10500, act: ['ack', 'sleep'], say: 'El tutor hace la pausa activa y la marca como hecha.' },
-    { at: 14000, scenario: 'heat', say: 'Llega una ola de calor. El aula-gemelo cambia de color.' },
-    { at: 20500, act: ['ack', 'radiation'], say: 'Ventanas abiertas, agua cada hora y recreo a la sombra.' },
-    { at: 25000, scene: 3, say: 'El día escolar: seis momentos que guía el tutor.' },
-    { at: 28500, task: 'breakfast' }, { at: 31000, task: 'entry' },
-    { at: 33500, task: 'recess', say: 'Tres momentos hechos: la racha sube un día.' },
-    { at: 36000, scene: 4, say: 'El resumen de la semana, listo para imprimir.' },
-    { at: 40000, say: 'Fin del modo historia.' }, { at: 43000, say: null },
+    { at: 0, scene: 1, scenario: 'calm', say: 'Modo historia. Una visita tranquila: sin señales, atiende la agente comunitaria.' },
+    { at: 4500, scenario: 'frost', say: 'Madrugada con helada. En un niño menor de 5 el semáforo pasa a "Vigilo".' },
+    { at: 11000, scene: 4, say: 'La temperatura cae por la noche y el riesgo sube.' },
+    { at: 16500, scene: 1, scenario: 'alarm', say: 'Aparece una señal de alarma: le cuesta respirar. Ahora es "Derivo".' },
+    { at: 23000, scene: 3, say: 'La hoja de derivación ya está lista, con el texto para dictar por radio.' },
+    { at: 30000, say: 'Fin del modo historia.' }, { at: 33000, say: null },
   ],
   assistant: {
-    samples: ['¿Qué está pasando?', '¿Qué hago hoy?', '¿Qué hago hoy?', '¿Qué toca ahora?', '¿Cómo va la semana?'],
+    samples: ['¿Qué está pasando?', '¿Qué hago?', '¿Qué hago?', '¿Qué digo por radio?', '¿Hay helada?'],
     suggestions: [
       ['¿Qué está pasando?'],
-      ['¿Qué hago hoy?', '¿Cómo está el aula?', '¿Hay mucho sueño?'],
-      ['¿Qué hago hoy?', '¿Cómo está el aula?', '¿Cómo va la semana?'],
-      ['¿Qué toca ahora?', '¿Qué hago hoy?', '¿Cuántos puntos tenemos?'],
-      ['¿Cómo va la semana?', '¿Qué hago hoy?', '¿Cómo está el aula?'],
+      ['¿Qué hago?', '¿Por qué?', '¿Qué tan segura estás?'],
+      ['¿Qué hago?', '¿Cómo cuento la respiración?', '¿Qué me falta preguntar?'],
+      ['¿Qué digo por radio?', '¿Qué hago en el camino?', '¿Qué hago?'],
+      ['¿Hay helada?', '¿Qué hago?', '¿Cómo abrigo la vivienda?'],
     ],
   },
 }
 
-export const PROFILES: Record<ProfileId, Profile> = { space: SPACE, school: SCHOOL }
+export const PROFILES: Record<ProfileId, Profile> = { space: SPACE, community: COMMUNITY }

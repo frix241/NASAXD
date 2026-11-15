@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { askAssistant } from '../assistant/askAssistant'
 import { PROFILES } from '../profiles'
 import { useProfile, useStore } from '../store'
+import { Avatar } from './Avatar'
 import { Icon } from './Icon'
 
 type Phase = 'idle' | 'listening' | 'thinking' | 'speaking'
@@ -22,6 +23,10 @@ function loadVoices(): Promise<SpeechSynthesisVoice[]> {
     setTimeout(done, 1200)
   })
 }
+
+declare const __ASSISTANT_LLM__: boolean
+/** Grabar y transcribir con Whisper: funciona en cualquier navegador moderno, pero pide https o localhost */
+const canRecord = () => typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia && typeof MediaRecorder !== 'undefined'
 
 let msgId = 0
 const keep: { u: SpeechSynthesisUtterance | null } = { u: null } // evita que el navegador corte la voz a medias
@@ -88,7 +93,7 @@ export function Assistant() {
       const answer = await askAssistant(question, {
         scene: s.scene, sim: s.sim, readings: s.readings, issues: s.issues,
         tasksDone: s.tasksDone, points: s.points, streak: s.streak,
-        profile: s.profile, tasks: PROFILES[s.profile].tasks, aula: s.aula,
+        profile: s.profile, tasks: PROFILES[s.profile].tasks, visit: s.visit, result: s.result,
       })
       setMsgs((m) => [...m.slice(-7), { id: ++msgId, from: 'bot', text: answer }])
       setPhase('idle')
@@ -103,8 +108,50 @@ export function Assistant() {
     timers.current.push(setTimeout(() => { const s = useStore.getState(); ask(PROFILES[s.profile].assistant.samples[s.scene]) }, 1700))
   }
 
+  /** Graba hasta 8 s (o hasta que se toque otra vez) y lo convierte en texto con Whisper. */
+  const recordAndTranscribe = async () => {
+    let stream: MediaStream
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }) } catch (e) {
+      const name = (e as Error).name
+      setPhase('idle')
+      setNote(name === 'NotAllowedError' ? 'El micrófono está bloqueado. Dale permiso en el navegador (icono junto a la dirección) o escribe tu pregunta.'
+        : name === 'NotFoundError' ? 'No encontré ningún micrófono en este equipo. Escribe tu pregunta.'
+          : 'No pude abrir el micrófono. Escribe tu pregunta.')
+      return
+    }
+    const chunks: Blob[] = []
+    const mr = new MediaRecorder(stream)
+    let aborted = false
+    rec.current = { stop: () => { if (mr.state !== 'inactive') mr.stop() }, abort: () => { aborted = true; if (mr.state !== 'inactive') mr.stop() } }
+    mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data) }
+    mr.onstop = async () => {
+      stream.getTracks().forEach((t) => t.stop())
+      rec.current = null
+      if (aborted) return
+      setPhase('thinking'); setHeard('')
+      try {
+        const form = new FormData()
+        form.append('file', new Blob(chunks, { type: mr.mimeType || 'audio/webm' }), 'voz.webm')
+        form.append('model', 'whisper-large-v3-turbo'); form.append('language', 'es'); form.append('response_format', 'json')
+        const res = await fetch('/api/groq-stt', { method: 'POST', body: form })
+        const said = res.ok ? String((await res.json()).text ?? '').trim() : ''
+        if (said.length > 1) { ask(said); return }
+        setPhase('idle'); setNote(res.ok ? 'No te entendí. Toca el micrófono e inténtalo otra vez, o escribe tu pregunta.' : 'No pude convertir la voz en texto ahora. Escribe tu pregunta.')
+      } catch { setPhase('idle'); setNote('Sin conexión para convertir la voz en texto. Escribe tu pregunta.') }
+    }
+    mr.start()
+    setPhase('listening'); setHeard('Te escucho. Toca el micrófono cuando termines.')
+    timers.current.push(setTimeout(() => { if (mr.state !== 'inactive') mr.stop() }, 8000))
+  }
+
   const listen = () => {
     stopAll(); setOpen(true); setNote(''); setHeard('')
+    // Fuera de https o localhost, el navegador no deja usar el micrófono
+    if (!window.isSecureContext && !navigator.webdriver) {
+      setNote('El navegador solo permite el micrófono en una dirección segura (https) o en localhost. Abre la dirección https de la app, o escribe tu pregunta.')
+      return
+    }
+    if (__ASSISTANT_LLM__ && canRecord() && navigator.onLine && !navigator.webdriver) { void recordAndTranscribe(); return }
     if (!Recognition) { mockListen('Este navegador no reconoce voz. Usé una pregunta de ejemplo; también puedes escribir la tuya.'); return }
     try {
       const r = new Recognition()
@@ -147,6 +194,7 @@ export function Assistant() {
       {open && (
         <section className="chat" aria-label="Asistente">
           <header>
+            <Avatar state={phase} variant={profile.id} size={52} />
             <h2>Asistente</h2>
             <button className="tool" aria-label={muted ? 'Activar voz' : 'Silenciar voz'} title={muted ? 'Activar voz' : 'Silenciar voz'} aria-pressed={muted}
               onClick={() => { if (!muted) hush(); setMuted(!muted) }}><Icon name={muted ? 'mute' : 'sound'} size={18} /></button>
@@ -179,6 +227,7 @@ export function Assistant() {
             ? <span className="wave small" aria-hidden="true">{[0, 1, 2, 3].map((i) => <i key={i} style={{ animationDelay: `${i * 160}ms` }} />)}</span>
             : <Icon name="mic" size={26} />}
         </button>
+        {!open && <button className="av-open" aria-label="Abrir el asistente" title="Abrir el asistente" onClick={() => setOpen(true)}><Avatar state={phase} variant={profile.id} size={54} /></button>}
         {!open && (
           <button className="keys" aria-label="Escribir al asistente" title="Escribir al asistente"
             onClick={() => { setOpen(true); setTimeout(() => input.current?.focus(), 50) }}><Icon name="keys" size={18} /></button>

@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { EXPLAIN_LABELS, SCHOOL_EXPLAIN, SPACE_EXPLAIN, type Field } from '../config/explain'
+import { EXPLAIN_LABELS, SPACE_EXPLAIN, type Field } from '../config/explain'
 import { DESTINATIONS, STATUS_WORD, worst, type Status } from '../config/rules'
 import { PROFILES, type ProfileId, type VitalRow } from '../profiles'
 import { statusPhrase, type Issue, type Zone } from '../sim/issues'
-import { dayNumber } from '../sim/aula'
 import type { MetricKey } from '../sim/simulator'
 import { currentAlert, useProfile, useStore } from '../store'
 import { Twin, TwinFlat } from '../three/Twin'
@@ -29,20 +28,23 @@ export function ModeSwitch() {
 
 export function TopBar() {
   const p = useProfile()
-  const school = p.id === 'school'
-  const day = useStore((s) => (school ? dayNumber(s.aula) : s.sim.missionDay))
+  const community = p.id === 'community'
+  const day = useStore((s) => s.sim.missionDay)
   const minute = useStore((s) => s.sim.minuteOfDay)
-  const dest = useStore((s) => (school ? s.aula.region : s.sim.destination))
+  const dest = useStore((s) => (community ? s.visit.region : s.sim.destination))
+  const result = useStore((s) => s.result)
+  const theme = useStore((s) => s.theme)
+  const setTheme = useStore((s) => s.setTheme)
   const issues = useStore((s) => s.issues)
   const setDest = useStore((s) => s.setDest)
   const hh = String(Math.floor(minute / 60)).padStart(2, '0'); const mm = String(minute % 60).padStart(2, '0')
-  const st: Status = issues.some((i) => i.level === 'bad') ? 'bad' : issues.length ? 'warn' : 'ok'
+  const st: Status = community ? result.status : issues.some((i) => i.level === 'bad') ? 'bad' : issues.length ? 'warn' : 'ok'
   return (
     <header className="topbar">
       <ModeSwitch />
       {p.text.alias && <span className="item">Alias <b>{p.text.alias}</b></span>}
-      <span className="item">{p.text.day} <b>{day}</b></span>
-      <span className="item">{p.text.clock} <b>{hh}:{mm}</b></span>
+      {!community && <span className="item">{p.text.day} <b>{day}</b></span>}
+      {!community && <span className="item">{p.text.clock} <b>{hh}:{mm}</b></span>}
       <span className="item" style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
         {p.text.dest}
         <span className="seg" role="group" aria-label={p.text.dest}>
@@ -51,7 +53,13 @@ export function TopBar() {
           ))}
         </span>
       </span>
-      <span className={`phrase s-${st}`} role="status"><Icon name={st} />{statusPhrase(issues)}</span>
+      {community && (
+        <span className="seg" role="group" aria-label="Tema">
+          <button aria-pressed={theme === 'day'} onClick={() => setTheme('day')}>Luz del día</button>
+          <button aria-pressed={theme === 'night'} onClick={() => setTheme('night')}>Noche</button>
+        </span>
+      )}
+      <span className={`phrase s-${st}`} role="status"><Icon name={st} />{community ? result.label : statusPhrase(issues)}</span>
     </header>
   )
 }
@@ -112,15 +120,13 @@ function ExplainPanel() {
   const r = useStore((s) => s.readings)
   const sim = useStore((s) => s.sim)
   const setExplain = useStore((s) => s.setExplain)
-  const setScene = useStore((s) => s.setScene)
   const box = useRef<HTMLElement>(null)
   useEffect(() => { if (key) box.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }) }, [key])
   if (!key) return null
-  const school = p.id === 'school'
-  const e = (school ? SCHOOL_EXPLAIN : SPACE_EXPLAIN)[key]
+  const e = SPACE_EXPLAIN[key]
   if (!e) return null
-  const L = EXPLAIN_LABELS[p.id]
-  const tabs = zone ? p.zones.metrics[zone].filter((k) => (school ? SCHOOL_EXPLAIN : SPACE_EXPLAIN)[k]) : [key]
+  const L = EXPLAIN_LABELS
+  const tabs = zone ? p.zones.metrics[zone].filter((k) => SPACE_EXPLAIN[k]) : [key]
   const reading = r[key]
   const current = (f: Field) => f.field === 'sleep' ? sim.sleepHours : f.field === 'mood' ? sim.mood : f.field === 'glucose' ? sim.glucose : sim.vitals[f.field]
   return (
@@ -142,14 +148,12 @@ function ExplainPanel() {
         <dt>{L.how}</dt><dd>{e.how}</dd>
         <dt>{L.alert}</dt><dd>{e.alert}</dd>
       </dl>
-      {school
-        ? <button className="btn small ghost" onClick={() => setScene(2)}>Ir al conteo rápido</button>
-        : e.fields && (
+      {e.fields && (
           <div className="measures">
             <h3>Registrar una medición</h3>
             {e.fields.map((f) => <Measure key={f.field + key} f={f} current={current(f)} />)}
           </div>
-        )}
+      )}
     </section>
   )
 }

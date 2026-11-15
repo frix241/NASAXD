@@ -2,7 +2,6 @@ import type { ActionId, Zone } from '../sim/issues'
 
 export type TaskId =
   | 'resistance' | 'water' | 'rest' | 'mood' | 'shelter' | 'measure'
-  | 'breakfast' | 'entry' | 'recess' | 'lunch' | 'exit' | 'night'
 export interface Task {
   id: TaskId; title: string; what: string; minutes: number; cares: string
   zone: Zone; points: number; action: ActionId; effect: string
@@ -17,14 +16,5 @@ export const SPACE_TASKS: Task[] = [
   { id: 'shelter', title: 'Revisión del refugio', what: 'Comprueba que el refugio tenga agua, comida y camino libre.', minutes: 5, cares: 'Todo el cuerpo ante la radiación', zone: 'body', points: 15, action: 'ack', effect: 'Refugio listo para una tormenta' },
 ]
 
-/** Día escolar del aula: seis momentos que guía el tutor. */
-export const SCHOOL_TASKS: Task[] = [
-  { id: 'breakfast', title: 'Desayuno', what: 'Pregunta a mano alzada quiénes desayunaron. Solo cuenta, sin señalar a nadie.', minutes: 1, cares: 'Energía para la mañana', zone: 'muscles', points: 10, action: 'ack', effect: 'Dato para el conteo rápido' },
-  { id: 'entry', title: 'Entrada', what: 'Haz el conteo rápido del día: cinco preguntas, treinta segundos.', minutes: 1, cares: 'Sueño y ánimo', zone: 'head', points: 20, action: 'ack', effect: 'Semáforo del aula al día' },
-  { id: 'recess', title: 'Recreo', what: 'Propón un juego con movimiento para todo el grupo.', minutes: 20, cares: 'Energía y movimiento', zone: 'muscles', points: 30, action: 'ack', effect: 'Recreo activo cumplido' },
-  { id: 'lunch', title: 'Lonche', what: 'Antes de comer, pausa para tomar agua y lavarse las manos.', minutes: 5, cares: 'Agua', zone: 'body', points: 10, action: 'ack', effect: 'El aula toma agua' },
-  { id: 'exit', title: 'Salida', what: 'Recuerda: gorro, sombra en el camino y mañana solo lo del día en la mochila.', minutes: 2, cares: 'Sol, mochila y postura', zone: 'bones', points: 15, action: 'ack', effect: 'Mochilas más livianas mañana' },
-  { id: 'night', title: 'Noche', what: 'Mensaje para casa: pantallas apagadas y a dormir temprano.', minutes: 1, cares: 'Sueño', zone: 'head', points: 15, action: 'ack', effect: 'Menos sueño mañana' },
-]
 export const POINTS_PER_LEVEL = 100
 export const ALERT_TASK_POINTS = 20

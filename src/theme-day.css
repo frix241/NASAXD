@@ -1,0 +1,272 @@
+/* AstroTwin — tema "Luz del día" y ajustes del perfil Comunidad rural.
+   Pensado para agentes de salud que leen la pantalla a pleno sol y la tocan con el dedo.
+
+   Fondo: amarillo pálido de libreta de campo. A pleno sol manda la luminancia: el amarillo es el
+   único tinte que conserva casi toda la luz del blanco (por eso se usa en señalización), así que
+   no pierde contraste frente al reflejo y a la vez distingue la página de los paneles, que son
+   un punto más claros. Negro cálido encima, sin grises medios.
+
+   Los contrastes se comprueban con `node scripts/contrast.mjs`. */
+
+.app.theme-day {
+  --bg: #fbf3cf;
+  --ink: #15130a;
+  --muted: #4a4632;
+  --ice: #0a47a3;
+  --line: #6b6547;
+  --line-soft: #c7bc88;
+  --surface: #fffdf2;
+  --surface-2: #efe4ad;
+  --border: #15130a;
+  --on-accent: #ffffff;
+  --ok: #0a5c2c;
+  --warn: #7d4300;
+  --bad: #a3111a;
+  --panel: #fffdf2;
+  /* Sombra con desplazamiento: la única profundidad del tema */
+  --lift: 0 2px 4px rgba(21, 19, 10, 0.12), 0 10px 26px rgba(21, 19, 10, 0.16);
+  color-scheme: light;
+  color: var(--ink);
+}
+
+/* ── Perfil comunidad (ambos temas): sin espacio ni casco ───── */
+.app.mode-community, .app.theme-day { background: var(--bg); }
+:is(.app.mode-community, .app.theme-day) :is(.space, .scanlines, .helmet, .fog) { display: none; }
+
+/* ── Tamaños para sol y dedos (tema día y perfil comunidad) ─── */
+:is(.app.theme-day, .app.mode-community) { font-size: 18px; line-height: 1.45; }
+:is(.app.theme-day, .app.mode-community) :focus-visible { outline: 3px solid var(--ice); outline-offset: 3px; }
+:is(.app.theme-day, .app.mode-community) .btn { min-height: 56px; padding: 12px 24px; font-size: 18px; }
+:is(.app.theme-day, .app.mode-community) .btn.small { min-height: 48px; padding: 8px 18px; font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .seg button { min-height: 56px; padding: 8px 18px; font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .topbar .seg button { min-height: 48px; padding: 6px 14px; }
+:is(.app.theme-day, .app.mode-community) .explain .tabs button { font-size: 15px; padding: 6px 14px; }
+:is(.app.theme-day, .app.mode-community) .topbar { font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .status { font-size: 15px; }
+:is(.app.theme-day, .app.mode-community) .small { font-size: 14px; }
+:is(.app.theme-day, .app.mode-community) .badge { font-size: 14px; padding: 2px 9px; }
+:is(.app.theme-day, .app.mode-community) .scene-head h1 { font-size: 24px; }
+:is(.app.theme-day, .app.mode-community) .scene-head p { font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .zone-chip { min-height: 56px; padding: 8px 12px; font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .zone-chip :is(.line, .status) { font-size: 15px; }
+:is(.app.theme-day, .app.mode-community) .vital .head { font-size: 17px; }
+:is(.app.theme-day, .app.mode-community) .vital .head .note,
+:is(.app.theme-day, .app.mode-community) .vital .value small { font-size: 14px; }
+:is(.app.theme-day, .app.mode-community) .alert .status { font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .alert h2 { font-size: 26px; }
+:is(.app.theme-day, .app.mode-community) .alert p { font-size: 18px; }
+:is(.app.theme-day, .app.mode-community) .alert .hint { font-size: 15px; }
+:is(.app.theme-day, .app.mode-community) .alert .timer { height: 4px; }
+:is(.app.theme-day, .app.mode-community) .explain header h2 { font-size: 22px; }
+:is(.app.theme-day, .app.mode-community) .explain dt { font-size: 14px; }
+:is(.app.theme-day, .app.mode-community) .explain dd { font-size: 17px; line-height: 1.45; }
+:is(.app.theme-day, .app.mode-community) .explain .hazard { font-size: 14px; }
+:is(.app.theme-day, .app.mode-community) .measures h3 { font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .measure label { font-size: 14px; }
+:is(.app.theme-day, .app.mode-community) .m-ctl button { width: 48px; height: 48px; font-size: 22px; }
+:is(.app.theme-day, .app.mode-community) .m-ctl input { width: 84px; height: 48px; font-size: 20px; }
+:is(.app.theme-day, .app.mode-community) .assistant { width: min(480px, calc(100vw - 32px)); }
+:is(.app.theme-day, .app.mode-community) .mic { width: 64px; height: 64px; }
+:is(.app.theme-day, .app.mode-community) .keys { left: 76px; width: 48px; height: 48px; }
+:is(.app.theme-day, .app.mode-community) .tool { width: 48px; height: 48px; }
+:is(.app.theme-day, .app.mode-community) .chat h2 { font-size: 17px; }
+:is(.app.theme-day, .app.mode-community) .msg { font-size: 17px; padding: 10px 14px; }
+:is(.app.theme-day, .app.mode-community) .msgs .hint { font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .chat .note { font-size: 15px; }
+:is(.app.theme-day, .app.mode-community) .chips { gap: 8px; }
+:is(.app.theme-day, .app.mode-community) .chips button { min-height: 48px; padding: 8px 16px; font-size: 16px; }
+:is(.app.theme-day, .app.mode-community) .ask input { font-size: 18px; min-height: 52px; padding: 10px 14px; }
+:is(.app.theme-day, .app.mode-community) .toast { font-size: 16px; padding: 12px 20px; }
+:is(.app.theme-day, .app.mode-community) .story { font-size: 16px; padding: 10px 18px; }
+:is(.app.theme-day, .app.mode-community) .demo { width: 290px; }
+:is(.app.theme-day, .app.mode-community) .demo h2 { font-size: 17px; }
+:is(.app.theme-day, .app.mode-community) .demo p { font-size: 14px; }
+:is(.app.theme-day, .app.mode-community) .dots { right: 12px; gap: 2px; }
+:is(.app.theme-day, .app.mode-community) .dots button { width: 44px; height: 44px; }
+:is(.app.theme-day, .app.mode-community) .dots button i { width: 12px; height: 12px; border-width: 2px; }
+:is(.app.theme-day, .app.mode-community) .dots button span { right: 46px; font-size: 14px; padding: 5px 10px; }
+@media (max-width: 860px) {
+  :is(.app.theme-day, .app.mode-community) .scene { padding-right: 44px; }
+  :is(.app.theme-day, .app.mode-community) .dots { right: 2px; }
+  :is(.app.theme-day, .app.mode-community) .dots button { width: 38px; }
+  :is(.app.theme-day, .app.mode-community) .topbar { font-size: 15px; }
+  :is(.app.theme-day, .app.mode-community) .topbar .seg button { padding: 6px 10px; font-size: 15px; }
+  :is(.app.theme-day, .app.mode-community) .alert h2 { font-size: 23px; }
+}
+
+/* ── Superficies del navegador ──────────────────────────────── */
+.app.theme-day ::selection { background: var(--ice); color: var(--on-accent); }
+.app.theme-day, .app.theme-day * { scrollbar-color: var(--muted) transparent; }
+.app.theme-day ::-webkit-scrollbar { width: 12px; height: 12px; }
+.app.theme-day ::-webkit-scrollbar-thumb { background: var(--muted); border: 3px solid var(--bg); border-radius: 6px; }
+.app.theme-day ::-webkit-scrollbar-track { background: transparent; }
+.app.theme-day input { caret-color: var(--ice); }
+
+/* ── Sin brillos: en claro el neón solo ensucia ─────────────── */
+.app.theme-day :is(.topbar, .scene-head, .zones, .path, .boot .core, .boot h1, .vital .value b) { text-shadow: none; }
+.app.theme-day .station.urgent .node, .app.theme-day .path::after { box-shadow: none; }
+.app.theme-day .stage::after { display: none; }
+.app.theme-day :is(.alert, .chat, .explain) { backdrop-filter: none; }
+
+/* ── Barra superior y segmentos ─────────────────────────────── */
+.app.theme-day .topbar { color: var(--ink); }
+.app.theme-day .topbar .item { color: var(--muted); }
+.app.theme-day .topbar .item b { color: var(--ink); }
+.app.theme-day .seg { border: 2px solid var(--border); background: var(--surface); }
+.app.theme-day .seg button { color: var(--ink); transition: background 0.15s, color 0.15s, transform 0.1s; }
+.app.theme-day .seg button + button { border-left: 2px solid var(--border); }
+.app.theme-day .seg button:hover { background: var(--surface-2); }
+.app.theme-day .seg button[aria-pressed='true'] { background: var(--ice); color: var(--on-accent); font-weight: 700; }
+.app.theme-day .seg button:focus-visible { outline-offset: -6px; outline-color: currentColor; }
+
+/* ── Botones ────────────────────────────────────────────────── */
+.app.theme-day .btn { border: 2px solid var(--ice); background: var(--ice); color: var(--on-accent); }
+.app.theme-day .btn:hover { background: color-mix(in srgb, var(--ice) 82%, #000); border-color: color-mix(in srgb, var(--ice) 82%, #000); }
+.app.theme-day .btn.ghost { border-color: var(--border); background: var(--surface); color: var(--ink); font-weight: 400; }
+.app.theme-day .btn.ghost:hover { background: var(--surface-2); border-color: var(--border); }
+.app.theme-day .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── Paneles ────────────────────────────────────────────────── */
+.app.theme-day .holo { border: 2px solid var(--line); background: var(--surface); }
+.app.theme-day .holo::before, .app.theme-day .holo::after { display: none; }
+.app.theme-day .panel:hover { border-color: var(--border); background: var(--surface); }
+.app.theme-day .modal { background: rgba(21, 19, 10, 0.6); }
+.app.theme-day .modal .panel { background: var(--surface); border-color: var(--border); box-shadow: var(--lift); }
+.app.theme-day .score .bar { height: 8px; background: var(--line-soft); }
+
+/* ── Estados, insignias y cabeceras ─────────────────────────── */
+.app.theme-day .status { color: var(--s); font-weight: 700; }
+.app.theme-day .badge { border: 2px solid var(--warn); color: var(--warn); background: color-mix(in srgb, var(--warn) 10%, var(--surface)); font-weight: 700; }
+.app.theme-day .scene-head h1 { color: var(--ink); }
+.app.theme-day .scene-head p { color: var(--muted); }
+
+/* ── Zonas del cuerpo e indicadores ─────────────────────────── */
+.app.theme-day .zone-chip { border: 2px solid var(--border); background: var(--surface);
+  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.1s; }
+.app.theme-day .zone-chip:hover { background: var(--surface-2); }
+.app.theme-day .zone-chip[aria-pressed='true'] { border-color: var(--s); background: var(--s); color: var(--on-accent); box-shadow: none; }
+.app.theme-day .zone-chip[aria-pressed='true'] * { color: inherit; }
+.app.theme-day .vital { border: 2px solid var(--s); background: color-mix(in srgb, var(--s) 8%, var(--surface));
+  transition: box-shadow 0.2s, background 0.2s; }
+.app.theme-day .vital:hover { background: color-mix(in srgb, var(--s) 15%, var(--surface)); }
+.app.theme-day .vital.hl, .app.theme-day .vital[aria-expanded='true'] {
+  background: color-mix(in srgb, var(--s) 22%, var(--surface)); box-shadow: 0 0 0 3px var(--s); }
+.app.theme-day .vital .flash { animation-name: dayFlash; }
+.app.theme-day .trace polyline, .app.theme-day .trace path.l { stroke-width: 2.5; filter: none; }
+.app.theme-day .gauge { height: 16px; border: 2px solid var(--border); background: var(--surface); }
+.app.theme-day .gauge i { opacity: 1; }
+.app.theme-day .gauge u { width: 2px; background: var(--ink); }
+/* El gemelo 3D y las gráficas se dibujan con luz (mezcla aditiva y colores validados sobre oscuro):
+   en el tema día viven dentro de una "pantalla" oscura con su propia paleta. */
+.app.theme-day:not(.mode-community) :is(.twin-view, .chart) {
+  --ink: #dcebff; --muted: #86a3cb; --line: rgba(109, 179, 255, 0.3); --line-soft: rgba(109, 179, 255, 0.14);
+  --ok: #34d399; --warn: #f5b83d; --bad: #f2625f;
+  background: #050a14; color: var(--ink); }
+.app.theme-day .twin-view { border: 2px solid var(--border); }
+.app.theme-day.mode-community .tip { background: var(--bg); border: 2px solid var(--border); color: var(--ink); }
+.app.theme-day:not(.mode-community) .tip { background: #050a14; border: 2px solid #86a3cb; color: #dcebff; }
+
+/* ── Alerta y explicación ───────────────────────────────────── */
+.app.theme-day .alert { border: 3px solid var(--s); background: color-mix(in srgb, var(--s) 10%, var(--surface));
+  box-shadow: var(--lift); animation-name: dayOpen; }
+.app.theme-day .alert.s-bad { animation-name: dayOpen, dayAlarm; }
+.app.theme-day .alert h2, .app.theme-day .alert p { color: var(--ink); }
+.app.theme-day .alert .hint { color: var(--muted); }
+.app.theme-day .alert .btn { border-color: var(--s); background: var(--s); color: var(--on-accent); }
+.app.theme-day .alert .btn:hover { background: color-mix(in srgb, var(--s) 82%, #000); border-color: color-mix(in srgb, var(--s) 82%, #000); }
+.app.theme-day .alert .btn.ghost { background: var(--surface); color: var(--ink); border-color: var(--border); }
+.app.theme-day .alert .btn.ghost:hover { background: var(--surface-2); }
+.app.theme-day .alert .timer { background: var(--line-soft); }
+.app.theme-day .explain { border: 2px solid var(--line); border-top: 4px solid var(--s); background: var(--surface);
+  box-shadow: var(--lift); animation-name: dayOpen; }
+.app.theme-day .explain dt { color: var(--ice); }
+.app.theme-day .explain .hazard { color: var(--muted); }
+.app.theme-day .measures { border-top: 2px solid var(--line-soft); }
+.app.theme-day .m-ctl button { border: 2px solid var(--border); background: var(--surface); }
+.app.theme-day .m-ctl button:hover { background: var(--surface-2); }
+.app.theme-day .m-ctl input { border: 2px solid var(--border); background: var(--surface); color: var(--ink); }
+.app.theme-day .m-ctl input:focus { outline: 3px solid var(--ice); outline-offset: 2px; border-color: var(--border); }
+
+/* ── Navegación por puntos ──────────────────────────────────── */
+.app.theme-day .dots button i { border-color: var(--border); background: var(--surface); }
+.app.theme-day .dots button:hover i { background: var(--surface-2); }
+.app.theme-day .dots button[aria-current='true'] i { background: var(--ice); border-color: var(--ice); box-shadow: none; }
+.app.theme-day .dots button span { background: var(--ink); color: var(--bg); border: 0; }
+
+/* ── Asistente ──────────────────────────────────────────────── */
+.app.theme-day .mic { border: 2px solid var(--ice); background: var(--ice); color: var(--on-accent);
+  box-shadow: var(--lift); transition: background 0.2s, border-color 0.2s, transform 0.1s; }
+.app.theme-day .mic:hover { background: color-mix(in srgb, var(--ice) 82%, #000); }
+.app.theme-day .mic.listening { background: var(--ink); border-color: var(--ink); box-shadow: var(--lift); }
+.app.theme-day .mic.listening::before, .app.theme-day .mic.listening::after { inset: -2px; border: 2px solid var(--ice); }
+.app.theme-day .keys { border: 2px solid var(--border); background: var(--surface); color: var(--ink); }
+.app.theme-day .keys:hover { background: var(--surface-2); color: var(--ink); border-color: var(--border); }
+.app.theme-day .chat { background: var(--surface); border: 2px solid var(--border); box-shadow: var(--lift); animation-name: dayOpen; }
+.app.theme-day .tool { color: var(--ink); }
+.app.theme-day .tool:hover:not(:disabled) { color: var(--ink); background: var(--surface-2); }
+.app.theme-day .tool:disabled { opacity: 0.45; }
+.app.theme-day .msgs .hint { color: var(--muted); }
+.app.theme-day .msg.me { background: var(--ice); border: 2px solid var(--ice); color: var(--on-accent); }
+.app.theme-day .msg.bot { background: var(--surface-2); border: 2px solid var(--line-soft); color: var(--ink); }
+.app.theme-day .msg.bot.live { color: var(--muted); }
+.app.theme-day .msg.me.live { color: var(--on-accent); }
+.app.theme-day .msg.me :is(.wave, .think) i { background: currentColor; }
+.app.theme-day .chat .note { color: var(--warn); font-weight: 700; }
+.app.theme-day .chips button { border: 2px solid var(--border); background: var(--surface); color: var(--ink); }
+.app.theme-day .chips button:hover { background: var(--surface-2); border-color: var(--border); }
+.app.theme-day .ask { border: 2px solid var(--border); background: var(--surface); }
+.app.theme-day .ask:focus-within { border-color: var(--border); outline: 3px solid var(--ice); outline-offset: 2px; }
+.app.theme-day .ask input { color: var(--ink); }
+.app.theme-day .ask input::placeholder { color: var(--muted); opacity: 1; }
+
+/* ── Avisos breves y panel de demostración ──────────────────── */
+.app.theme-day .toast { background: var(--ink); color: var(--bg); border: 0; box-shadow: var(--lift); animation-name: dayFade; }
+.app.theme-day .story { background: var(--surface); border: 2px solid var(--warn); color: var(--ink); box-shadow: var(--lift); }
+.app.theme-day .demo { background: var(--surface); border: 2px solid var(--border); box-shadow: var(--lift); }
+.app.theme-day .demo p { color: var(--muted); }
+
+/* ── Otras piezas con oscuro fijo (conteo, tabla, ruta) ─────── */
+.app.theme-day .q { border: 2px solid var(--s); background: color-mix(in srgb, var(--s) 8%, var(--surface)); }
+.app.theme-day .side-box .q { border: 0; background: none; }
+.app.theme-day .pm { border: 2px solid var(--border); background: var(--surface); }
+.app.theme-day .pm:hover { background: var(--surface-2); }
+.app.theme-day .q-opt button { border: 2px solid var(--border); background: var(--surface); }
+.app.theme-day .q-opt button[aria-pressed='true'] { border-color: var(--ice); background: var(--ice); color: var(--on-accent); }
+.app.theme-day .level2 { border: 2px solid var(--line); background: var(--surface); }
+.app.theme-day table.week th, .app.theme-day table.week td { border-bottom: 2px solid var(--line-soft); }
+.app.theme-day .station .node { background: var(--surface); }
+.app.theme-day .boot .hud i { opacity: 0.8; }
+
+/* ── Movimiento: sin destellos de holograma sobre claro ─────── */
+.app.theme-day .stage.holo-out .scene, .app.theme-day .stage.holo-in .scene { -webkit-mask-image: none; mask-image: none; }
+.app.theme-day .stage.holo-out .scene { animation-name: dayOut; }
+.app.theme-day .stage.holo-in .scene { animation-name: dayIn; }
+.app.theme-day .stage.holo-in :is(.vital, .zone-chip, .wall > .panel, .station, .score > .holo) { animation-name: dayPiece; }
+.app.theme-day .modal .panel { animation-name: dayFade; }
+.app.theme-day.mode-swap .stage { animation-name: dayFade; }
+@keyframes dayIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes dayOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes dayFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dayPiece { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes dayOpen { from { clip-path: inset(50% 0 50% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes dayFlash { from { opacity: 0.25; } to { opacity: 0; } }
+/* La alerta grave late con un anillo del color del estado, sin halo difuso */
+@keyframes dayAlarm {
+  0%, 100% { box-shadow: var(--lift), 0 0 0 0 color-mix(in srgb, var(--s) 45%, transparent); }
+  50% { box-shadow: var(--lift), 0 0 0 8px color-mix(in srgb, var(--s) 45%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app.theme-day .stage.holo-out .scene { animation-name: dayOut; }
+  .app.theme-day .stage.holo-in .scene, .app.theme-day :is(.alert, .alert.s-bad, .chat, .explain, .toast),
+  .app.theme-day .modal .panel, .app.theme-day.mode-swap .stage { animation-name: dayFade; }
+  .app.theme-day .stage.holo-in :is(.vital, .zone-chip, .wall > .panel, .station, .score > .holo),
+  .app.theme-day .vital .flash { animation: none; }
+  :is(.app.theme-day, .app.mode-community) :is(.btn, .seg button, .zone-chip, .mic, .vital, .pm) { transition: none; }
+  :is(.app.theme-day, .app.mode-community) :is(.btn, .mic, .zone-chip, .seg button, .pm):active { transform: none; }
+}
+
+/* La hoja impresa sigue siendo blanca */
+@media print {
+  .app.theme-day, .app.mode-community { background: #fff; }
+}

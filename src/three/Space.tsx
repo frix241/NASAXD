@@ -241,7 +241,6 @@ export function Space({ boot }: { boot: boolean }) {
       {webgl ? (
         <Canvas dpr={[1, 2]} frameloop={visible ? 'always' : 'never'} camera={{ fov: 40, position: [0, 0, 12], near: 0.1, far: 200 }}
           gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-          onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', () => useStore.getState().set({ webgl: false }))}
           style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
           {!lowPerf && <Stars />}
           <Bodies boot={boot} />

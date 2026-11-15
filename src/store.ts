@@ -1,10 +1,7 @@
 import { create } from 'zustand'
 import { ALERT_TASK_POINTS, type TaskId } from './config/tasks'
 import { PROFILES, type ProfileId } from './profiles'
-import type { Destination, Status } from './config/rules'
-import {
-  applyAulaEvent, aulaIssues, createAula, evaluateAula, nextDay, setToday, setTotal, type Aula, type DayCount,
-} from './sim/aula'
+import { DESTINATIONS, type Destination, type Status } from './config/rules'
 import { findIssues, type ActionId, type Issue, type Zone } from './sim/issues'
 import {
   applyScenario, createSim, doExercise, drinkWater, evaluate, goToShelter, moodCheck,
@@ -13,14 +10,24 @@ import {
 } from './sim/simulator'
 
 
+import { assess, newVisit, simulateFrost, type DangerSign, type Result, type Visit } from './sim/community'
+
 interface Store {
-  /** Modo colegio: conteo diario del aula (sin datos individuales) */
-  aula: Aula
-  countToday: (patch: Partial<DayCount>) => void
-  countTotal: (n: number) => void
-  countNextDay: () => void
+  // ── Perfil comunidad ──
+  visit: Visit
+  result: Result
+  setVisit: (patch: Partial<Visit>) => void
+  toggleDanger: (sign: DangerSign) => void
+  newPerson: () => void
+  /** Demostración: simula una helada */
+  frost: () => void
+  frostOn: boolean
+  theme: 'day' | 'night'
+  setTheme: (t: 'day' | 'night') => void
+  lang: 'es' | 'qu'
+  setLang: (l: 'es' | 'qu') => void
   /** Qué hoja se está imprimiendo, si alguna */
-  printing: 'ficha' | 'informe' | null
+  printing: 'derivacion' | null
   profile: ProfileId
   setProfile: (p: ProfileId) => void
   scene: number
@@ -64,11 +71,6 @@ function derive(sim: SimState) {
   const readings = evaluate(sim)
   return { sim, readings, issues: findIssues(sim, readings) }
 }
-/** En modo colegio el semáforo sale del conteo del aula, no del simulador. */
-function deriveAula(aula: Aula) {
-  return { aula, readings: evaluateAula(aula), issues: aulaIssues(aula) }
-}
-
 function applyAction(sim: SimState, action: ActionId): SimState {
   switch (action) {
     case 'shelter': return goToShelter(sim)
@@ -93,11 +95,17 @@ const ACTION_SAID: Record<ActionId, string> = {
 
 /** El modo se guarda solo en memoria. `?modo=colegio` lo abre directo en modo colegio. */
 const startProfile: ProfileId =
-  typeof location !== 'undefined' && new URLSearchParams(location.search).get('modo') === 'colegio' ? 'school' : 'space'
+  typeof location !== 'undefined' && new URLSearchParams(location.search).get('modo') === 'comunidad' ? 'community' : 'space'
+
+/** Visita nueva del perfil comunidad, con su resultado */
+function freshVisit(region: Destination) {
+  const visit = newVisit(region)
+  return { visit, result: assess(visit), frostOn: false }
+}
 
 const initial = (profile: ProfileId) => ({
   ...derive(createSim()),
-  ...(profile === 'school' ? deriveAula(createAula()) : { aula: createAula() }),
+  ...freshVisit(profile === 'community' ? PROFILES.community.defaultDest : 'sierraAlta'),
   dismissed: {}, acted: {}, highlight: null, explain: null, tasksDone: {}, points: 240, streak: 4,
   toast: null, storyCaption: null,
 })
@@ -112,9 +120,13 @@ export const useStore = create<Store>((set, get) => ({
     set({ profile, ...initial(profile), scene: Math.min(get().scene, PROFILES[profile].scenes.length - 1) })
   },
   printing: null,
-  countToday: (patch) => set(deriveAula(setToday(get().aula, patch))),
-  countTotal: (n) => set(deriveAula(setTotal(get().aula, n))),
-  countNextDay: () => set({ ...deriveAula(nextDay(get().aula)), dismissed: {}, acted: {}, toast: 'Día guardado. Empieza el siguiente.' }),
+  theme: 'day', lang: 'es',
+  setVisit: (patch) => { const visit = { ...get().visit, ...patch }; set({ visit, result: assess(visit) }) },
+  toggleDanger: (sign) => { const v = get().visit; const visit = { ...v, danger: { ...v.danger, [sign]: !v.danger[sign] } }; set({ visit, result: assess(visit) }) },
+  newPerson: () => { const visit = { ...newVisit(get().visit.region), cold: get().visit.cold }; set({ visit, result: assess(visit) }) },
+  frost: () => { const visit = simulateFrost(get().visit); set({ visit, result: assess(visit), frostOn: true }) },
+  setTheme: (theme) => set({ theme }),
+  setLang: (lang) => set({ lang }),
   scene: 0,
   bootDone: false,
   demoOpen: false,
@@ -127,9 +139,7 @@ export const useStore = create<Store>((set, get) => ({
   setScene: (n) => set({ scene: Math.max(0, Math.min(PROFILES[get().profile].scenes.length - 1, n)) }),
   finishBoot: () => { if (get().scene === 0) set({ scene: 1, bootDone: true }); else set({ bootDone: true }) },
   tick: () => {
-    const school = get().profile === 'school'
-    const sim = step(get().sim)
-    const d = school ? { sim, ...deriveAula(get().aula) } : derive(sim)
+    const d = get().profile === 'community' ? { sim: step(get().sim), readings: get().readings, issues: [] } : derive(step(get().sim))
     const dismissed = { ...get().dismissed }
     const acted = { ...get().acted }
     for (const k of Object.keys(d.readings) as MetricKey[]) {
@@ -137,16 +147,24 @@ export const useStore = create<Store>((set, get) => ({
     }
     set({ ...d, dismissed, acted })
   },
-  scenario: (sc) => set(get().profile === 'school' ? deriveAula(applyAulaEvent(get().aula, sc)) : derive(applyScenario(get().sim, sc))),
-  setDest: (d) => set(get().profile === 'school' ? deriveAula({ ...get().aula, region: d }) : derive(setDestination(get().sim, d))),
+  scenario: (sc) => {
+    if (get().profile !== 'community') { set(derive(applyScenario(get().sim, sc))); return }
+    // Visita tranquila: todo respondido y sin señales
+    if (sc === 'calm') get().setVisit({ cough: false, feverTouch: false, warmEnough: true, ateDrank: true, breaths: 28, cold: 'normal' })
+    if (sc === 'frost') get().frost()
+    if (sc === 'alarm' && !get().visit.danger.breathless) get().toggleDanger('breathless')
+  },
+  setDest: (d) => {
+    if (get().profile === 'community') get().setVisit({ region: d, altitude: DESTINATIONS[d].altitude ?? get().visit.altitude })
+    else set(derive(setDestination(get().sim, d)))
+  },
   dismiss: (key) => {
     const st = get().readings[key].status
     set({ dismissed: { ...get().dismissed, [key]: st } })
   },
   act: (action, key) => {
     const s = get()
-    const school = s.profile === 'school'
-    const patch: Partial<Store> = school ? { toast: 'Acción del día hecha. ¡Bien!' } : { ...derive(applyAction(s.sim, action)), toast: ACTION_SAID[action] }
+    const patch: Partial<Store> = { ...derive(applyAction(s.sim, action)), toast: ACTION_SAID[action] }
     if (key) {
       patch.dismissed = { ...s.dismissed, [key]: s.readings[key].status }
       if (!s.acted[key]) patch.points = s.points + ALERT_TASK_POINTS
@@ -162,7 +180,7 @@ export const useStore = create<Store>((set, get) => ({
     const tasksDone = { ...s.tasksDone, [id]: true }
     const count = Object.keys(tasksDone).length
     set({
-      ...(s.profile === 'school' ? {} : derive(applyAction(s.sim, task.action))),
+      ...derive(applyAction(s.sim, task.action)),
       tasksDone,
       points: s.points + task.points,
       streak: count === 3 ? s.streak + 1 : s.streak,

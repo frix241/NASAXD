@@ -49,11 +49,11 @@ export interface SimState {
   history: History
 }
 
-export type Scenario = 'storm' | 'badNight' | 'lowWater' | 'highBP' | 'fever' | 'sleepy' | 'heat' | 'cold' | 'hardWeek'
+/** Eventos de demostración. Los dos últimos son del perfil comunidad (los aplica el estado global). */
+export type Scenario = 'storm' | 'badNight' | 'lowWater' | 'highBP' | 'fever' | 'calm' | 'frost' | 'alarm'
 export type MetricKey =
   | 'pulse' | 'bp' | 'spo2' | 'hydration' | 'temp' | 'resp'
   | 'sleep' | 'exercise' | 'radiation' | 'mood' | 'glucose'
-  | 'breakfast' | 'backpack' | 'posture' // solo modo colegio
 
 export const EXERCISE_GOAL_MIN = 60 // minutos por día
 const STORM_MINUTES = 600
@@ -279,15 +279,11 @@ export interface Reading { status: Status; value: number; text: string; unit: st
 
 const fmt = (v: number, d = 0) => v.toFixed(d).replace('.', ',')
 
-const OFF: Reading = { label: '', status: 'ok', value: 0, text: '', unit: '' }
-
 export function evaluate(s: SimState): Record<MetricKey, Reading> {
   const v = s.vitals
   const base = DESTINATIONS[s.destination].radBase
   const ex = s.exercisingLeft > 0
   return {
-    // Medidas del modo colegio: no existen en la misión espacial
-    breakfast: OFF, backpack: OFF, posture: OFF,
     pulse: { label: 'Pulso', status: statusPulse(v.pulse, ex), value: v.pulse, text: fmt(v.pulse), unit: 'lpm' },
     bp: { label: 'Presión', status: statusSys(v.sys), value: v.sys, text: `${fmt(v.sys)}/${fmt(v.dia)}`, unit: 'mmHg' },
     spo2: { label: 'Oxígeno', status: statusSpo2(v.spo2), value: v.spo2, text: fmt(v.spo2), unit: '%' },
