@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useStore } from '../store'
+import { useProfile, useStore } from '../store'
 import { Icon } from '../ui/Icon'
+import { ModeSwitch } from './Monitor'
 
 // Líneas del HUD: [tipo, izquierda %, arriba %, ancho %, alto %]
 const HUD: [string, number, number, number, number][] = [
@@ -8,7 +9,6 @@ const HUD: [string, number, number, number, number][] = [
   ['h', 17, 50, 19, 0], ['h', 64, 50, 19, 0],
   ['c tl', 20, 22, 4, 6], ['c tr', 76, 22, 4, 6], ['c bl', 20, 72, 4, 6], ['c br', 76, 72, 4, 6],
 ]
-const CHECKS = ['Sensores del traje', 'Enlace con la nave', 'Tu perfil']
 
 /** Escena 1: baja el visor, se empaña, se enciende el HUD y se comprueba el sistema (~6 s). */
 export default function Boot() {
@@ -16,6 +16,8 @@ export default function Boot() {
   const [text, setText] = useState(false)
   const [done, setDone] = useState(0)
   const finish = useStore((s) => s.finishBoot)
+  const p = useProfile()
+  const CHECKS = p.hero.checks
   useEffect(() => {
     const { set } = useStore.getState()
     set({ visorUp: true })
@@ -39,13 +41,14 @@ export default function Boot() {
         ))}
       </div>
       <div className="core" role="status">
-        <h1>{done >= 4 ? 'AstroTwin listo' : 'Iniciando AstroTwin…'}</h1>
+        <h1>{done >= 4 ? p.hero.ready : p.hero.starting}</h1>
         <ul>
           {CHECKS.map((c, i) => (
             <li key={c} className={done > i ? 'done' : ''}><b>{done > i ? <Icon name="ok" /> : <i className="spin" />}</b>{c}<span className="muted">{done > i ? 'listo' : 'comprobando'}</span></li>
           ))}
         </ul>
       </div>
+      <div className="boot-mode"><ModeSwitch /></div>
       <button className="btn ghost skip" onClick={finish}>Saltar</button>
     </div>
   )

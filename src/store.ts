@@ -1,16 +1,28 @@
 import { create } from 'zustand'
-import { ALERT_TASK_POINTS, TASKS, type TaskId } from './config/tasks'
+import { ALERT_TASK_POINTS, type TaskId } from './config/tasks'
+import { PROFILES, type ProfileId } from './profiles'
 import type { Destination, Status } from './config/rules'
+import {
+  applyAulaEvent, aulaIssues, createAula, evaluateAula, nextDay, setToday, setTotal, type Aula, type DayCount,
+} from './sim/aula'
 import { findIssues, type ActionId, type Issue, type Zone } from './sim/issues'
 import {
   applyScenario, createSim, doExercise, drinkWater, evaluate, goToShelter, moodCheck,
-  notifyEarth, rest, setDestination, step, type MetricKey, type Reading, type Scenario,
+  notifyEarth, rest, setDestination, setMeasurement, step, type MeasureField, type MetricKey, type Reading, type Scenario,
   type SimState,
 } from './sim/simulator'
 
-export const SCENES = ['Arranque', 'Monitor', 'Datos completos', 'Ruta diaria'] as const
 
 interface Store {
+  /** Modo colegio: conteo diario del aula (sin datos individuales) */
+  aula: Aula
+  countToday: (patch: Partial<DayCount>) => void
+  countTotal: (n: number) => void
+  countNextDay: () => void
+  /** Qué hoja se está imprimiendo, si alguna */
+  printing: 'ficha' | 'informe' | null
+  profile: ProfileId
+  setProfile: (p: ProfileId) => void
   scene: number
   bootDone: boolean
   sim: SimState
@@ -19,6 +31,11 @@ interface Store {
   dismissed: Partial<Record<MetricKey, Status>>
   acted: Partial<Record<MetricKey, Status>>
   highlight: Zone | null
+  /** Indicador cuya explicación está abierta */
+  explain: MetricKey | null
+  setExplain: (k: MetricKey | null) => void
+  /** Registra una medición hecha a mano */
+  measure: (field: MeasureField, value: number) => void
   tasksDone: Partial<Record<TaskId, boolean>>
   points: number
   streak: number
@@ -47,6 +64,10 @@ function derive(sim: SimState) {
   const readings = evaluate(sim)
   return { sim, readings, issues: findIssues(sim, readings) }
 }
+/** En modo colegio el semáforo sale del conteo del aula, no del simulador. */
+function deriveAula(aula: Aula) {
+  return { aula, readings: evaluateAula(aula), issues: aulaIssues(aula) }
+}
 
 function applyAction(sim: SimState, action: ActionId): SimState {
   switch (action) {
@@ -58,6 +79,7 @@ function applyAction(sim: SimState, action: ActionId): SimState {
     case 'mood': return moodCheck(sim)
     case 'ack': return sim
   }
+  return sim
 }
 const ACTION_SAID: Record<ActionId, string> = {
   shelter: 'Vas al refugio. La radiación baja ahí dentro.',
@@ -69,13 +91,30 @@ const ACTION_SAID: Record<ActionId, string> = {
   ack: 'Anotado.',
 }
 
-const initial = () => ({
+/** El modo se guarda solo en memoria. `?modo=colegio` lo abre directo en modo colegio. */
+const startProfile: ProfileId =
+  typeof location !== 'undefined' && new URLSearchParams(location.search).get('modo') === 'colegio' ? 'school' : 'space'
+
+const initial = (profile: ProfileId) => ({
   ...derive(createSim()),
-  dismissed: {}, acted: {}, highlight: null, tasksDone: {}, points: 240, streak: 4,
+  ...(profile === 'school' ? deriveAula(createAula()) : { aula: createAula() }),
+  dismissed: {}, acted: {}, highlight: null, explain: null, tasksDone: {}, points: 240, streak: 4,
   toast: null, storyCaption: null,
 })
 
+/** Perfil activo: de aquí leen todos los componentes. */
+export const useProfile = () => PROFILES[useStore((s) => s.profile)]
+
 export const useStore = create<Store>((set, get) => ({
+  profile: startProfile,
+  setProfile: (profile) => {
+    if (profile === get().profile) return
+    set({ profile, ...initial(profile), scene: Math.min(get().scene, PROFILES[profile].scenes.length - 1) })
+  },
+  printing: null,
+  countToday: (patch) => set(deriveAula(setToday(get().aula, patch))),
+  countTotal: (n) => set(deriveAula(setTotal(get().aula, n))),
+  countNextDay: () => set({ ...deriveAula(nextDay(get().aula)), dismissed: {}, acted: {}, toast: 'Día guardado. Empieza el siguiente.' }),
   scene: 0,
   bootDone: false,
   demoOpen: false,
@@ -83,12 +122,14 @@ export const useStore = create<Store>((set, get) => ({
   visorUp: true,
   fogKey: 0,
   webgl: true,
-  ...initial(),
+  ...initial(startProfile),
   set: (p) => set(p),
-  setScene: (n) => set({ scene: Math.max(0, Math.min(SCENES.length - 1, n)) }),
+  setScene: (n) => set({ scene: Math.max(0, Math.min(PROFILES[get().profile].scenes.length - 1, n)) }),
   finishBoot: () => { if (get().scene === 0) set({ scene: 1, bootDone: true }); else set({ bootDone: true }) },
   tick: () => {
-    const d = derive(step(get().sim))
+    const school = get().profile === 'school'
+    const sim = step(get().sim)
+    const d = school ? { sim, ...deriveAula(get().aula) } : derive(sim)
     const dismissed = { ...get().dismissed }
     const acted = { ...get().acted }
     for (const k of Object.keys(d.readings) as MetricKey[]) {
@@ -96,15 +137,16 @@ export const useStore = create<Store>((set, get) => ({
     }
     set({ ...d, dismissed, acted })
   },
-  scenario: (sc) => set(derive(applyScenario(get().sim, sc))),
-  setDest: (d) => set(derive(setDestination(get().sim, d))),
+  scenario: (sc) => set(get().profile === 'school' ? deriveAula(applyAulaEvent(get().aula, sc)) : derive(applyScenario(get().sim, sc))),
+  setDest: (d) => set(get().profile === 'school' ? deriveAula({ ...get().aula, region: d }) : derive(setDestination(get().sim, d))),
   dismiss: (key) => {
     const st = get().readings[key].status
     set({ dismissed: { ...get().dismissed, [key]: st } })
   },
   act: (action, key) => {
     const s = get()
-    const patch: Partial<Store> = { ...derive(applyAction(s.sim, action)), toast: ACTION_SAID[action] }
+    const school = s.profile === 'school'
+    const patch: Partial<Store> = school ? { toast: 'Acción del día hecha. ¡Bien!' } : { ...derive(applyAction(s.sim, action)), toast: ACTION_SAID[action] }
     if (key) {
       patch.dismissed = { ...s.dismissed, [key]: s.readings[key].status }
       if (!s.acted[key]) patch.points = s.points + ALERT_TASK_POINTS
@@ -115,20 +157,26 @@ export const useStore = create<Store>((set, get) => ({
   completeTask: (id) => {
     const s = get()
     if (s.tasksDone[id]) return
-    const task = TASKS.find((t) => t.id === id)!
+    const task = PROFILES[s.profile].tasks.find((t) => t.id === id)
+    if (!task) return
     const tasksDone = { ...s.tasksDone, [id]: true }
     const count = Object.keys(tasksDone).length
     set({
-      ...derive(applyAction(s.sim, task.action)),
+      ...(s.profile === 'school' ? {} : derive(applyAction(s.sim, task.action))),
       tasksDone,
       points: s.points + task.points,
       streak: count === 3 ? s.streak + 1 : s.streak,
       toast: `${task.title}: hecho. +${task.points} puntos`,
     })
   },
-  setHighlight: (z) => set({ highlight: z }),
+  setHighlight: (z) => {
+    const p = PROFILES[get().profile]
+    set({ highlight: z, explain: z ? p.zones.metrics[z][0] ?? null : null })
+  },
+  setExplain: (k) => set({ explain: k, highlight: k ? PROFILES[get().profile].zones.of[k] : null }),
+  measure: (field, value) => set({ ...derive(setMeasurement(get().sim, field, value)), toast: 'Medición guardada.' }),
   say: (t) => set({ toast: t }),
-  reset: () => set(initial()),
+  reset: () => set(initial(get().profile)),
 }))
 
 /** Aviso que toca mostrar en el centro: el más grave que no se haya cerrado. */

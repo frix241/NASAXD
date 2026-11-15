@@ -3,13 +3,17 @@
  * Único lugar donde viven los umbrales: cambia aquí y cambia toda la app.
  */
 export type Status = 'ok' | 'warn' | 'bad'
-export type Destination = 'leo' | 'luna' | 'marte'
+export type Destination = 'leo' | 'luna' | 'marte' | 'costa' | 'sierra' | 'selva'
 
-export const DESTINATIONS: Record<Destination, { label: string; radBase: number }> = {
+export const DESTINATIONS: Record<Destination, { label: string; radBase: number; temp?: number; uv?: number; hum?: number }> = {
   // radBase: dosis normal en µSv por hora para ese destino
   leo: { label: 'Órbita baja', radBase: 12 },
   luna: { label: 'Luna', radBase: 55 },
   marte: { label: 'Marte', radBase: 75 },
+  // Modo colegio: regiones del Perú con lo normal del aula (temperatura °C, índice UV al mediodía, humedad %)
+  costa: { label: 'Costa (Lima)', radBase: 10, temp: 26, uv: 11, hum: 80 },
+  sierra: { label: 'Sierra (Cusco)', radBase: 10, temp: 17, uv: 14, hum: 40 },
+  selva: { label: 'Selva (Iquitos)', radBase: 10, temp: 31, uv: 10, hum: 85 },
 }
 
 export const RULES = {
@@ -23,6 +27,7 @@ export const RULES = {
   // Las dos siguientes no vienen en el reto; son valores propios y prudentes.
   resp: { okMin: 12, okMax: 20, warnMin: 10, warnMax: 24 }, // rpm
   mood: { okMin: 60, warnMin: 40 }, // 0–100
+  glucose: { okMin: 70, okMax: 99, warnMax: 125, badMin: 54 }, // mg/dL en ayunas (referencia general)
   // Conexiones entre medidas
   links: {
     sysPerSleepHourLost: 5, // mmHg por cada hora dormida de menos (bajo 7 h)
@@ -73,6 +78,12 @@ export function statusResp(v: number): Status {
   const x = Math.round(v)
   if (x > RULES.resp.warnMax || x < RULES.resp.warnMin) return 'bad'
   if (x > RULES.resp.okMax || x < RULES.resp.okMin) return 'warn'
+  return 'ok'
+}
+export function statusGlucose(v: number): Status {
+  const x = Math.round(v); const g = RULES.glucose
+  if (x > g.warnMax || x < g.badMin) return 'bad'
+  if (x > g.okMax || x < g.okMin) return 'warn'
   return 'ok'
 }
 export function statusMood(v: number): Status {

@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Boot from './scenes/Boot'
 import DataWall from './scenes/DataWall'
 import Monitor from './scenes/Monitor'
+import Count from './scenes/Count'
 import Route from './scenes/Route'
-import { SCENES, useStore } from './store'
+import Summary, { PrintSheets } from './scenes/Summary'
+import { useProfile, useStore } from './store'
 import { Space } from './three/Space'
 import { Assistant } from './ui/Assistant'
 import { DemoPanel } from './ui/Demo'
@@ -42,6 +44,7 @@ function useSceneNav() {
       if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || e.ctrlKey || e.metaKey || e.altKey) return
       const s = useStore.getState()
       if (e.key === 'd' || e.key === 'D') { s.set({ demoOpen: !s.demoOpen }); return }
+      if (e.key === 'c' || e.key === 'C') { s.setProfile(s.profile === 'space' ? 'school' : 'space'); return }
       if (document.querySelector('.modal')) return
       if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(e.key)) { e.preventDefault(); go(1) }
       if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1) }
@@ -73,9 +76,10 @@ function useSceneNav() {
 function NavDots() {
   const scene = useStore((s) => s.scene)
   const setScene = useStore((s) => s.setScene)
+  const scenes = useProfile().scenes
   return (
     <nav className="dots" aria-label="Escenas">
-      {SCENES.map((name, i) => (
+      {scenes.map((name, i) => (
         <button key={name} aria-label={name} aria-current={i === scene} onClick={() => setScene(i)}>
           <i /><span>{name}</span>
         </button>
@@ -98,12 +102,24 @@ function Toast() {
 export default function App() {
   const scene = useStore((s) => s.scene)
   const story = useStore((s) => s.storyCaption)
+  const p = useProfile()
+  const printing = useStore((s) => s.printing)
+  const [swap, setSwap] = useState(false)
   const visible = useTabVisible()
   const [shown, setShown] = useState(scene)
   const [phase, setPhase] = useState<'idle' | 'out' | 'in'>('idle')
   useSceneNav()
 
   useEffect(() => { if (!hasWebGL()) useStore.getState().set({ webgl: false }) }, [])
+  // Cambio de modo: transición breve de 0,4 s
+  const firstMode = useRef(true)
+  useEffect(() => {
+    if (firstMode.current) { firstMode.current = false; return }
+    setSwap(true)
+    const t = setTimeout(() => setSwap(false), 400)
+    return () => clearTimeout(t)
+  }, [p.id])
+  useEffect(() => { document.body.dataset.print = printing ?? '' }, [printing])
   useEffect(() => {
     if (!visible) return
     const id = setInterval(() => useStore.getState().tick(), 1000)
@@ -121,15 +137,19 @@ export default function App() {
     return () => clearTimeout(t)
   }, [phase, shown])
 
+  const kind = p.sceneKinds[Math.min(shown, p.sceneKinds.length - 1)]
   return (
-    <div className="app">
+    <div className={`app mode-${p.id}${swap ? ' mode-swap' : ''}`}
+      style={{ '--ice': p.palette.ice, '--line': p.palette.line, '--line-soft': p.palette.lineSoft } as React.CSSProperties}>
       <Space boot={shown === 0} />
       <main className={`stage${phase === 'idle' ? '' : ` holo-${phase}`}`}>
         <div className={`scene${shown === 0 ? ' boot-scene' : ''}`} key={shown}>
-          {shown === 0 && <Boot />}
-          {shown === 1 && <Monitor />}
-          {shown === 2 && <DataWall />}
-          {shown === 3 && <Route />}
+          {kind === 'boot' && <Boot />}
+          {kind === 'monitor' && <Monitor />}
+          {kind === 'data' && <DataWall />}
+          {kind === 'route' && <Route />}
+          {kind === 'count' && <Count />}
+          {kind === 'summary' && <Summary />}
         </div>
       </main>
       <Helmet />
@@ -138,6 +158,7 @@ export default function App() {
       <Toast />
       {story && <div className="story" role="status">{story}</div>}
       <DemoPanel />
+      <PrintSheets />
     </div>
   )
 }

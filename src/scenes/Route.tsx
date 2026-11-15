@@ -1,11 +1,12 @@
-import { ALERT_TASK_POINTS, POINTS_PER_LEVEL, TASKS } from '../config/tasks'
-import { ZONE_LABEL } from '../sim/issues'
-import { pendingIssues, useStore } from '../store'
+import { ALERT_TASK_POINTS, POINTS_PER_LEVEL } from '../config/tasks'
+import { pendingIssues, useProfile, useStore } from '../store'
 import { Icon } from '../ui/Icon'
 import { useCountUp } from '../ui/hooks'
 import { TopBar } from './Monitor'
 
 export default function Route() {
+  const p = useProfile()
+  const TASKS = p.tasks
   const done = useStore((s) => s.tasksDone)
   const points = useStore((s) => s.points)
   const streak = useStore((s) => s.streak)
@@ -24,8 +25,8 @@ export default function Route() {
     <div>
       <TopBar />
       <div className="scene-head" style={{ marginTop: 14 }}>
-        <h1>Tu ruta de hoy</h1>
-        <p>{doneCount === TASKS.length ? 'Ruta completa. Buen trabajo.' : `${doneCount} de ${TASKS.length} tareas hechas. Cada una cuida una parte de tu cuerpo.`}</p>
+        <h1>{p.text.routeTitle}</h1>
+        <p>{doneCount === TASKS.length ? p.text.routeAllDone : `${doneCount} de ${TASKS.length} hechas. ${p.text.routeHint}`}</p>
       </div>
       <div className="route">
         <ol className="path" style={{ '--done': doneCount / TASKS.length } as React.CSSProperties}>
@@ -36,7 +37,7 @@ export default function Route() {
                 <span className="tag">{i.level === 'bad' ? 'Primero esto' : 'Conviene hacerlo pronto'}</span>
                 <h3>{i.title}</h3>
                 <p className="what">{i.why}</p>
-                <p className="meta"><span>Dura {i.minutes} min</span><span>Cuida: {ZONE_LABEL[i.zone].toLowerCase()}</span><span>+{ALERT_TASK_POINTS} puntos</span></p>
+                <p className="meta"><span>Dura {i.minutes} min</span><span>Cuida: {p.zones.label[i.zone].toLowerCase()}</span><span>+{ALERT_TASK_POINTS} puntos</span></p>
               </div>
               <button className="btn" onClick={() => act(i.action, i.key)}>{i.actionLabel}</button>
             </li>

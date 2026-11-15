@@ -4,7 +4,7 @@ import {
   statusSys, statusTemp, worst,
 } from '../config/rules'
 import {
-  applyScenario, createSim, doExercise, drinkWater, evaluate, goToShelter, rest, step,
+  applyScenario, createSim, doExercise, drinkWater, evaluate, goToShelter, rest, setMeasurement, step,
   stepMany, targets,
 } from './simulator'
 
@@ -112,6 +112,17 @@ describe('simulador', () => {
     expect(evaluate(b).pulse.status).toBe('ok')
     expect(b.exerciseWeek).toBeGreaterThan(a.exerciseWeek)
     expect(evaluate(stepMany(b, 40)).pulse.status).toBe('ok')
+  })
+  it('una medición a mano se queda y cambia el semáforo', () => {
+    let s = setMeasurement(createSim(), 'sys', 146)
+    expect(evaluate(s).bp.status).toBe('bad')
+    s = stepMany(s, 60)
+    expect(s.vitals.sys).toBeGreaterThan(140)
+    s = setMeasurement(s, 'glucose', 132)
+    expect(evaluate(stepMany(s, 20)).glucose.status).toBe('bad')
+    expect(evaluate(setMeasurement(s, 'glucose', 65)).glucose.status).toBe('warn')
+    expect(evaluate(setMeasurement(s, 'sleep', 5)).sleep.status).toBe('bad')
+    expect(evaluate(stepMany(setMeasurement(s, 'mood', 30), 3)).mood.status).toBe('bad')
   })
   it('descansar recupera sueño', () => {
     const s = rest(applyScenario(createSim(), 'badNight'), 1.3)

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { askAssistant, SAMPLE_QUESTION, SUGGESTIONS } from '../assistant/askAssistant'
-import { useStore } from '../store'
+import { askAssistant } from '../assistant/askAssistant'
+import { PROFILES } from '../profiles'
+import { useProfile, useStore } from '../store'
 import { Icon } from './Icon'
 
 type Phase = 'idle' | 'listening' | 'thinking' | 'speaking'
@@ -28,6 +29,7 @@ const keep: { u: SpeechSynthesisUtterance | null } = { u: null } // evita que el
 /** Asistente: se le habla (si el navegador reconoce voz) o se le escribe. Responde con texto y voz. */
 export function Assistant() {
   const scene = useStore((s) => s.scene)
+  const profile = useProfile()
   const [open, setOpen] = useState(false)
   const [phase, setPhase] = useState<Phase>('idle')
   const [msgs, setMsgs] = useState<Msg[]>([])
@@ -86,6 +88,7 @@ export function Assistant() {
       const answer = await askAssistant(question, {
         scene: s.scene, sim: s.sim, readings: s.readings, issues: s.issues,
         tasksDone: s.tasksDone, points: s.points, streak: s.streak,
+        profile: s.profile, tasks: PROFILES[s.profile].tasks, aula: s.aula,
       })
       setMsgs((m) => [...m.slice(-7), { id: ++msgId, from: 'bot', text: answer }])
       setPhase('idle')
@@ -97,7 +100,7 @@ export function Assistant() {
   const mockListen = (why: string) => {
     setNote(why)
     setPhase('listening')
-    timers.current.push(setTimeout(() => ask(SAMPLE_QUESTION[useStore.getState().scene]), 1700))
+    timers.current.push(setTimeout(() => { const s = useStore.getState(); ask(PROFILES[s.profile].assistant.samples[s.scene]) }, 1700))
   }
 
   const listen = () => {
@@ -162,7 +165,7 @@ export function Assistant() {
           </div>
           {note && <p className="note" role="status">{note}</p>}
           <div className="chips">
-            {SUGGESTIONS[scene].map((q) => <button key={q} onClick={() => ask(q)}>{q}</button>)}
+            {(profile.assistant.suggestions[scene] ?? []).map((q) => <button key={q} onClick={() => ask(q)}>{q}</button>)}
           </div>
           <form className="ask" onSubmit={(e) => { e.preventDefault(); ask(text) }}>
             <input ref={input} value={text} onChange={(e) => setText(e.target.value)} placeholder="Escribe tu pregunta" aria-label="Escribe tu pregunta" maxLength={140} />

@@ -4,7 +4,7 @@
  */
 import {
   DESTINATIONS, RULES, type Destination, type Status,
-  statusMood, statusPercent, statusPulse, statusRadiation, statusResp, statusSleep,
+  statusGlucose, statusMood, statusPercent, statusPulse, statusRadiation, statusResp, statusSleep,
   statusSpo2, statusSys, statusTemp,
 } from '../config/rules'
 
@@ -27,6 +27,10 @@ export interface SimState {
   destination: Destination
   vitals: Vitals
   noise: Vitals
+  /** Ajuste que deja una medición hecha a mano: el cuerpo sigue desde ese valor */
+  offset: Vitals
+  glucose: number // mg/dL
+  glucoseBase: number
   hydTarget: number
   sleepHours: number
   moodBoost: number
@@ -45,10 +49,11 @@ export interface SimState {
   history: History
 }
 
-export type Scenario = 'storm' | 'badNight' | 'lowWater' | 'highBP' | 'fever'
+export type Scenario = 'storm' | 'badNight' | 'lowWater' | 'highBP' | 'fever' | 'sleepy' | 'heat' | 'cold' | 'hardWeek'
 export type MetricKey =
   | 'pulse' | 'bp' | 'spo2' | 'hydration' | 'temp' | 'resp'
-  | 'sleep' | 'exercise' | 'radiation' | 'mood'
+  | 'sleep' | 'exercise' | 'radiation' | 'mood' | 'glucose'
+  | 'breakfast' | 'backpack' | 'posture' // solo modo colegio
 
 export const EXERCISE_GOAL_MIN = 60 // minutos por día
 const STORM_MINUTES = 600
@@ -80,16 +85,17 @@ export function targets(s: SimState): Vitals & { mood: number; radRate: number }
   const waterLow = Math.max(0, RULES.percent.okMin - s.vitals.hydration)
   const ex = s.exercisingLeft > 0
   const base = DESTINATIONS[s.destination].radBase
+  const o = s.offset
   return {
-    pulse: 66 + 5 * c + (s.fever ? 14 : 0) + waterLow * 0.25 + sleepLost * 1.5 + (ex ? 52 : 0),
+    pulse: o.pulse + 66 + 5 * c + (s.fever ? 14 : 0) + waterLow * 0.25 + sleepLost * 1.5 + (ex ? 52 : 0),
     sys:
-      110 + 3 * c + sleepLost * RULES.links.sysPerSleepHourLost +
+      o.sys + 110 + 3 * c + sleepLost * RULES.links.sysPerSleepHourLost +
       waterLow * RULES.links.sysPerHydrationPoint + (s.highBP ? 32 : 0) + (ex ? 14 : 0),
-    dia: 71 + 2 * c + sleepLost * 2 + waterLow * 0.12 + (s.highBP ? 16 : 0),
-    spo2: 97.6,
+    dia: o.dia + 71 + 2 * c + sleepLost * 2 + waterLow * 0.12 + (s.highBP ? 16 : 0),
+    spo2: o.spo2 + 97.6,
     hydration: s.hydTarget,
-    temp: 36.6 + 0.25 * c + (s.fever ? 1.8 : 0) + (ex ? 0.3 : 0),
-    resp: 14 + c + (s.fever ? 4 : 0) + (ex ? 11 : 0),
+    temp: o.temp + 36.6 + 0.25 * c + (s.fever ? 1.8 : 0) + (ex ? 0.3 : 0),
+    resp: o.resp + 14 + c + (s.fever ? 4 : 0) + (ex ? 11 : 0),
     mood: clamp(80 - sleepLost * RULES.links.moodPerSleepHourLost - (s.storm ? 8 : 0) + s.moodBoost, 0, 100),
     radRate: base * (s.storm ? (s.sheltered ? 1.4 : 9) : 1),
   }
@@ -118,6 +124,8 @@ export function createSim(seed = 7, destination: Destination = 'luna'): SimState
     destination,
     vitals: { pulse: 68, sys: 112, dia: 72, spo2: 97.6, hydration: 78, temp: 36.7, resp: 15 },
     noise: { pulse: 0, sys: 0, dia: 0, spo2: 0, hydration: 0, temp: 0, resp: 0 },
+    offset: { pulse: 0, sys: 0, dia: 0, spo2: 0, hydration: 0, temp: 0, resp: 0 },
+    glucose: 90, glucoseBase: 90,
     hydTarget: 78,
     sleepHours: sleep[13],
     moodBoost: 0,
@@ -185,6 +193,7 @@ export function step(prev: SimState): SimState {
   s.vitals.spo2 = clamp(s.vitals.spo2, 80, 100)
   s.vitals.hydration = clamp(s.vitals.hydration, 20, 100)
   s.mood += (t.mood - s.mood) * 0.25
+  s.glucose += (s.glucoseBase + (next() - 0.5) * 5 - s.glucose) * 0.2
   s.radRate += (t.radRate * (0.96 + next() * 0.08) - s.radRate) * 0.6
 
   const dose = s.radRate / 60 / 1000 // mSv en este minuto
@@ -219,6 +228,24 @@ export function applyScenario(s: SimState, sc: Scenario): SimState {
     case 'lowWater': return { ...s, hydTarget: 41 }
     case 'highBP': return { ...s, highBP: true }
     case 'fever': return { ...s, fever: true }
+    default: return s
+  }
+}
+
+// ── Mediciones hechas a mano ────────────────────────────────────────────────
+export type MeasureField = 'pulse' | 'sys' | 'dia' | 'spo2' | 'temp' | 'resp' | 'hydration' | 'sleep' | 'mood' | 'glucose'
+
+/** Registra una medición que la tripulante tomó ella misma. El simulador continúa desde ese valor. */
+export function setMeasurement(s: SimState, field: MeasureField, value: number): SimState {
+  switch (field) {
+    case 'hydration': return { ...s, hydTarget: clamp(value, 20, 100), vitals: { ...s.vitals, hydration: clamp(value, 20, 100) } }
+    case 'sleep': return setSleep(s, clamp(value, 0, 12))
+    case 'glucose': return { ...s, glucose: value, glucoseBase: value }
+    case 'mood': return { ...s, mood: clamp(value, 0, 100), moodBoost: s.moodBoost + clamp(value, 0, 100) - targets(s).mood }
+    default: {
+      const natural = targets(s)[field] - s.offset[field]
+      return { ...s, offset: { ...s.offset, [field]: value - natural }, vitals: { ...s.vitals, [field]: value }, noise: { ...s.noise, [field]: 0 } }
+    }
   }
 }
 
@@ -229,7 +256,8 @@ export const goToShelter = (s: SimState): SimState => ({ ...s, sheltered: true }
 export const rest = (s: SimState, hours = 0.6): SimState =>
   ({ ...setSleep(s, Math.min(8.5, s.sleepHours + hours)), highBP: false, moodBoost: s.moodBoost + 3 })
 export const moodCheck = (s: SimState): SimState => ({ ...s, moodBoost: s.moodBoost + 8 })
-export const notifyEarth = (s: SimState): SimState => ({ ...s, fever: false, highBP: false })
+export const notifyEarth = (s: SimState): SimState =>
+  ({ ...s, fever: false, highBP: false, glucoseBase: 90, offset: { pulse: 0, sys: 0, dia: 0, spo2: 0, hydration: 0, temp: 0, resp: 0 } })
 export function doExercise(s: SimState, minutes = 30): SimState {
   const exercise = s.history.exercise.slice()
   exercise[exercise.length - 1] += minutes
@@ -251,11 +279,15 @@ export interface Reading { status: Status; value: number; text: string; unit: st
 
 const fmt = (v: number, d = 0) => v.toFixed(d).replace('.', ',')
 
+const OFF: Reading = { label: '', status: 'ok', value: 0, text: '', unit: '' }
+
 export function evaluate(s: SimState): Record<MetricKey, Reading> {
   const v = s.vitals
   const base = DESTINATIONS[s.destination].radBase
   const ex = s.exercisingLeft > 0
   return {
+    // Medidas del modo colegio: no existen en la misión espacial
+    breakfast: OFF, backpack: OFF, posture: OFF,
     pulse: { label: 'Pulso', status: statusPulse(v.pulse, ex), value: v.pulse, text: fmt(v.pulse), unit: 'lpm' },
     bp: { label: 'Presión', status: statusSys(v.sys), value: v.sys, text: `${fmt(v.sys)}/${fmt(v.dia)}`, unit: 'mmHg' },
     spo2: { label: 'Oxígeno', status: statusSpo2(v.spo2), value: v.spo2, text: fmt(v.spo2), unit: '%' },
@@ -266,5 +298,6 @@ export function evaluate(s: SimState): Record<MetricKey, Reading> {
     exercise: { label: 'Ejercicio', status: statusPercent(s.exerciseWeek), value: s.exerciseWeek, text: fmt(s.exerciseWeek), unit: '%' },
     radiation: { label: 'Radiación', status: statusRadiation(s.radRate, base), value: s.radRate / base, text: fmt(s.radRate / base, 1), unit: '× normal' },
     mood: { label: 'Ánimo', status: statusMood(s.mood), value: s.mood, text: fmt(s.mood), unit: '/100' },
+    glucose: { label: 'Glucosa', status: statusGlucose(s.glucose), value: s.glucose, text: fmt(s.glucose), unit: 'mg/dL' },
   }
 }

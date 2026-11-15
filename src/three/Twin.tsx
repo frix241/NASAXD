@@ -139,7 +139,27 @@ function Dust() {
   )
 }
 
-function Figure({ zones }: { zones: Record<Zone, Status> }) {
+const holoMat = (color: string) => new THREE.ShaderMaterial({
+  vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  uniforms: { uTime: { value: 0 }, uColor: { value: new THREE.Color(color) }, uPulse: { value: 0 } },
+})
+
+/** Accesorios que cambian con el modo: casco y mochila de soporte vital, o uniforme y mochila escolar. */
+function Gear({ kind, active, children }: { kind: string; active: boolean; children: (mat: THREE.Material) => React.ReactNode }) {
+  const g = useRef<THREE.Group>(null)
+  const mat = useMemo(() => holoMat(kind === 'school' ? '#6fd3c8' : ICE), [kind])
+  useFrame(({ clock }, dt) => {
+    mat.uniforms.uTime.value = clock.elapsedTime
+    if (!g.current) return
+    // 0,4 s para aparecer o desaparecer
+    const s = THREE.MathUtils.clamp(g.current.scale.x + (active ? dt : -dt) / 0.4, 0.001, 1)
+    g.current.scale.setScalar(s)
+    g.current.visible = s > 0.002
+  })
+  return <group ref={g} scale={active ? 1 : 0.001}>{children(mat)}</group>
+}
+
+function Figure({ zones, gear, hidden }: { zones: Record<Zone, Status>; gear: string; hidden: Zone[] }) {
   const g = useRef<THREE.Group>(null)
   const ring = useRef<THREE.Mesh>(null)
   const lowPerf = useStore((s) => s.lowPerf)
@@ -156,13 +176,29 @@ function Figure({ zones }: { zones: Record<Zone, Status> }) {
         <ZoneGroup zone="head" status={zones.head} hit={[{ p: [0, 1.5, 0], r: 0.27 }]}>
           <Z p={[0, 1.54, 0]} s={[1, 0.85, 1.1]}><sphereGeometry args={[0.15, 16, 12]} /></Z>
         </ZoneGroup>
-        <ZoneGroup zone="heart" status={zones.heart} hit={[{ p: [0.07, 0.9, 0.06], r: 0.17 }]}>
+        <Gear kind="space" active={gear === 'space'}>{(m) => (
+          <>
+            <mesh position={[0, 1.5, 0.02]} material={m} raycast={noRay}><sphereGeometry args={[0.38, 28, 20]} /></mesh>
+            <mesh position={[0, 1.2, 0]} rotation={[Math.PI / 2, 0, 0]} material={m} raycast={noRay}><torusGeometry args={[0.2, 0.035, 8, 28]} /></mesh>
+            <mesh position={[0, 0.74, -0.3]} material={m} raycast={noRay}><boxGeometry args={[0.46, 0.6, 0.2]} /></mesh>
+          </>
+        )}</Gear>
+        <Gear kind="school" active={gear === 'school'}>{(m) => (
+          <>
+            <mesh position={[0, 0.68, -0.3]} scale={[1, 1, 0.5]} material={m} raycast={noRay}><capsuleGeometry args={[0.2, 0.24, 6, 18]} /></mesh>
+            <mesh position={[-0.2, 0.84, 0.16]} rotation={[0.25, 0, 0.1]} material={m} raycast={noRay}><capsuleGeometry args={[0.025, 0.42, 4, 8]} /></mesh>
+            <mesh position={[0.2, 0.84, 0.16]} rotation={[0.25, 0, -0.1]} material={m} raycast={noRay}><capsuleGeometry args={[0.025, 0.42, 4, 8]} /></mesh>
+            <mesh position={[0, 0.93, 0.21]} rotation={[Math.PI, 0, 0]} material={m} raycast={noRay}><coneGeometry args={[0.05, 0.26, 4]} /></mesh>
+            <mesh position={[0, 1.13, 0.06]} rotation={[Math.PI / 2 - 0.3, 0, 0]} material={m} raycast={noRay}><torusGeometry args={[0.13, 0.025, 6, 20]} /></mesh>
+          </>
+        )}</Gear>
+        {!hidden.includes('heart') && <ZoneGroup zone="heart" status={zones.heart} hit={[{ p: [0.07, 0.9, 0.06], r: 0.17 }]}>
           <Z p={[0.07, 0.9, 0.06]} s={[1, 1.15, 0.9]}><sphereGeometry args={[0.085, 16, 12]} /></Z>
-        </ZoneGroup>
-        <ZoneGroup zone="kidneys" status={zones.kidneys} hit={[{ p: [-0.13, 0.4, -0.05], r: 0.12 }, { p: [0.13, 0.4, -0.05], r: 0.12 }]}>
+        </ZoneGroup>}
+        {!hidden.includes('kidneys') && <ZoneGroup zone="kidneys" status={zones.kidneys} hit={[{ p: [-0.13, 0.4, -0.05], r: 0.12 }, { p: [0.13, 0.4, -0.05], r: 0.12 }]}>
           <Z p={[-0.13, 0.4, -0.06]} s={[0.75, 1.25, 0.7]}><sphereGeometry args={[0.06, 12, 10]} /></Z>
           <Z p={[0.13, 0.4, -0.06]} s={[0.75, 1.25, 0.7]}><sphereGeometry args={[0.06, 12, 10]} /></Z>
-        </ZoneGroup>
+        </ZoneGroup>}
         <ZoneGroup zone="bones" status={zones.bones}
           hit={[{ p: [0, 0.75, -0.12], r: 0.1 }, { p: [0, 0.2, -0.12], r: 0.1 }, { p: [-0.165, -0.5, 0], r: 0.14 }, { p: [0.165, -0.5, 0], r: 0.14 }]}>
           {spine.map((y) => <Z key={y} p={[0, y, -0.11]}><boxGeometry args={[0.07, 0.07, 0.06]} /></Z>)}
@@ -191,14 +227,14 @@ function Figure({ zones }: { zones: Record<Zone, Status> }) {
   )
 }
 
-export function Twin({ zones }: { zones: Record<Zone, Status> }) {
+export function Twin({ zones, gear, hidden, label }: { zones: Record<Zone, Status>; gear: string; hidden: Zone[]; label: string }) {
   const visible = useTabVisible()
   const setHighlight = useStore((s) => s.setHighlight)
   return (
     <Canvas dpr={[1, 2]} frameloop={visible ? 'always' : 'never'} camera={{ fov: 32, position: [0, 0, 7.4] }}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-      onPointerMissed={() => setHighlight(null)} aria-label="Gemelo digital en 3D">
-      <Figure zones={zones} />
+      onPointerMissed={() => setHighlight(null)} aria-label={label}>
+      <Figure zones={zones} gear={gear} hidden={hidden} />
     </Canvas>
   )
 }

@@ -5,7 +5,8 @@
  * `askAssistant` (por ejemplo, un fetch a http://localhost:11434) y conserva la firma:
  * la interfaz no necesita ningún cambio.
  */
-import { TASKS, type TaskId } from '../config/tasks'
+import type { Task, TaskId } from '../config/tasks'
+import { actionOfDay, evaluateAula, QUESTIONS, weekSummary, type Aula } from '../sim/aula'
 import type { Issue } from '../sim/issues'
 import type { MetricKey, Reading, SimState } from '../sim/simulator'
 
@@ -17,17 +18,10 @@ export interface AssistantContext {
   tasksDone: Partial<Record<TaskId, boolean>>
   points: number
   streak: number
+  profile: 'space' | 'school'
+  tasks: Task[]
+  aula: Aula
 }
-
-/** Pregunta de ejemplo por escena (se usa cuando el micrófono no puede oír). */
-export const SAMPLE_QUESTION = ['¿Qué está pasando?', '¿Cómo estoy?', '¿Qué dicen mis datos?', '¿Qué me toca ahora?']
-/** Preguntas sugeridas por escena. */
-export const SUGGESTIONS: string[][] = [
-  ['¿Qué está pasando?'],
-  ['¿Cómo estoy?', '¿Cómo va mi agua?', '¿Hay radiación?'],
-  ['¿Qué dicen mis datos?', '¿Cómo dormí?', '¿Cómo va mi ejercicio?'],
-  ['¿Qué me toca ahora?', '¿Cuántos puntos tengo?', '¿Cómo estoy?'],
-]
 
 const avg = (v: number[]) => v.reduce((a, b) => a + b, 0) / v.length
 const n1 = (v: number) => v.toFixed(1).replace('.', ',')
@@ -54,7 +48,7 @@ function data(c: AssistantContext): string {
 function next(c: AssistantContext): string {
   const urgent = c.issues.find((i) => i.level === 'bad')
   if (urgent) return `Primero: ${urgent.actionLabel.toLowerCase()}. ${urgent.why}`
-  const left = TASKS.filter((t) => !c.tasksDone[t.id])
+  const left = c.tasks.filter((t) => !c.tasksDone[t.id])
   if (!left.length) return `Terminaste tu ruta de hoy. Tienes ${c.points} puntos y ${c.streak} días de racha.`
   return `Te ${left.length === 1 ? 'falta 1 tarea' : `faltan ${left.length} tareas`}. Sigue ${left[0].title.toLowerCase()}: dura ${left[0].minutes} minutos y cuida ${left[0].cares.toLowerCase()}.`
 }
@@ -79,6 +73,34 @@ function rules(text: string, c: AssistantContext): string {
   return 'Puedo contarte de tu pulso, presión, agua, sueño, radiación, ejercicio, ánimo y tus tareas del día. Pregúntame por una de esas.'
 }
 
+/** Modo colegio: habla con el tutor, en frases cortas y sin términos médicos. Nunca diagnostica. */
+function rulesSchool(text: string, c: AssistantContext): string {
+  const q = plain(text)
+  const r = evaluateAula(c.aula)
+  const act = actionOfDay(c.aula)
+  const today = act.level === 'ok' ? `${act.title}. ${act.text}` : `Acción del día: ${act.title.toLowerCase()}. ${act.text}`
+  const one = (k: 'sleep' | 'breakfast' | 'mood', what: string) => `Hoy ${r[k].text} de ${c.aula.total} ${what}. ${r[k].status === 'ok' ? 'Está en verde.' : today}`
+  if (c.scene === 0) return 'Estoy preparando el aula. En unos segundos verás el semáforo de hoy.'
+  if (/semana|resumen|informe|colegio/.test(q)) {
+    const w = weekSummary(c.aula).filter((x) => x.worst !== 'ok')
+    return w.length
+      ? `Esta semana hay que mirar: ${w.map((x) => x.short.toLowerCase()).join(', ')}. En el resumen puedes imprimir el informe para el director.`
+      : 'La semana va en verde en las cinco preguntas.'
+  }
+  if (/suen|dorm|cansad/.test(q)) return one('sleep', 'durmieron poco')
+  if (/desayun|hambre|comi/.test(q)) return one('breakfast', 'no desayunaron')
+  if (/animo|decaid|triste/.test(q)) return one('mood', 'están decaídos')
+  if (/calor|frio|clima|sol/.test(q)) return `El clima de hoy: ${r.radiation.text.toLowerCase()}. ${r.radiation.status === 'ok' ? 'Sin cambios en la rutina.' : today}`
+  if (/recreo|mov|juego/.test(q)) return r.exercise.status === 'ok' ? 'Hoy sí hubo recreo activo. ¡Bien!' : today
+  if (/punto|racha|nivel/.test(q)) return `El aula tiene ${c.points} puntos y ${c.streak} días de racha.`
+  if (/toca|sigue|ahora|ruta/.test(q)) return next(c)
+  if (/como|aula|hoy|hago|accion|pasando|hola/.test(q)) {
+    const bad = QUESTIONS.filter((x) => r[x.key].status !== 'ok').length
+    return bad ? today : `${act.title}. ${act.text}`
+  }
+  return 'Puedo decirte la acción del día, cómo va el sueño, el desayuno, el ánimo, el clima y el recreo del aula, o cómo va la semana.'
+}
+
 export async function askAssistant(text: string, context: AssistantContext): Promise<string> {
-  return rules(text, context)
+  return context.profile === 'school' ? rulesSchool(text, context) : rules(text, context)
 }

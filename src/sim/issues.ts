@@ -5,17 +5,37 @@ import type { MetricKey, Reading, SimState } from './simulator'
 export type Zone = 'heart' | 'kidneys' | 'bones' | 'head' | 'muscles' | 'body'
 export type ActionId = 'shelter' | 'water' | 'rest' | 'earth' | 'exercise' | 'mood' | 'ack'
 
-export const ZONE_OF: Record<MetricKey, Zone> = {
-  pulse: 'heart', bp: 'heart', spo2: 'heart', resp: 'heart', hydration: 'kidneys',
-  sleep: 'head', mood: 'head', exercise: 'muscles', radiation: 'body', temp: 'body',
+export interface ZoneMap { of: Record<MetricKey, Zone>; label: Record<Zone, string>; metrics: Record<Zone, MetricKey[]> }
+export const SPACE_ZONES: ZoneMap = {
+  of: {
+    pulse: 'heart', bp: 'heart', spo2: 'heart', resp: 'heart', hydration: 'kidneys',
+    sleep: 'head', mood: 'head', exercise: 'muscles', radiation: 'body', temp: 'body', glucose: 'body',
+    breakfast: 'muscles', backpack: 'bones', posture: 'bones',
+  },
+  label: {
+    heart: 'Corazón', kidneys: 'Riñones', bones: 'Huesos', head: 'Cabeza y sueño',
+    muscles: 'Músculos', body: 'Cuerpo entero',
+  },
+  metrics: {
+    heart: ['pulse', 'bp', 'spo2', 'resp'], kidneys: ['hydration'], bones: ['exercise'],
+    head: ['sleep', 'mood'], muscles: ['exercise'], body: ['radiation', 'temp', 'glucose'],
+  },
 }
-export const ZONE_LABEL: Record<Zone, string> = {
-  heart: 'Corazón', kidneys: 'Riñones', bones: 'Huesos', head: 'Cabeza y sueño',
-  muscles: 'Músculos', body: 'Cuerpo entero',
-}
-export const ZONE_METRICS: Record<Zone, MetricKey[]> = {
-  heart: ['pulse', 'bp', 'spo2', 'resp'], kidneys: ['hydration'], bones: ['exercise'],
-  head: ['sleep', 'mood'], muscles: ['exercise'], body: ['radiation', 'temp'],
+/** Colegio: el mismo gemelo representa al aula. Sin corazón ni riñones: no hay medidas clínicas. */
+export const SCHOOL_ZONES: ZoneMap = {
+  of: {
+    pulse: 'body', bp: 'body', spo2: 'body', resp: 'body', temp: 'body', glucose: 'body',
+    sleep: 'head', mood: 'head', breakfast: 'muscles', exercise: 'muscles',
+    radiation: 'body', hydration: 'body', backpack: 'bones', posture: 'bones',
+  },
+  label: {
+    head: 'Sueño y ánimo', muscles: 'Energía y movimiento', body: 'Clima y agua', bones: 'Mochila y postura',
+    heart: '', kidneys: '',
+  },
+  metrics: {
+    head: ['sleep', 'mood'], muscles: ['breakfast', 'exercise'], body: ['radiation', 'hydration'],
+    bones: ['backpack', 'posture'], heart: [], kidneys: [],
+  },
 }
 
 export interface Issue {
@@ -29,7 +49,7 @@ export interface Issue {
   minutes: number
 }
 
-const PRIORITY: MetricKey[] = ['radiation', 'temp', 'spo2', 'bp', 'pulse', 'hydration', 'sleep', 'resp', 'exercise', 'mood']
+const PRIORITY: MetricKey[] = ['radiation', 'temp', 'spo2', 'bp', 'pulse', 'glucose', 'hydration', 'sleep', 'resp', 'exercise', 'mood']
 
 type Copy = Omit<Issue, 'key' | 'level' | 'zone'>
 function copy(key: MetricKey, bad: boolean, r: Reading, s: SimState): Copy {
@@ -60,6 +80,10 @@ function copy(key: MetricKey, bad: boolean, r: Reading, s: SimState): Copy {
     case 'resp': return { title: bad ? 'Respiración fuera de lo normal' : 'Respiración algo rápida', why: `Respiras ${r.text} veces por minuto. Detente y respira lento.`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Avisar a la Tierra' : 'Entendido', minutes: 3 }
     case 'exercise': return { title: bad ? 'Muy poco ejercicio esta semana' : 'Falta ejercicio esta semana', why: `Llevas el ${r.text} % de la meta. Sin ejercicio se pierden músculo y hueso.`, action: 'exercise', actionLabel: 'Hacer ejercicio', minutes: 30 }
     case 'mood': return { title: bad ? 'Ánimo muy bajo' : 'Ánimo bajo', why: 'Tu ánimo bajó. Un descanso o hablar con alguien ayuda.', action: 'mood', actionLabel: 'Chequeo de ánimo', minutes: 3 }
+    case 'glucose': return r.value < 70
+      ? { title: bad ? 'Azúcar en sangre muy baja' : 'Azúcar en sangre algo baja', why: `Tu glucosa marca ${r.text} mg/dL. Come algo dulce ahora y vuelve a medir en 15 minutos.${bad ? ' Avisa a la Tierra.' : ''}`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Avisar a la Tierra' : 'Ya comí algo', minutes: 15 }
+      : { title: bad ? 'Azúcar en sangre alta' : 'Azúcar en sangre algo alta', why: `Tu glucosa marca ${r.text} mg/dL en ayunas. ${bad ? 'Repite la medición y cuéntale a la Tierra.' : 'Toma agua, muévete un poco y mide otra vez mañana en ayunas.'}`, action: bad ? 'earth' : 'ack', actionLabel: bad ? 'Avisar a la Tierra' : 'Entendido', minutes: 5 }
+    default: return { title: r.label, why: '', action: 'ack', actionLabel: 'Entendido', minutes: 1 }
   }
 }
 
@@ -68,7 +92,8 @@ export function findIssues(s: SimState, readings: Record<MetricKey, Reading>): I
   for (const level of ['bad', 'warn'] as const) {
     for (const key of PRIORITY) {
       const r = readings[key]
-      if (r.status === level) list.push({ key, level, zone: ZONE_OF[key], ...copy(key, level === 'bad', r, s) })
+      if (r.status !== level) continue
+      list.push({ key, level, zone: SPACE_ZONES.of[key], ...copy(key, level === 'bad', r, s) })
     }
   }
   return list
